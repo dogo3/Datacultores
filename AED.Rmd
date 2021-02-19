@@ -1,0 +1,47 @@
+---
+title: "AED"
+author: "Jose Francisco Domenech Gomis"
+date: "19/2/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readr)
+```
+
+
+```{r}
+dfMAPAConsumo <- read_delim("data/Dataset1.- DatosConsumoAlimentarioMAPAporCCAA.txt", "|", escape_double = FALSE, trim_ws = TRUE)
+head(dfMAPAConsumo)
+```
+
+
+```{r}
+dfPreciosAndalucia <- read_delim("data/Dataset2.- Precios Semanales Observatorio de Precios Junta de Andalucia.txt", "|", escape_double = FALSE, trim_ws = TRUE)
+head(dfPreciosAndalucia)
+```
+
+```{r}
+dfMercaMadrid <- read_delim("data/Dataset3a_Datos_MercaMadrid.txt", "|", escape_double = FALSE, trim_ws = TRUE)
+head(dfMercaMadrid)
+```
+
+```{r}
+dfMercaBarna <- read_delim("data/Dataset3b_Datos_MercaBarna.txt", "|", escape_double = FALSE, trim_ws = TRUE)
+head(dfMercaBarna)
+```
+
+```{r}
+dfComercioExterior <- read_delim("data/Dataset4.- Comercio Exterior de Espaдa.txt", "|", escape_double = FALSE, trim_ws = TRUE)
+head(dfComercioExterior)
+```
+
+```{r}
+dfCovid <- read_delim("data/Dataset5_Coronavirus_cases.txt", "|", escape_double = FALSE, trim_ws = TRUE)
+head(dfCovid)
+```
+

@@ -7,10 +7,11 @@
 
 
 
-## Autors ✒️
+## Autores ✒️
 
 * **Jose Francisco Domenech Gomis** ([dogo3](https://github.com/dogo3))<a href="https://twitter.com/intent/follow?screen_name=DomenechGomis">
         <img src="https://img.shields.io/twitter/follow/DomenechGomis?style=social&logo=twitter"
             alt="follow on Twitter"></a>
 * **Eva Barrero Sánchez** ([evabarrero](https://github.com/evabarrero))
-* **Francesc Ruiz Rius** ([]())
+* **Francesc Ruiz Rius** ([francescruiz](https://github.com/francescruiz))
+
