@@ -1,6 +1,6 @@
 ---
 title: "AED"
-author: "Jose Francisco Domenech Gomis"
+author: "Jose Francisco Domenech Gomis, Eva Barrero Sánchez y Francesc Ruiz Rius"
 date: "19/2/2021"
 output: html_document
 ---
@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(readr)
+library(tidyr)
 ```
 
 
@@ -38,6 +39,12 @@ head(dfMercaBarna)
 ```{r}
 dfComercioExterior <- read_delim("data/Dataset4.- Comercio Exterior de Espana.txt", "|", escape_double = FALSE, trim_ws = TRUE)
 head(dfComercioExterior)
+
+#colnames(dfComercioExterior["Value"]) <- "Valor"
+# View(dfComercioExterior)
+# dfComercioExterior<-pivot_wider(data=dfComercioExterior,names_from=c("INDICATORS","FLOW"),values_from=c("Value"),values_fn = list)
+# View(dfComercioExterior)
+colnames(dfComercioExterior)
 ```
 
 ```{r}
