@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(readr)
 library(tidyr)
+library(dplyr)
 ```
 
 
@@ -37,15 +38,13 @@ head(dfMercaBarna)
 ```
 
 ```{r}
-dfComercioExterior <- read_delim("data/Dataset4.- Comercio Exterior de Espana.txt", "|", escape_double = FALSE, trim_ws = TRUE)
+dfComercioExterior <- read_delim("data/Dataset4.- Comercio Exterior de Espana.txt", "|", escape_double = FALSE, col_types = cols(Value = col_character()), 
+    trim_ws = TRUE, na=":")
+dfComercioExterior<-pivot_wider(data=dfComercioExterior,names_from=c("INDICATORS","FLOW"),values_from=c("Value"),values_fn = list)
 head(dfComercioExterior)
-
-#colnames(dfComercioExterior["Value"]) <- "Valor"
-# View(dfComercioExterior)
-# dfComercioExterior<-pivot_wider(data=dfComercioExterior,names_from=c("INDICATORS","FLOW"),values_from=c("Value"),values_fn = list)
-# View(dfComercioExterior)
-colnames(dfComercioExterior)
 ```
+El dataset 4 daba problemas porque las filas cuyo producto era "Fresh or dried citrus fruit (excl. oranges, lemons..." estaban mal codificadas y tenian una columna de más, esto se ha corregido previamente con un editor de texto.
+
 
 ```{r}
 dfCovid <- read_delim("data/Dataset5_Coronavirus_cases.txt", "|", escape_double = FALSE, trim_ws = TRUE)
