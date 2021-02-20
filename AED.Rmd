@@ -54,9 +54,6 @@ colnames(dfComercioExterior)
 dfCovid <- read_delim("data/Dataset5_Coronavirus_cases.txt", "|", escape_double = FALSE, trim_ws = TRUE) %>% select(-day, -month, -year)
 dfCovid$dateRep <- dmy(dfCovid$dateRep)
 head(dfCovid)
-
-#TODO
-#Eva, a mi me aparece aqui un error con el select, mira a ver si esta bien
 ```
 
 
