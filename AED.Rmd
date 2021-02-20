@@ -83,7 +83,7 @@ data_provincias_mapa <- data_provincias %>%
 data_provincias_mapa %>%
   ggplot() +
   geom_polygon(aes( x= long, y = lat, group = group),
-               fill = "steelblue", alpha = 0.8, size = 0.05, col = 'tomato') +
+               fill = "steelblue", alpha = 0.8, size = 0.05, col = 'tomato2') +
   theme_void() + 
   ggtitle("Mapa de España separado por provincias")
 ```
