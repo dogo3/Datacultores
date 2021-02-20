@@ -39,3 +39,6 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# Compilados del README
+README.html
