@@ -49,9 +49,46 @@ head(dfComercioExterior)
 colnames(dfComercioExterior)
 ```
 
+
 ```{r}
 dfCovid <- read_delim("data/Dataset5_Coronavirus_cases.txt", "|", escape_double = FALSE, trim_ws = TRUE) %>% select(-day, -month, -year)
 dfCovid$dateRep <- dmy(dfCovid$dateRep)
 head(dfCovid)
+
+#TODO
+#Eva, a mi me aparece aqui un error con el select, mira a ver si esta bien
 ```
 
+
+Mapa de España, para utilizarlo más adelante.
+
+```{r}
+library(tidyr)
+library(rgdal)
+library(raster)
+library(broom)
+library(ggplot2)
+```
+
+
+```{r}
+shapefile_provincias <- readOGR("assets/Provincias_ETRS89_30N.shp")
+```
+
+```{r}
+data_provincias <- tidy(shapefile_provincias)
+nombres_provincias <- tibble(shapefile_provincias$Texto) %>% 
+  mutate(id = as.character(seq(0, nrow(.)-1)))
+
+data_provincias_mapa <- data_provincias %>% 
+  left_join(nombres_provincias, by = "id")
+```
+
+```{r}
+data_provincias_mapa %>%
+  ggplot() +
+  geom_polygon(aes( x= long, y = lat, group = group),
+               fill = "steelblue", alpha = 0.8, size = 0.05, col = 'tomato') +
+  theme_void() + 
+  ggtitle("Mapa de España separado por provincias")
+```
