@@ -36,7 +36,7 @@ head(dfMercaBarna)
 ```
 
 ```{r}
-dfComercioExterior <- read_delim("data/Dataset4.- Comercio Exterior de Espaдa.txt", "|", escape_double = FALSE, trim_ws = TRUE)
+dfComercioExterior <- read_delim("data/Dataset4.- Comercio Exterior de Espana.txt", "|", escape_double = FALSE, trim_ws = TRUE)
 head(dfComercioExterior)
 ```
 
