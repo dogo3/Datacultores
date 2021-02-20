@@ -12,6 +12,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(readr)
 library(tidyr)
+library(dplyr)
+library(lubridate)
 ```
 
 
@@ -48,7 +50,8 @@ colnames(dfComercioExterior)
 ```
 
 ```{r}
-dfCovid <- read_delim("data/Dataset5_Coronavirus_cases.txt", "|", escape_double = FALSE, trim_ws = TRUE)
+dfCovid <- read_delim("data/Dataset5_Coronavirus_cases.txt", "|", escape_double = FALSE, trim_ws = TRUE) %>% select(-day, -month, -year)
+dfCovid$dateRep <- dmy(dfCovid$dateRep)
 head(dfCovid)
 ```
 
