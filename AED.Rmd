@@ -9,11 +9,12 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(readr)
 library(tidyr)
 library(dplyr)
 library(lubridate)
+library(ggplot2)
 ```
 
 
@@ -54,10 +55,32 @@ dfCovid$dateRep <- dmy(dfCovid$dateRep)
 head(dfCovid)
 ```
 
+```{r}
+#Filtrar los datos españoles.
+dfCovid_Espana <- dfCovid %>% filter(countriesAndTerritories %in% 'Spain') %>% arrange(dateRep)
+#ponerle a la columna casos y muertes, NA donde hay 0.
+dfCovid_Espana$cases[dfCovid_Espana$cases == '0'] <- NA
+dfCovid_Espana$deaths[dfCovid_Espana$deaths == '0'] <- NA
+head(dfCovid_Espana)
+
+ggplot() + 
+  geom_line(data=subset(dfCovid_Espana, !is.na(cases)), aes(x=dateRep, y=cases))+
+  geom_smooth(data=subset(dfCovid_Espana, !is.na(cases)), aes(x=dateRep, y=cases))
+ggplot() +
+  geom_line(data=subset(dfCovid_Espana, !is.na(deaths)), aes(x=dateRep, y=deaths))+
+  geom_smooth(data=subset(dfCovid_Espana, !is.na(deaths)), aes(x=dateRep, y=deaths))
+```
+
+Gráfico casos: existen datos registrados cada dos o tres días, que se corresponden con el acumulado de esos días. Por tanto, no tiene mucho sentido trabajar con esos datos.
+
+Gráfico muertes: ídem que casos, incluso datos negativos!!
+
+Habría que usar alguna aproximación de ellos?
+
 
 Mapa de España, para utilizarlo más adelante.
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(tidyr)
 library(rgdal)
 library(raster)
