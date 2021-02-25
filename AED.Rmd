@@ -28,8 +28,20 @@ head(dfMAPAConsumo)
 
 ```{r}
 dfPreciosAndalucia <- read_delim("data/Dataset2.- Precios Semanales Observatorio de Precios Junta de Andalucia.txt", "|", escape_double = FALSE, trim_ws = TRUE)
+
+dfPreciosAndalucia<-mutate(dfPreciosAndalucia,INICIO=dmy(INICIO),FIN=dmy(FIN))
+dfPreciosAndalucia<-mutate(dfPreciosAndalucia,PRECIO=as.numeric(gsub("," ,".", PRECIO)))
 head(dfPreciosAndalucia)
 ```
+
+Notas:
+  - Grupo: Agricola/Agricultura ecológica
+
+```{r}
+ggplot(data=filter(dfPreciosAndalucia,SUBSECTOR=="Citricos"),aes(x=INICIO,y=PRECIO,color=PRODUCTO))+geom_point()
+#ggplot(data=dfPreciosAndalucia,aes(x=INICIO,y=PRECIO,fill=SECTOR))+geom_dotplot(binwidth = 1.5)
+```
+
 
 ```{r}
 dfMercaMadrid <- read_delim("data/Dataset3a_Datos_MercaMadrid.txt", "|", escape_double = FALSE, trim_ws = TRUE)
