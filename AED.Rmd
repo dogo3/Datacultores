@@ -15,6 +15,8 @@ library(tidyr)
 library(dplyr)
 library(lubridate)
 library(ggplot2)
+library(plotly)
+library(lubridate)
 ```
 
 
@@ -43,9 +45,34 @@ head(dfMercaBarna)
 dfComercioExterior <- read_delim("data/Dataset4.- Comercio Exterior de Espana.txt", "|", escape_double = FALSE, col_types = cols(Value = col_character()), 
     trim_ws = TRUE, na=":")
 dfComercioExterior<-pivot_wider(data=dfComercioExterior,names_from=c("INDICATORS","FLOW"),values_from=c("Value"),values_fn = list)
+
+dfComercioExterior$QUANTITY_IN_100KG_IMPORT <- as.numeric(dfComercioExterior$QUANTITY_IN_100KG_IMPORT)
+dfComercioExterior$QUANTITY_IN_100KG_EXPORT <- as.numeric(dfComercioExterior$QUANTITY_IN_100KG_EXPORT)
+dfComercioExterior$VALUE_IN_EUROS_IMPORT <- as.numeric(dfComercioExterior$VALUE_IN_EUROS_IMPORT)
+dfComercioExterior$VALUE_IN_EUROS_EXPORT <- as.numeric(dfComercioExterior$VALUE_IN_EUROS_EXPORT)
+
+dfComercioExterior<-mutate(dfComercioExterior,YEAR_MONTH=paste(as.character(year(my(PERIOD))),as.character(month(my(PERIOD)))))
+
 head(dfComercioExterior)
+View(dfComercioExterior)
 ```
 El dataset 4 daba problemas porque las filas cuyo producto era "Fresh or dried citrus fruit (excl. oranges, lemons..." estaban mal codificadas y tenian una columna de más, esto se ha corregido previamente con un editor de texto.
+
+```{r}
+totalImpKg<-sum(unlist(dfComercioExterior$QUANTITY_IN_100KG_IMPORT),na.rm = T)
+totalExpKg<-sum(unlist(dfComercioExterior$QUANTITY_IN_100KG_EXPORT),na.rm = T)
+totalImpEur<-sum(unlist(dfComercioExterior$VALUE_IN_EUROS_IMPORT),na.rm = T)
+totalExpEur<-sum(unlist(dfComercioExterior$VALUE_IN_EUROS_EXPORT),na.rm = T)
+print(paste("Total importaciones en toneladas:",totalImpKg/10))
+print(paste("Total exportaciones en toneladas:",totalExpKg/10))
+print(paste("Total importaciones en €:",totalImpEur))
+print(paste("Total exportaciones en €:",totalExpEur))
+```
+
+```{r}
+dfComercioExteriorFilt<-filter(dfComercioExterior,REPORTER=="Poland")
+ggplotly(ggplot(data=dfComercioExteriorFilt,aes(x=YEAR_MONTH,y=VALUE_IN_EUROS_EXPORT,color=PRODUCT))+geom_point()+theme(legend.position = "none",axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)))
+```
 
 
 
@@ -85,7 +112,6 @@ library(tidyr)
 library(rgdal)
 library(raster)
 library(broom)
-library(ggplot2)
 ```
 
 
