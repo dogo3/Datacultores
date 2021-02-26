@@ -107,7 +107,7 @@ ggplotly(ggplot(data=dfComercioExteriorFilt,aes(x=YEAR_MONTH,y=VALUE_IN_EUROS_EX
 
 ```{r}
 dfCovid <- read_delim("data/Dataset5_Coronavirus_cases.txt", "|", escape_double = FALSE, trim_ws = TRUE) %>% 
-  dplyr::select(-day, -month, -year) %>% 
+  dplyr::select(-day, -year) %>% 
   mutate(`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`=
            as.numeric(gsub("," ,".", `Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`)))
 dfCovid$dateRep <- dmy(dfCovid$dateRep)
@@ -124,18 +124,21 @@ dfCovid_Espana$deaths[dfCovid_Espana$deaths == '0'] <- NA
 head(dfCovid_Espana)
 
 #casos
-ggplot() + 
-  geom_line(data=subset(dfCovid_Espana, !is.na(cases)), aes(x=dateRep, y=cases))+
-  geom_smooth(data=subset(dfCovid_Espana, !is.na(cases)), aes(x=dateRep, y=cases))
+# ggplot() + 
+#   geom_line(data=subset(dfCovid_Espana, !is.na(cases)), aes(x=dateRep, y=cases))+
+#   geom_smooth(data=subset(dfCovid_Espana, !is.na(cases)), aes(x=dateRep, y=cases))
 #muertes
-ggplot() +
-  geom_line(data=subset(dfCovid_Espana, !is.na(deaths)), aes(x=dateRep, y=deaths))+
-  geom_smooth(data=subset(dfCovid_Espana, !is.na(deaths)), aes(x=dateRep, y=deaths))
-
+# ggplot() +
+#   geom_line(data=subset(dfCovid_Espana, !is.na(deaths)), aes(x=dateRep, y=deaths))+
+#   geom_smooth(data=subset(dfCovid_Espana, !is.na(deaths)), aes(x=dateRep, y=deaths))
+# 
 #incidencia acumulada
 ggplot(dfCovid_Espana) +
-  geom_line(aes(x=dateRep, y=`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`))+
-  labs(x='Fecha', y='IA 14')
+  geom_line(aes(x=dateRep, y=`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`), col='dark blue')+
+  labs(x='Fecha', y='IA 14', title='Evolución IA14 España')+
+  scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 
 ```
 
