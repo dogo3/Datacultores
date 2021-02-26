@@ -31,10 +31,12 @@ dfPreciosAndalucia <- read_delim("data/Dataset2.- Precios Semanales Observatorio
 
 dfPreciosAndalucia<-mutate(dfPreciosAndalucia,INICIO=dmy(INICIO),FIN=dmy(FIN))
 dfPreciosAndalucia<-mutate(dfPreciosAndalucia,PRECIO=as.numeric(gsub("," ,".", PRECIO)))
+
 # dfPreciosAndalucia<-mutate(dfPreciosAndalucia,YEAR_WEEK=paste(as.character(year(ymd(INICIO))),as.character(week(ymd(INICIO)))))
 #dfPreciosAndalucia<-mutate(dfPreciosAndalucia,INICIO=as.factor(INICIO))
 head(dfPreciosAndalucia)
 # View(dfPreciosAndalucia)
+
 ```
 
 Notas:
