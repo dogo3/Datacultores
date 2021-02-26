@@ -66,9 +66,10 @@ ggplotly(ggplot(data=citricos,aes(x=INICIO,y=PRECIO,color=PRODUCTO))+
 
 ```{r}
 ggplot(dfPreciosAndalucia,aes(x=INICIO,y=PRECIO))+
-  geom_boxplot(aes(group=YEAR_MONTH))+
+  geom_boxplot(aes(group=YEAR_MONTH),outlier.size = 0.5)+
   theme(legend.position = "none",axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
-  scale_x_date(date_breaks = "months",date_labels = "%b %Y")
+  scale_x_date(date_breaks = "months",date_labels = "%b %Y")+
+  scale_y_sqrt()
 ```
 
 
