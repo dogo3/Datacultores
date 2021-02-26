@@ -21,7 +21,9 @@ library(lubridate)
 
 
 ```{r}
-dfMAPAConsumo <- read_delim("data/Dataset1.- DatosConsumoAlimentarioMAPAporCCAA.txt", "|", escape_double = FALSE, trim_ws = TRUE)
+dfMAPAConsumo <- read_delim("data/Dataset1.- DatosConsumoAlimentarioMAPAporCCAA.txt", "|", escape_double = FALSE, 
+           col_types = cols(`Año` = col_date(format = "%Y"), X11 = col_skip(), X12 = col_skip()), 
+           locale = locale(decimal_mark = ","), trim_ws = TRUE)
 head(dfMAPAConsumo)
 ```
 
