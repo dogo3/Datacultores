@@ -58,7 +58,7 @@ ggplot(dfMAPAConsumo_Total)+
 ```
 Muchas cosas y muy feo
 
-To Do: 
+#TODO: 
 - se pueden analizar los precios de los 3-5 productos con mas volumen, por ejemplo.
 - analizar consumo de ellos
 - ver si el gasto se ha visto influenciado
