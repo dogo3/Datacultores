@@ -31,15 +31,30 @@ dfPreciosAndalucia <- read_delim("data/Dataset2.- Precios Semanales Observatorio
 
 dfPreciosAndalucia<-mutate(dfPreciosAndalucia,INICIO=dmy(INICIO),FIN=dmy(FIN))
 dfPreciosAndalucia<-mutate(dfPreciosAndalucia,PRECIO=as.numeric(gsub("," ,".", PRECIO)))
+# dfPreciosAndalucia<-mutate(dfPreciosAndalucia,YEAR_WEEK=paste(as.character(year(ymd(INICIO))),as.character(week(ymd(INICIO)))))
+#dfPreciosAndalucia<-mutate(dfPreciosAndalucia,INICIO=as.factor(INICIO))
 head(dfPreciosAndalucia)
+# View(dfPreciosAndalucia)
 ```
 
 Notas:
   - Grupo: Agricola/Agricultura ecológica
 
 ```{r}
-ggplot(data=filter(dfPreciosAndalucia,SUBSECTOR=="Citricos"),aes(x=INICIO,y=PRECIO,color=PRODUCTO))+geom_point()
-#ggplot(data=dfPreciosAndalucia,aes(x=INICIO,y=PRECIO,fill=SECTOR))+geom_dotplot(binwidth = 1.5)
+citricos<-filter(dfPreciosAndalucia,SUBSECTOR=="Citricos")
+ggplotly(ggplot(data=citricos,aes(x=INICIO,y=PRECIO,color=PRODUCTO))+
+           geom_line(size=0.3)+ 
+           scale_x_date(date_breaks = "months",date_labels = "%b %Y")+
+           theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+)
+
+# pimientos<-filter(dfPreciosAndalucia,PRODUCTO=="AGUACATE")
+# ggplotly(ggplot(data=pimientos,aes(x=INICIO,y=PRECIO,color=SUBTIPO,shape=TIPO))+
+#            geom_line(size=0.8)+
+#            scale_x_date(date_breaks = "months",date_labels = "%b %Y")+
+#            theme(legend.position = "none",axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+# )
+
 ```
 
 
