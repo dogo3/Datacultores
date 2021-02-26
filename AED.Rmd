@@ -17,6 +17,7 @@ library(lubridate)
 library(ggplot2)
 library(plotly)
 library(lubridate)
+library(forcats)
 ```
 
 
@@ -33,10 +34,13 @@ dfPreciosAndalucia<-mutate(dfPreciosAndalucia,INICIO=dmy(INICIO),FIN=dmy(FIN))
 dfPreciosAndalucia<-mutate(dfPreciosAndalucia,PRECIO=as.numeric(gsub("," ,".", PRECIO)))
 
 # dfPreciosAndalucia<-mutate(dfPreciosAndalucia,YEAR_WEEK=paste(as.character(year(ymd(INICIO))),as.character(week(ymd(INICIO)))))
+dfPreciosAndalucia<-mutate(dfPreciosAndalucia,YEAR_MONTH=factor(paste(year(INICIO),month(INICIO,label=T))))
 #dfPreciosAndalucia<-mutate(dfPreciosAndalucia,INICIO=as.factor(INICIO))
 head(dfPreciosAndalucia)
 # View(dfPreciosAndalucia)
-
+unique(dfPreciosAndalucia$GRUPO)
+unique(dfPreciosAndalucia$SECTOR)
+print(unique(dfPreciosAndalucia$SUBSECTOR))
 ```
 
 Notas:
@@ -59,6 +63,14 @@ ggplotly(ggplot(data=citricos,aes(x=INICIO,y=PRECIO,color=PRODUCTO))+
 
 ```
 
+```{r}
+ggplot(dfPreciosAndalucia,aes(x=INICIO,y=PRECIO))+
+  geom_boxplot(aes(group=YEAR_MONTH))+
+  theme(legend.position = "none",axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  scale_x_date(date_breaks = "months",date_labels = "%b %Y")
+```
+
+
 
 ```{r}
 dfMercaMadrid <- read_delim("data/Dataset3a_Datos_MercaMadrid.txt", "|", escape_double = FALSE, trim_ws = TRUE)
@@ -80,27 +92,31 @@ dfComercioExterior$QUANTITY_IN_100KG_EXPORT <- as.numeric(dfComercioExterior$QUA
 dfComercioExterior$VALUE_IN_EUROS_IMPORT <- as.numeric(dfComercioExterior$VALUE_IN_EUROS_IMPORT)
 dfComercioExterior$VALUE_IN_EUROS_EXPORT <- as.numeric(dfComercioExterior$VALUE_IN_EUROS_EXPORT)
 
-dfComercioExterior<-mutate(dfComercioExterior,YEAR_MONTH=paste(as.character(year(my(PERIOD))),as.character(month(my(PERIOD)))))
+dfComercioExterior<-mutate(dfComercioExterior,YEAR_MONTH=paste(as.character(year(my(PERIOD))),as.character(month(my(PERIOD),label=T))))
 
 head(dfComercioExterior)
 View(dfComercioExterior)
 ```
 El dataset 4 daba problemas porque las filas cuyo producto era "Fresh or dried citrus fruit (excl. oranges, lemons..." estaban mal codificadas y tenian una columna de más, esto se ha corregido previamente con un editor de texto.
 
+*Importante:* La columna REPORTER es la que nos indica el sujeto de la transacción, la columna PARTNER es siempre España mientras que REPORTER indica con quién ha operado España, por tanto cuando hablamos de importaciones del REPORTER realmente hablamos de exportaciones de España y viceversa.
+
 ```{r}
 totalImpKg<-sum(unlist(dfComercioExterior$QUANTITY_IN_100KG_IMPORT),na.rm = T)
 totalExpKg<-sum(unlist(dfComercioExterior$QUANTITY_IN_100KG_EXPORT),na.rm = T)
 totalImpEur<-sum(unlist(dfComercioExterior$VALUE_IN_EUROS_IMPORT),na.rm = T)
 totalExpEur<-sum(unlist(dfComercioExterior$VALUE_IN_EUROS_EXPORT),na.rm = T)
-print(paste("Total importaciones en toneladas:",totalImpKg/10))
-print(paste("Total exportaciones en toneladas:",totalExpKg/10))
-print(paste("Total importaciones en €:",totalImpEur))
-print(paste("Total exportaciones en €:",totalExpEur))
+
+print(paste("Total importaciones a toneladas:      ",totalExpKg/10))
+print(paste("Total exportaciones desde toneladas:  ",totalImpKg/10))
+print(paste("Total importaciones a España en €:    ",totalExpEur))
+print(paste("Total exportaciones desde España en €:",totalImpEur))
 ```
 
 ```{r}
+#TODO corregir esti para que el eje X aparezca bien ordenado
 dfComercioExteriorFilt<-filter(dfComercioExterior,REPORTER=="Poland")
-ggplotly(ggplot(data=dfComercioExteriorFilt,aes(x=YEAR_MONTH,y=VALUE_IN_EUROS_EXPORT,color=PRODUCT))+geom_point()+theme(legend.position = "none",axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)))
+ggplotly(ggplot(data=dfComercioExteriorFilt,aes(x=YEAR_MONTH,y=VALUE_IN_EUROS_EXPORT,color=PRODUCT))+geom_point()+theme(legend.position = "none",axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)))
 ```
 
 
