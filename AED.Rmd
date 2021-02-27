@@ -58,10 +58,94 @@ ggplot(dfMAPAConsumo_Total)+
 ```
 Muchas cosas y muy feo
 
-#TODO: 
-- se pueden analizar los precios de los 3-5 productos con mas volumen, por ejemplo.
-- analizar consumo de ellos
-- ver si el gasto se ha visto influenciado
+* se pueden analizar los precios de los 3-5 productos con mas volumen, por ejemplo.
+
+```{r}
+dfVol <- dfMAPAConsumo_Total %>% 
+  group_by(Producto) %>%
+  summarise(Volumen_Total = sum(`Volumen (miles de kg)`),
+            Volumen_Max = max(`Volumen (miles de kg)`)) %>%
+  arrange(desc(Volumen_Total)) %>%
+  head(10)
+dfVol
+```
+
+Obviamos los tres primeros por ser totales.
+
+```{r}
+productos <- as.character(dfVol$Producto[4:8])
+productos
+```
+
+```{r}
+p <- dfMAPAConsumo_Total %>% 
+  filter(Producto %in% productos) %>%
+  ggplot()+
+  geom_line(aes(x=Fecha, y=`Precio medio kg`, col=Producto), size=1)+
+  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+  scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  ggtitle('Precio medio - 5 productos con más volumen')
+
+ggplotly(p)
+```
+
+Rayas negras: años
+Raya roja: marzo 2020 = inicio covid
+
+El precio de las naranjas sí ha subido más, pero en el resto no se aprecia ninguna tendencia creciente. No parece que el precio se haya visto afectado respecto otros años.
+
+* Analizar consumo de ellos
+
+```{r}
+p <- dfMAPAConsumo_Total %>% 
+  filter(Producto %in% productos) %>%
+  ggplot()+
+  geom_line(aes(x=Fecha, y=`Consumo per capita`, col=Producto), size=1)+
+  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+  scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  ggtitle('Consumo per cápita - 5 productos con más volumen')
+
+ggplotly(p)
+```
+
+El consumo sí parece haberse visto afectado, teniendo todos un pico muy grande en abril.
+En general parece que ha aumentado el gasto de todos.
+
+* ver si el gasto se ha visto influenciado
+
+```{r}
+p <- dfMAPAConsumo_Total %>% 
+  filter(Producto %in% productos) %>%
+  ggplot()+
+  geom_line(aes(x=Fecha, y=`Gasto per capita`, col=Producto), size=1)+
+  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+  scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  ggtitle('Gasto per cápita - 5 productos con más volumen')
+
+ggplotly(p)
+```
+
+A partir de marzo 2020 se gasta más en estos productos.
+Este comportamiento se ha visto reflejado en el consumo (se aprecia un mayor consumo en todos los productos, con pico máx en abril)
+En otros años, no se mostraba una tendencia creciente general tan acusada.
+Tenemos claro que el gasto ha aumentado. Este aumento del gasto se ha debido a un aumento de consumo, no a un aumento de precios.
+Inciso: si el gasto aumenta, puede ser que gastes más como tal, o que te obliguen a gastar más (aumento de precios). En este caso se ve que ha sido principalmente por aumento en el consumo.
+A partir de verano 2020, todo vuelve a la normalidad y las series siguen su curso habitual de todos los años.
+
+#TODO
+
+- Analizar series temporales para respaldar todo lo anterior en base a eso
+- Marcarnos un triple y añadir un dataset con una serie del IPC (esperemos que no suban, si no no hay triple)
+
 
 ```{r}
 dfPreciosAndalucia <- read_delim("data/Dataset2.- Precios Semanales Observatorio de Precios Junta de Andalucia.txt", "|", escape_double = FALSE, trim_ws = TRUE)
