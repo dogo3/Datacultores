@@ -138,13 +138,14 @@ A partir de marzo 2020 se gasta más en estos productos.
 Este comportamiento se ha visto reflejado en el consumo (se aprecia un mayor consumo en todos los productos, con pico máx en abril)
 En otros años, no se mostraba una tendencia creciente general tan acusada.
 Tenemos claro que el gasto ha aumentado. Este aumento del gasto se ha debido a un aumento de consumo, no a un aumento de precios.
-Inciso: si el gasto aumenta, puede ser que gastes más como tal, o que te obliguen a gastar más (aumento de precios). En este caso se ve que ha sido principalmente por aumento en el consumo.
+Inciso: si el gasto aumenta, puede ser que gastes más como tal, o que te obliguen a gastar más (aumento de precios). En este caso se ve que ha sido principalmente por aumento en el consumo, aunque habría que analizar el impacto de los precios.
 A partir de verano 2020, todo vuelve a la normalidad y las series siguen su curso habitual de todos los años.
 
 #TODO
 
 - Analizar series temporales para respaldar todo lo anterior en base a eso
-- Marcarnos un triple y añadir un dataset con una serie del IPC (esperemos que no suban, si no no hay triple)
+- Marcarnos un triple y añadir un dataset con una serie del IPC. ahi es cuando podremos decir si han tenido impacto los precios o no!
+Pista: bajó el IPC de casi todo menos de los precios y verduras, pero hay que ver si todos los años suben por esas fechas y es algo habitual o si es exclusivo Covid.
 
 
 ```{r}
