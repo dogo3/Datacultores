@@ -306,6 +306,24 @@ ggplot(dfPreciosAndalucia,aes(x=INICIO,y=PRECIO))+
   scale_y_sqrt()
 ```
 
+```{r}
+p <- dfPreciosAndalucia %>%
+  group_by(SUBSECTOR, INICIO) %>%
+  summarise(PRECIO_MEDIO = mean(PRECIO), .groups = 'keep') %>%
+  ggplot()+
+  geom_line(aes(x=INICIO, y=PRECIO_MEDIO, col=SUBSECTOR))+
+  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  scale_x_date(date_breaks = "2 months",date_labels = "%b %Y")+
+  scale_y_log10()+
+  ggtitle('Precio medio por subsectores')
+
+ggplotly(p)
+```
+
+Casi todos bajan después de la línea roja >:(
 
 #DATASET3A
 ```{r}
