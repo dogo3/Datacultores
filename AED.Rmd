@@ -327,8 +327,10 @@ Casi todos bajan después de la línea roja >:(
 
 #DATASET3A
 ```{r}
-dfMercaMadrid <- read_delim("data/Dataset3a_Datos_MercaMadrid.txt", "|", escape_double = FALSE, trim_ws = TRUE,
-                            locale = locale(decimal_mark = ","))
+dfMercaMadrid <- read_delim("data/Dataset3a_Datos_MercaMadrid.txt", "|", escape_double = FALSE, trim_ws = TRUE, locale = locale(decimal_mark = ","))
+dfMercaMadrid <- unite(dfMercaMadrid, MONTH, YEAR, col='Fecha', sep='/',remove=F)
+dfMercaMadrid$Fecha <- as.Date(as.yearmon(dfMercaMadrid$Fecha, format='%m/%Y'))
+
 head(dfMercaMadrid)
 ```
 
