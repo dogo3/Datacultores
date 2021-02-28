@@ -45,8 +45,7 @@ library(zoo)
 
 
 ```{r}
-dfMAPAConsumo <- read_delim("data/Dataset1.- DatosConsumoAlimentarioMAPAporCCAA.txt", "|", escape_double = FALSE, 
-           col_types = cols(X11 = col_skip(), X12 = col_skip()), locale = locale(decimal_mark = ","), trim_ws = TRUE)
+dfMAPAConsumo <- read_delim("data/Dataset1.- DatosConsumoAlimentarioMAPAporCCAA.txt", "|", escape_double = FALSE, col_types = cols(X11 = col_skip(), X12 = col_skip()), locale = locale(decimal_mark = ","), trim_ws = TRUE)
 head(dfMAPAConsumo)
 ```
 
@@ -163,11 +162,103 @@ Tenemos claro que el gasto ha aumentado. Este aumento del gasto se ha debido a u
 Inciso: si el gasto aumenta, puede ser que gastes más como tal, o que te obliguen a gastar más (aumento de precios). En este caso se ve que ha sido principalmente por aumento en el consumo, aunque habría que analizar el impacto de los precios.
 A partir de verano 2020, todo vuelve a la normalidad y las series siguen su curso habitual de todos los años.
 
-#TODO
 
-- Analizar series temporales para respaldar todo lo anterior en base a eso
-- Marcarnos un triple y añadir un dataset con una serie del IPC. ahi es cuando podremos decir si han tenido impacto los precios o no!
-Pista: bajó el IPC de casi todo menos de los precios y verduras, pero hay que ver si todos los años suben por esas fechas y es algo habitual o si es exclusivo Covid.
+Creo que analizar totales de frutas y verduras va a ser mejor, se puede generalizar más. 
+Si cogemos total frutas y hortalizas:
+
+```{r}
+dfVol <- dfMAPAConsumo_Total %>% 
+  group_by(Producto) %>%
+  summarise(Volumen_Total = sum(`Volumen (miles de kg)`)) %>%
+  arrange(desc(Volumen_Total)) %>%
+  head(2)
+
+productos <- as.character(dfVol$Producto)
+
+p <- dfMAPAConsumo_Total %>% 
+  filter(Producto %in% productos) %>%
+  ggplot()+
+  geom_line(aes(x=Fecha, y=`Precio medio kg`, col=Producto), size=1)+
+  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+  scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  ggtitle('Precio medio - Total frutas y hortalizas frescas')
+
+ggplotly(p)
+```
+
+Aquí sí se aprecia que han subido los precios.
+
+```{r}
+p <- dfMAPAConsumo_Total %>% 
+  filter(Producto %in% productos) %>%
+  ggplot()+
+  geom_line(aes(x=Fecha, y=`Consumo per capita`, col=Producto), size=1)+
+  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+  scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  ggtitle('Consumo pc - Total frutas y hortalizas frescas')
+
+ggplotly(p)
+```
+
+Solo frutas.
+
+```{r}
+p <- dfMAPAConsumo_Total %>% 
+  filter(Producto %in% productos[1]) %>%
+  ggplot()+
+  geom_line(aes(x=Fecha, y=`Precio medio kg`, col='red'), size=1)+
+  geom_line(aes(x=Fecha, y=`Consumo per capita`, col='blue'), size=1)+
+  geom_line(aes(x=Fecha, y=`Gasto per capita`, col='green'), size=1)+
+  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+  scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+  scale_y_log10()+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  ggtitle('Precio medio, consumo pc y gasto pc - Frutas frescas')
+
+ggplotly(p)
+```
+
+Solo hortalizas.
+
+```{r}
+p <- dfMAPAConsumo_Total %>% 
+  filter(Producto %in% productos[2]) %>%
+  ggplot()+
+  geom_line(aes(x=Fecha, y=`Precio medio kg`, col='red'), size=1)+
+  geom_line(aes(x=Fecha, y=`Consumo per capita`, col='blue'), size=1)+
+  geom_line(aes(x=Fecha, y=`Gasto per capita`, col='green'), size=1)+
+  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+  scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+  scale_y_log10()+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  ggtitle('Precio medio, consumo pc y gasto pc - Hortalizas frescas')
+
+ggplotly(p)
+```
+
+He puesto escala logarítmica. Se observa mejor que sube TODO. El aumento del gasto se debe tanto a un aumento del consumo como de los precios, aunque creo que los precios han tenido menor influencia (puedo pensar alguna manera economista de respaldar esto)
+
+#TODO Si esto se presenta, cambiar leyenda para que salga bonita!
+
+#TODO Añadir dataset serie IPC. EL IPC para frutas y verduras subió, se puede ver si es algo habitual o exclusivo Covid.
+
+#TODO Series temporales.
+ts()-Convertir a serie temporal.
+decompose()
+estabilizar varianza: log(de la ts())
+quitar tendencia: diff -> diff(log(ts()))
+quitar estacionalidad: otro diff, lag 12. -> y
+autocorr: acf(y), analizar palos
 
 
 ```{r}
