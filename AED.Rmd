@@ -43,6 +43,7 @@ library(forcats)
 library(zoo)
 ```
 
+#DATASET1
 
 ```{r}
 dfMAPAConsumo <- read_delim("data/Dataset1.- DatosConsumoAlimentarioMAPAporCCAA.txt", "|", escape_double = FALSE, col_types = cols(X11 = col_skip(), X12 = col_skip()), locale = locale(decimal_mark = ","), trim_ws = TRUE)
@@ -260,7 +261,7 @@ quitar tendencia: diff -> diff(log(ts()))
 quitar estacionalidad: otro diff, lag 12. -> y
 autocorr: acf(y), analizar palos
 
-
+#DATASET2
 ```{r}
 dfPreciosAndalucia <- read_delim("data/Dataset2.- Precios Semanales Observatorio de Precios Junta de Andalucia.txt", "|", escape_double = FALSE, trim_ws = TRUE)
 
@@ -306,19 +307,21 @@ ggplot(dfPreciosAndalucia,aes(x=INICIO,y=PRECIO))+
 ```
 
 
-
+#DATASET3A
 ```{r}
 dfMercaMadrid <- read_delim("data/Dataset3a_Datos_MercaMadrid.txt", "|", escape_double = FALSE, trim_ws = TRUE,
                             locale = locale(decimal_mark = ","))
 head(dfMercaMadrid)
 ```
 
+#DATASET3B
 ```{r}
 dfMercaBarna <- read_delim("data/Dataset3b_Datos_MercaBarna.txt", "|", escape_double = FALSE, trim_ws = TRUE,
                            locale = locale(decimal_mark = ","))
 head(dfMercaBarna)
 ```
 
+#DATASET4
 ```{r}
 dfComercioExterior <- read_delim("data/Dataset4.- Comercio Exterior de Espana.txt", "|", escape_double = FALSE, col_types = cols(Value = col_character()), 
     trim_ws = TRUE, na=":")
@@ -357,7 +360,7 @@ ggplotly(ggplot(data=dfComercioExteriorFilt,aes(x=YEAR_MONTH,y=VALUE_IN_EUROS_EX
 ```
 
 
-
+#DATASET5
 ```{r}
 dfCovid <- read_delim("data/Dataset5_Coronavirus_cases.txt", "|", escape_double = FALSE, trim_ws = TRUE) %>% 
   dplyr::select(-day, -year) %>% 
