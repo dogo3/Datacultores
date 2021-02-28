@@ -5,6 +5,28 @@ date: "19/2/2021"
 output: html_document
 ---
 
+Te retamos a realizar el mejor análisis sobre el comportamiento del mercado español de frutas y hortalizas durante el periodo de pandemia, definido como el periodo transcurrido entre el 01/03/2020 y el 30/11/2020. Podrás llevar a cabo el análisis tanto a nivel global del sector de las F&H, como para una subcategoría dentro del mismo (e.j. hortalizas de hoja), o inclusive para un producto en particular (e.j. tomate).
+
+Estas son algunas de las preguntas que deben guiar (pero no limitar) tu análisis:
+
+- ¿De qué manera se ha visto afectado el consumo y la demanda de F&H durante la pandemia con respecto a años anteriores?
+- ¿Qué efecto ha tenido sobre las importaciones/exportaciones de F&H?¿Ha tenido algún efecto especial el periodo de excepción (Marzo, abril y mayo)?
+- ¿Existe correlación entre los casos COVID-19 y las importaciones/exportaciones a nivel de la Unión Europea?
+
+*Estructura del trabajo propuesta*
+
+* Análisis consumo:
+ - Evolución precio medio, consumo per cápita, gasto per cápita (Dataset 1)
+ - Evolución precios Andalucía (Dataset 2)
+ - Evolución precios Madrid (Dataset 3.a)
+ - Evolución precios Barcelona (Dataset 3.b)
+ - Comparar la evolución de los 3 precios (mayores núcleos de población españoles, es representativo de la situación general)
+
+* Análisis exportaciones/importaciones:
+ - Obtener ¿mayores exportadores e importadores? y ver su evolución. (Dataset 4)
+ - Superponer con curva IA COVID para ver si hay correlación (Dataset 5)
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
