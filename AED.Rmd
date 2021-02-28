@@ -357,8 +357,9 @@ Estaba en descenso pero justo para marzo, empiezan a subir.
 
 #DATASET3B
 ```{r}
-dfMercaBarna <- read_delim("data/Dataset3b_Datos_MercaBarna.txt", "|", escape_double = FALSE, trim_ws = TRUE,
-                           locale = locale(decimal_mark = ","))
+dfMercaBarna <- read_delim("data/Dataset3b_Datos_MercaBarna.txt", "|", escape_double = FALSE, trim_ws = TRUE, locale = locale(decimal_mark = ","))
+dfMercaBarna <- unite(dfMercaMadrid, MONTH, YEAR, col='Fecha', sep='/',remove=F)
+dfMercaBarna$Fecha <- as.Date(as.yearmon(dfMercaBarna$Fecha, format='%m/%Y'))
 head(dfMercaBarna)
 ```
 
