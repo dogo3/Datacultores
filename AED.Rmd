@@ -324,6 +324,8 @@ ggplotly(p)
 ```
 
 Casi todos bajan después de la línea roja >:(
+Cítricos suben siempre en todos mucho: 
+#TODO ver qué ha ocurrido con ellos. a lo mejor es que la produccion de este año ha sido horrible.
 
 #DATASET3A
 ```{r}
@@ -333,6 +335,25 @@ dfMercaMadrid$Fecha <- as.Date(as.yearmon(dfMercaMadrid$Fecha, format='%m/%Y'))
 
 head(dfMercaMadrid)
 ```
+
+```{r}
+p <- dfMercaMadrid %>% 
+  group_by(familia, Fecha) %>% 
+  summarise(precio_medio = mean(price_mean), .groups='keep') %>%
+  ggplot() + 
+  geom_line(aes(x=Fecha, y=precio_medio, col=familia))+
+  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  scale_x_date(date_breaks = "2 months",date_labels = "%b %Y")+
+  ggtitle('Precio medio por subsectores')
+
+ggplotly(p)
+```
+
+Todos los años parece que sube para marzo-abril.
+Estaba en descenso pero justo para marzo, empiezan a subir.
 
 #DATASET3B
 ```{r}
