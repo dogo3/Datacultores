@@ -347,7 +347,7 @@ p <- dfMercaMadrid %>%
   geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
   scale_x_date(date_breaks = "2 months",date_labels = "%b %Y")+
-  ggtitle('Precio medio por subsectores')
+  ggtitle('Precio medio por familias')
 
 ggplotly(p)
 ```
@@ -358,10 +358,28 @@ Estaba en descenso pero justo para marzo, empiezan a subir.
 #DATASET3B
 ```{r}
 dfMercaBarna <- read_delim("data/Dataset3b_Datos_MercaBarna.txt", "|", escape_double = FALSE, trim_ws = TRUE, locale = locale(decimal_mark = ","))
-dfMercaBarna <- unite(dfMercaMadrid, MONTH, YEAR, col='Fecha', sep='/',remove=F)
+dfMercaBarna <- unite(dfMercaBarna, MONTH, YEAR, col='Fecha', sep='/',remove=F)
 dfMercaBarna$Fecha <- as.Date(as.yearmon(dfMercaBarna$Fecha, format='%m/%Y'))
 head(dfMercaBarna)
 ```
+
+```{r}
+p <- dfMercaBarna %>% 
+  group_by(familia, Fecha) %>% 
+  summarise(precio_medio = mean(price_mean), .groups='keep') %>%
+  ggplot() + 
+  geom_line(aes(x=Fecha, y=precio_medio, col=familia))+
+  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  scale_x_date(date_breaks = "2 months",date_labels = "%b %Y")+
+  ggtitle('Precio medio por familias')
+
+ggplotly(p)
+```
+
+Muchas familias (17), no se saca nada en claro.
 
 #DATASET4
 ```{r}
