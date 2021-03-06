@@ -168,6 +168,23 @@ Creo que analizar totales de frutas y verduras va a ser mejor, se puede generali
 Si cogemos total frutas y hortalizas:
 
 ```{r}
+p <- dfMAPAConsumo_Total %>%
+  filter(Producto %in% c('T.HORTALIZAS FRESCAS', 'T.FRUTAS FRESCAS'))%>%
+  ggplot()+
+  geom_line(aes(x=Fecha, y=`Volumen (miles de kg)`, col=Producto))+
+  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+  scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  ggtitle('Volumen - Total frutas y hortalizas frescas')
+
+ggplotly(p)
+```
+
+Efectivamente el volumen ha subido. Normalmente el pico de frutas es en verano, y en 2020 se dio antes (aparte de en verano). En cambio, el volumen de hortalizas no sigue una tendencia igual todos los años, y justamente aumentó en abril de 2020. Esto se verá mejor en consumo pc.
+
+```{r}
 dfVol <- dfMAPAConsumo_Total %>% 
   group_by(Producto) %>%
   summarise(Volumen_Total = sum(`Volumen (miles de kg)`)) %>%
@@ -251,7 +268,7 @@ He puesto escala logarítmica. Se observa mejor que sube TODO. El aumento del ga
 
 #TODO Si esto se presenta, cambiar leyenda para que salga bonita!
 
-#TODO Añadir dataset serie IPC. EL IPC para frutas y verduras subió, se puede ver si es algo habitual o exclusivo Covid.
+*Añadir dataset serie IPC. EL IPC para frutas y verduras subió, se puede ver si es algo habitual o exclusivo Covid.
 
 ```{r}
 IPC <- read_delim("data/IPC_INE.csv", "\t", escape_double = FALSE, col_types = cols(Periodo = col_date(format = "%YM%m")),
@@ -313,6 +330,7 @@ IPC %>%
 Legumbres/Hortalizas:
 - Sufre una variación anual respecto al año 2019 del 3.9% en abril y del 2,7% en mayo. En el año 2019, hubo una variación en estos meses del 8.1% y 5% respecto 2018, por lo que la variación en este año fue mayor.
 - Aunque los precios fueron superiores al año 2019, en 2019 en el mismo período aumentaron más respecto al año anterior. No está del todo claro que esta variación se deba a Covid-19.
+
 
 #TODO Series temporales.
 ts()-Convertir a serie temporal.
