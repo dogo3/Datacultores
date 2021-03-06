@@ -294,6 +294,26 @@ p <- IPC %>%
 ggplotly(p)
 ```
 
+```{r}
+IPC %>%
+  filter(Clases == 'Frutas') %>%
+  filter(`Tipo de dato` == 'Variación anual' ,month(Periodo) %in% c(3,4,5))
+```
+
+Frutas: 
+- Sufren una variación en abril del 11,4% respecto al año pasado. En 2019, sufrió una variación negativa respecto 2018, pero en 2018 también sufrió una variación positiva del 3.1% respecto al año anterior.
+- Los precios de la fruta son variables. En este caso se puede concluir que ha habido una variación extraordinaria respecto a los años anteriores.
+
+```{r}
+IPC %>%
+  filter(Clases == 'Legumbres/Hortalizas') %>%
+  filter(`Tipo de dato` == 'Variación anual' ,month(Periodo) %in% c(3,4,5))
+```
+
+Legumbres/Hortalizas:
+- Sufre una variación anual respecto al año 2019 del 3.9% en abril y del 2,7% en mayo. En el año 2019, hubo una variación en estos meses del 8.1% y 5% respecto 2018, por lo que la variación en este año fue mayor.
+- Aunque los precios fueron superiores al año 2019, en 2019 en el mismo período aumentaron más respecto al año anterior. No está del todo claro que esta variación se deba a Covid-19.
+
 #TODO Series temporales.
 ts()-Convertir a serie temporal.
 decompose()
