@@ -264,7 +264,19 @@ head(IPC)
 ```
 
 ```{r}
+p <- IPC %>%
+  filter(`Tipo de dato` == 'Índice') %>%
+  ggplot()+
+  geom_line(aes(x=Periodo, y=Total, col=Clases), size=1)+
+  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+  scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+  scale_y_log10()+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  ggtitle('Índice IPC')
 
+ggplotly(p)
 ```
 
 
