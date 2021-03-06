@@ -253,6 +253,13 @@ He puesto escala logarítmica. Se observa mejor que sube TODO. El aumento del ga
 
 #TODO Añadir dataset serie IPC. EL IPC para frutas y verduras subió, se puede ver si es algo habitual o exclusivo Covid.
 
+```{r}
+IPC <- read_delim("data/IPC_INE.csv", "\t", escape_double = FALSE, locale = locale(encoding = "ISO-8859-1"), trim_ws = TRUE)
+
+head(IPC)
+```
+
+
 #TODO Series temporales.
 ts()-Convertir a serie temporal.
 decompose()
