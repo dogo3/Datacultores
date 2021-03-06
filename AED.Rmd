@@ -482,22 +482,32 @@ dfComercioExterior$PERIOD <- as.Date(as.yearmon(dfComercioExterior$PERIOD, forma
 head(dfComercioExterior)
 
 #hay una fecha que sale con NA porque es el total del año, yo la quitaría
+dfComercioExterior <- dfComercioExterior[!is.na(dfComercioExterior$PERIOD), ]
 ```
 El dataset 4 daba problemas porque las filas cuyo producto era "Fresh or dried citrus fruit (excl. oranges, lemons..." estaban mal codificadas y tenian una columna de más, esto se ha corregido previamente con un editor de texto.
 
 *Importante:* La columna REPORTER es la que nos indica el sujeto de la transacción, la columna PARTNER es siempre España mientras que REPORTER indica con quién ha operado España, por tanto cuando hablamos de importaciones del REPORTER realmente hablamos de exportaciones de España y viceversa.
 
-#TODO esta suma está mal porque hay una fila que tiene el total del año (la que ahora en fecha sale con NA). Sería todo/2 porque estamos sumando cada año dos veces. Quitar esa fila es más fácil
+TODO->HECHO esta suma está mal porque hay una fila que tiene el total del año (la que ahora en fecha sale con NA). Quitar esa fila es más fácil
 ```{r}
-totalImpKg<-sum(unlist(dfComercioExterior$QUANTITY_IN_100KG_IMPORT),na.rm = T)
-totalExpKg<-sum(unlist(dfComercioExterior$QUANTITY_IN_100KG_EXPORT),na.rm = T)
-totalImpEur<-sum(unlist(dfComercioExterior$VALUE_IN_EUROS_IMPORT),na.rm = T)
-totalExpEur<-sum(unlist(dfComercioExterior$VALUE_IN_EUROS_EXPORT),na.rm = T)
+# totalImpKg<-sum(unlist(dfComercioExterior$QUANTITY_IN_100KG_IMPORT),na.rm = T)
+# totalExpKg<-sum(unlist(dfComercioExterior$QUANTITY_IN_100KG_EXPORT),na.rm = T)
+# totalImpEur<-sum(unlist(dfComercioExterior$VALUE_IN_EUROS_IMPORT),na.rm = T)
+# totalExpEur<-sum(unlist(dfComercioExterior$VALUE_IN_EUROS_EXPORT),na.rm = T)
+# 
+# print(paste("Total importaciones a toneladas:      ",totalExpKg/10))
+# print(paste("Total exportaciones desde España toneladas:  ",totalImpKg/10))
+# print(paste("Total importaciones a España en €:    ",totalExpEur))
+# print(paste("Total exportaciones desde España en €:",totalImpEur))
+```
 
-print(paste("Total importaciones a toneladas:      ",totalExpKg/10))
-print(paste("Total exportaciones desde toneladas:  ",totalImpKg/10))
-print(paste("Total importaciones a España en €:    ",totalExpEur))
-print(paste("Total exportaciones desde España en €:",totalImpEur))
+```{r}
+dfComercioExterior %>%
+  group_by(year(PERIOD)) %>%
+  summarise('Exp(€)' = sum(VALUE_IN_EUROS_IMPORT, na.rm = T),
+            'Imp(€)' = sum(VALUE_IN_EUROS_EXPORT, na.rm = T), 
+            'Exp(ton)' = sum(QUANTITY_IN_100KG_IMPORT, na.rm=T)/10,
+            'Imp(ton)' = sum(QUANTITY_IN_100KG_EXPORT, na.rm=T)/10)
 ```
 
 ```{r}
@@ -505,6 +515,9 @@ print(paste("Total exportaciones desde España en €:",totalImpEur))
 dfComercioExteriorFilt<-filter(dfComercioExterior,REPORTER=="Poland")
 ggplotly(ggplot(data=dfComercioExteriorFilt,aes(x=YEAR_MONTH,y=VALUE_IN_EUROS_EXPORT,color=PRODUCT))+geom_point()+theme(legend.position = "none",axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)))
 ```
+
+
+
 
 
 #DATASET5
