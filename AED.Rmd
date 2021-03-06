@@ -25,6 +25,9 @@ Estas son algunas de las preguntas que deben guiar (pero no limitar) tu análisi
 * Análisis exportaciones/importaciones:
  - Obtener ¿mayores exportadores e importadores? y ver su evolución. (Dataset 4)
  - Superponer con curva IA COVID para ver si hay correlación (Dataset 5)
+ 
+ *Idea a seguir*
+ https://www.mapa.gob.es/es/agricultura/temas/producciones-agricolas/cifras_del_sectorfyh_tcm30-502367.pdf
 
 
 ```{r setup, include=FALSE}
