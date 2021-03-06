@@ -553,47 +553,39 @@ Las exportaciones parece que siempre caen en febrero y suben en marzo. En verano
 
 #DATASET5
 ```{r}
-dfCovid <- read_delim("data/Dataset5_Coronavirus_cases.txt", "|", escape_double = FALSE, trim_ws = TRUE) %>% 
-  dplyr::select(-day, -year) %>% 
-  mutate(`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`=
-           as.numeric(gsub("," ,".", `Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`)))
-dfCovid$dateRep <- dmy(dfCovid$dateRep)
+# dfCovid <- read_delim("data/Dataset5_Coronavirus_cases.txt", "|", escape_double = FALSE, trim_ws = TRUE) %>% 
+#   dplyr::select(-day, -year) %>% 
+#   mutate(`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`=
+#            as.numeric(gsub("," ,".", `Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`)))
+# dfCovid$dateRep <- dmy(dfCovid$dateRep)
+
+dfCovid <- read_delim("data/Dataset5_Coronavirus_cases.txt", "|", escape_double = FALSE, col_types = cols(dateRep = col_date(format = "%d/%m/%Y")), na='0', locale = locale(decimal_mark = ","), trim_ws = TRUE)
 
 head(dfCovid)
 ```
 
 ```{r}
 #Filtrar los datos españoles.
-dfCovid_Espana <- dfCovid %>% filter(countriesAndTerritories %in% 'Spain') %>% arrange(dateRep)
-#ponerle a la columna casos y muertes, NA donde hay 0.
-dfCovid_Espana$cases[dfCovid_Espana$cases == '0'] <- NA
-dfCovid_Espana$deaths[dfCovid_Espana$deaths == '0'] <- NA
-head(dfCovid_Espana)
+# dfCovid %>%
+#   filter(countriesAndTerritories %in% 'Spain') %>%
+#   ggplot()+
+#   geom_line(aes(x=dateRep, y=cases))
 
-#casos
-# ggplot() + 
-#   geom_line(data=subset(dfCovid_Espana, !is.na(cases)), aes(x=dateRep, y=cases))+
-#   geom_smooth(data=subset(dfCovid_Espana, !is.na(cases)), aes(x=dateRep, y=cases))
-#muertes
-# ggplot() +
-#   geom_line(data=subset(dfCovid_Espana, !is.na(deaths)), aes(x=dateRep, y=deaths))+
-#   geom_smooth(data=subset(dfCovid_Espana, !is.na(deaths)), aes(x=dateRep, y=deaths))
-# 
 #incidencia acumulada
-ggplot(dfCovid_Espana) +
-  geom_line(aes(x=dateRep, y=`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`), col='dark blue')+
-  labs(x='Fecha', y='IA 14', title='Evolución IA14 España')+
+dfCovid %>%
+  filter(countriesAndTerritories %in% 'Spain', dateRep > '2020-03-01') %>%
+  ggplot()+
+  geom_line(aes(x=dateRep, y=`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`))+
   scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
-  theme_minimal()+
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+  labs(x='Fecha', y='IA 14', title='Evolución IA14 España')
 ```
 
 Gráfico casos: existen datos registrados cada dos o tres días, que se corresponden con el acumulado de esos días. Por tanto, no tiene mucho sentido trabajar con esos datos.
 
 Gráfico muertes: ídem que casos, incluso datos negativos!!
 
-Habría que usar alguna aproximación de ellos?
+Usar incidencia acumulada.
 
 
 Mapa de España, para utilizarlo más adelante.
