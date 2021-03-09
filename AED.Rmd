@@ -61,14 +61,71 @@ Paso también los meses a factor.
 Creo una columna nueva que sume ambos.
 La convierto a fecha.
 ```{r}
-niveles <- c('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto',
+meses <- c('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto',
              'Septiembre', 'Octubre', 'Noviembre', 'Diciembre')
-dfMAPAConsumo_Total$Mes <- factor(dfMAPAConsumo_Total$Mes, levels=niveles, labels=c(1:12))
+dfMAPAConsumo_Total$Mes <- factor(dfMAPAConsumo_Total$Mes, levels=meses, labels=c(1:12))
 dfMAPAConsumo_Total$Producto <- as.factor(dfMAPAConsumo_Total$Producto)
 dfMAPAConsumo_Total <- unite(dfMAPAConsumo_Total, Mes, Año, col='Fecha', sep='/',remove=F)
 dfMAPAConsumo_Total$Fecha <- as.Date(as.yearmon(dfMAPAConsumo_Total$Fecha, format='%m/%Y'))
-str(dfMAPAConsumo_Total)
+dfMAPAConsumo_Total <- arrange(dfMAPAConsumo_Total,Fecha)
+head(dfMAPAConsumo_Total)
 ```
+```{r}
+#diffAnyo <- function(df,colDatoBase,colDatoNuevo,colFecha){
+
+#df<-head(dfMAPAConsumo_Total)
+df<-dfMAPAConsumo_Total%>%select(c("Fecha","Volumen (miles de kg),Producto"))%>%filter(year(Fecha)==2018 | year(Fecha)==2019)
+View(df)
+colDatoBase<-"Volumen (miles de kg)"
+colDatoNuevo<-"DifVol"
+colFecha<-"Fecha"
+#Para cada fila
+for(r in df[[colFecha]]){
+  #Si no hay dato del año anterior, ponemos NA
+  #if(df[r,][colFecha] - years(1) in )
+  #Si hay dato del año anterior, calulamos la diferencia
+  #print(df[r,][colFecha] - years(1))
+  #print(df[df[colFecha]==df[r,][colFecha][[1]] - years(1)])
+  #print(df[colFecha]==r-years(1))
+  
+  #print(df[df[[colFecha]]==as.Date(r),])
+  
+  if((as.Date(r)-years(1)) %in% (df[[colFecha]])){
+    df[colDatoNuevo] <- df[df[[colFecha]]==as.Date(r),] - df[df[[colFecha]]==as.Date(r)-years(1),]
+  }
+}
+
+View(df)
+
+#}
+
+#diffAnyo(head(dfMAPAConsumo_Total),"Volumen (mules de kg)","DifVol","Fecha")
+```
+
+```{r}
+# dfMAPAConsumo_Total%>%arange(Producto)
+# dfMAPAConsumo_Total2018
+```
+
+
+Calculo diferencias mensuales
+```{r}
+#Añadimos la diferencia a 1 mes
+anyoVacio<-rep(NA,12)
+#as.vector(diff(zoo(x), na.pad=TRUE))
+# dfMAPAConsumo_Total$VolDif<-as.vector(diff(zoo(dfMAPAConsumo_Total$"Volumen (miles de kg)"),lag = 12,na.pad = T)) 
+# dfMAPAConsumo_Total$ValDif<-as.vector(diff(zoo(dfMAPAConsumo_Total$`Valor (miles de €)`),lag = 12,na.pad = T)) 
+# dfMAPAConsumo_Total$PmDif<-as.vector(diff(zoo(dfMAPAConsumo_Total$`Precio medio kg`),lag = 12,na.pad = T)) 
+# dfMAPAConsumo_Total$PenDif<-as.vector(diff(zoo(dfMAPAConsumo_Total$`Penetración (%)`),lag = 12,na.pad = T)) 
+# dfMAPAConsumo_Total$CpDif<-as.vector(diff(zoo(dfMAPAConsumo_Total$`Consumo per capita`),lag = 12,na.pad = T)) 
+# dfMAPAConsumo_Total$GpDif<-as.vector(diff(zoo(dfMAPAConsumo_Total$`Gasto per capita`),lag = 12,na.pad = T)) 
+
+View(dfMAPAConsumo_Total)
+```
+
+
+
+
 
 Tenemos 51 tipos de productos. Ahora podemos ver la evolución.
 
@@ -97,6 +154,20 @@ Obviamos los tres primeros por ser totales.
 ```{r}
 productos <- as.character(dfVol$Producto[4:8])
 productos
+```
+
+```{r}
+p<-dfMAPAConsumo_Total %>%
+  filter(Producto %in% productos) %>%
+  ggplot()+
+  geom_line(aes(x=Fecha, y=`VolDif1`, col=Producto), size=1)+
+  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+  scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  ggtitle('Precio medio - 5 productos con más volumen')
+ggplotly(p)
 ```
 
 ```{r}
@@ -262,6 +333,7 @@ quitar estacionalidad: otro diff, lag 12. -> y
 autocorr: acf(y), analizar palos
 
 #DATASET2
+
 ```{r}
 dfPreciosAndalucia <- read_delim("data/Dataset2.- Precios Semanales Observatorio de Precios Junta de Andalucia.txt", "|", escape_double = FALSE, trim_ws = TRUE)
 
@@ -328,6 +400,7 @@ Cítricos suben siempre en todos mucho:
 #TODO ver qué ha ocurrido con ellos. a lo mejor es que la produccion de este año ha sido horrible.
 
 #DATASET3A
+
 ```{r}
 dfMercaMadrid <- read_delim("data/Dataset3a_Datos_MercaMadrid.txt", "|", escape_double = FALSE, trim_ws = TRUE, locale = locale(decimal_mark = ","))
 dfMercaMadrid <- unite(dfMercaMadrid, MONTH, YEAR, col='Fecha', sep='/',remove=F)
@@ -356,6 +429,7 @@ Todos los años parece que sube para marzo-abril.
 Estaba en descenso pero justo para marzo, empiezan a subir.
 
 #DATASET3B
+
 ```{r}
 dfMercaBarna <- read_delim("data/Dataset3b_Datos_MercaBarna.txt", "|", escape_double = FALSE, trim_ws = TRUE, locale = locale(decimal_mark = ","))
 dfMercaBarna <- unite(dfMercaBarna, MONTH, YEAR, col='Fecha', sep='/',remove=F)
@@ -381,7 +455,8 @@ ggplotly(p)
 
 Muchas familias (17), no se saca nada en claro.
 
-#DATASET4
+#DATASET 4
+
 ```{r}
 dfComercioExterior <- read_delim("data/Dataset4.- Comercio Exterior de Espana.txt", "|", escape_double = FALSE, col_types = cols(Value = col_character()), 
     trim_ws = TRUE, na=":")
@@ -420,7 +495,7 @@ ggplotly(ggplot(data=dfComercioExteriorFilt,aes(x=YEAR_MONTH,y=VALUE_IN_EUROS_EX
 ```
 
 
-#DATASET5
+#DATASET 5
 ```{r}
 dfCovid <- read_delim("data/Dataset5_Coronavirus_cases.txt", "|", escape_double = FALSE, trim_ws = TRUE) %>% 
   dplyr::select(-day, -year) %>% 
