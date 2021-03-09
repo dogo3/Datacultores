@@ -25,6 +25,9 @@ Estas son algunas de las preguntas que deben guiar (pero no limitar) tu análisi
 * Análisis exportaciones/importaciones:
  - Obtener ¿mayores exportadores e importadores? y ver su evolución. (Dataset 4)
  - Superponer con curva IA COVID para ver si hay correlación (Dataset 5)
+ 
+ *Idea a seguir*
+ https://www.mapa.gob.es/es/agricultura/temas/producciones-agricolas/cifras_del_sectorfyh_tcm30-502367.pdf
 
 
 ```{r setup, include=FALSE}
@@ -67,44 +70,52 @@ dfMAPAConsumo_Total$Mes <- factor(dfMAPAConsumo_Total$Mes, levels=meses, labels=
 dfMAPAConsumo_Total$Producto <- as.factor(dfMAPAConsumo_Total$Producto)
 dfMAPAConsumo_Total <- unite(dfMAPAConsumo_Total, Mes, Año, col='Fecha', sep='/',remove=F)
 dfMAPAConsumo_Total$Fecha <- as.Date(as.yearmon(dfMAPAConsumo_Total$Fecha, format='%m/%Y'))
-dfMAPAConsumo_Total <- arrange(dfMAPAConsumo_Total,Fecha)
-head(dfMAPAConsumo_Total)
-```
-```{r}
-#diffAnyo <- function(df,colDatoBase,colDatoNuevo,colFecha){
 
-#df<-head(dfMAPAConsumo_Total)
-df<-dfMAPAConsumo_Total%>%select(c("Fecha","Volumen (miles de kg),Producto"))%>%filter(year(Fecha)==2018 | year(Fecha)==2019)
-View(df)
-colDatoBase<-"Volumen (miles de kg)"
-colDatoNuevo<-"DifVol"
-colFecha<-"Fecha"
-#Para cada fila
-for(r in df[[colFecha]]){
-  #Si no hay dato del año anterior, ponemos NA
-  #if(df[r,][colFecha] - years(1) in )
-  #Si hay dato del año anterior, calulamos la diferencia
-  #print(df[r,][colFecha] - years(1))
-  #print(df[df[colFecha]==df[r,][colFecha][[1]] - years(1)])
-  #print(df[colFecha]==r-years(1))
-  
-  #print(df[df[[colFecha]]==as.Date(r),])
-  
-  if((as.Date(r)-years(1)) %in% (df[[colFecha]])){
-    df[colDatoNuevo] <- df[df[[colFecha]]==as.Date(r),] - df[df[[colFecha]]==as.Date(r)-years(1),]
-  }
-}
 
-View(df)
-
-#}
-
-#diffAnyo(head(dfMAPAConsumo_Total),"Volumen (mules de kg)","DifVol","Fecha")
 ```
 
 ```{r}
-# dfMAPAConsumo_Total%>%arange(Producto)
-# dfMAPAConsumo_Total2018
+# dfMAPAConsumo_Total <- arrange(dfMAPAConsumo_Total,Fecha)
+# head(dfMAPAConsumo_Total)
+# 
+# #diffAnyo <- function(df,colDatoBase,colDatoNuevo,colFecha){
+# 
+# #df<-head(dfMAPAConsumo_Total)
+# df<-dfMAPAConsumo_Total%>%select(c("Fecha","Volumen (miles de kg),Producto"))%>%filter(year(Fecha)==2018 | year(Fecha)==2019)
+# View(df)
+# colDatoBase<-"Volumen (miles de kg)"
+# colDatoNuevo<-"DifVol"
+# colFecha<-"Fecha"
+# #Para cada fila
+# for(r in df[[colFecha]]){
+#   #Si no hay dato del año anterior, ponemos NA
+#   #if(df[r,][colFecha] - years(1) in )
+#   #Si hay dato del año anterior, calulamos la diferencia
+#   #print(df[r,][colFecha] - years(1))
+#   #print(df[df[colFecha]==df[r,][colFecha][[1]] - years(1)])
+#   #print(df[colFecha]==r-years(1))
+#   
+#   #print(df[df[[colFecha]]==as.Date(r),])
+#   
+#   if((as.Date(r)-years(1)) %in% (df[[colFecha]])){
+#     df[colDatoNuevo] <- df[df[[colFecha]]==as.Date(r),] - df[df[[colFecha]]==as.Date(r)-years(1),]
+#   }
+# }
+# 
+# View(df)
+# 
+# #}
+# 
+# #diffAnyo(head(dfMAPAConsumo_Total),"Volumen (mules de kg)","DifVol","Fecha")
+# # dfMAPAConsumo_Total%>%arange(Producto)
+# # dfMAPAConsumo_Total2018
+```
+
+```{r}
+dfMAPAConsumo$Mes <- factor(dfMAPAConsumo$Mes, levels=niveles, labels=c(1:12))
+dfMAPAConsumo <- unite(dfMAPAConsumo, Mes, Año, col='Fecha', sep='/',remove=F)
+dfMAPAConsumo$Fecha <- as.Date(as.yearmon(dfMAPAConsumo$Fecha, format='%m/%Y'))
+str(dfMAPAConsumo_Total)
 ```
 
 
@@ -130,10 +141,12 @@ View(dfMAPAConsumo_Total)
 Tenemos 51 tipos de productos. Ahora podemos ver la evolución.
 
 ```{r}
-ggplot(dfMAPAConsumo_Total)+
+p <- ggplot(dfMAPAConsumo_Total)+
   geom_line(aes(x=Fecha, y=`Precio medio kg`, col=Producto))+
   scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
   theme(legend.position = "none",axis.text.x = element_text(angle = 60, vjust = 1, hjust=1))
+
+ggplotly(p)
 ```
 Muchas cosas y muy feo
 
@@ -157,17 +170,17 @@ productos
 ```
 
 ```{r}
-p<-dfMAPAConsumo_Total %>%
-  filter(Producto %in% productos) %>%
-  ggplot()+
-  geom_line(aes(x=Fecha, y=`VolDif1`, col=Producto), size=1)+
-  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
-  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
-  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
-  scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
-  ggtitle('Precio medio - 5 productos con más volumen')
-ggplotly(p)
+# p<-dfMAPAConsumo_Total %>%
+#   filter(Producto %in% productos) %>%
+#   ggplot()+
+#   geom_line(aes(x=Fecha, y=`VolDif1`, col=Producto), size=1)+
+#   geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+#   geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+#   geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+#   scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+#   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+#   ggtitle('Precio medio - 5 productos con más volumen')
+# ggplotly(p)
 ```
 
 ```{r}
@@ -177,7 +190,7 @@ p <- dfMAPAConsumo_Total %>%
   geom_line(aes(x=Fecha, y=`Precio medio kg`, col=Producto), size=1)+
   geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
   geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
-  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=3, col='red')+
   scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
   ggtitle('Precio medio - 5 productos con más volumen')
@@ -237,6 +250,23 @@ A partir de verano 2020, todo vuelve a la normalidad y las series siguen su curs
 
 Creo que analizar totales de frutas y verduras va a ser mejor, se puede generalizar más. 
 Si cogemos total frutas y hortalizas:
+
+```{r}
+p <- dfMAPAConsumo_Total %>%
+  filter(Producto %in% c('T.HORTALIZAS FRESCAS', 'T.FRUTAS FRESCAS'))%>%
+  ggplot()+
+  geom_line(aes(x=Fecha, y=`Volumen (miles de kg)`, col=Producto))+
+  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+  scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  ggtitle('Volumen - Total frutas y hortalizas frescas')
+
+ggplotly(p)
+```
+
+Efectivamente el volumen ha subido. Normalmente el pico de frutas es en verano, y en 2020 se dio antes (aparte de en verano). En cambio, el volumen de hortalizas no sigue una tendencia igual todos los años, y justamente aumentó en abril de 2020. Esto se verá mejor en consumo pc.
 
 ```{r}
 dfVol <- dfMAPAConsumo_Total %>% 
@@ -322,7 +352,69 @@ He puesto escala logarítmica. Se observa mejor que sube TODO. El aumento del ga
 
 #TODO Si esto se presenta, cambiar leyenda para que salga bonita!
 
-#TODO Añadir dataset serie IPC. EL IPC para frutas y verduras subió, se puede ver si es algo habitual o exclusivo Covid.
+*Añadir dataset serie IPC. EL IPC para frutas y verduras subió, se puede ver si es algo habitual o exclusivo Covid.
+
+```{r}
+IPC <- read_delim("data/IPC_INE.csv", "\t", escape_double = FALSE, col_types = cols(Periodo = col_date(format = "%YM%m")),
+                  locale = locale(encoding = "ISO-8859-1", decimal_mark = ","), trim_ws = TRUE)
+IPC <- IPC %>%
+  mutate(Clases = gsub('0116 Frutas', 'Frutas', Clases), 
+         Clases = gsub('0117 Legumbres y hortalizas', 'Legumbres/Hortalizas', Clases))
+
+head(IPC)
+```
+
+```{r}
+p <- IPC %>%
+  filter(`Tipo de dato` == 'Índice') %>%
+  ggplot()+
+  geom_line(aes(x=Periodo, y=Total, col=Clases), size=1)+
+  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+  scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  ggtitle('Índice IPC')
+
+ggplotly(p)
+```
+
+```{r}
+p <- IPC %>%
+  filter(`Tipo de dato` == 'Variación anual') %>%
+  ggplot()+
+  geom_line(aes(x=Periodo, y=Total, col=Clases), size=1)+
+  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+  geom_hline(yintercept=0)+
+  scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  ggtitle('Índice IPC')
+
+ggplotly(p)
+```
+
+```{r}
+IPC %>%
+  filter(Clases == 'Frutas') %>%
+  filter(`Tipo de dato` == 'Variación anual' ,month(Periodo) %in% c(3,4,5))
+```
+
+Frutas: 
+- Sufren una variación en abril del 11,4% respecto al año pasado. En 2019, sufrió una variación negativa respecto 2018, pero en 2018 también sufrió una variación positiva del 3.1% respecto al año anterior.
+- Los precios de la fruta son variables. En este caso se puede concluir que ha habido una variación extraordinaria respecto a los años anteriores.
+
+```{r}
+IPC %>%
+  filter(Clases == 'Legumbres/Hortalizas') %>%
+  filter(`Tipo de dato` == 'Variación anual' ,month(Periodo) %in% c(3,4,5))
+```
+
+Legumbres/Hortalizas:
+- Sufre una variación anual respecto al año 2019 del 3.9% en abril y del 2,7% en mayo. En el año 2019, hubo una variación en estos meses del 8.1% y 5% respecto 2018, por lo que la variación en este año fue mayor.
+- Aunque los precios fueron superiores al año 2019, en 2019 en el mismo período aumentaron más respecto al año anterior. No está del todo claro que esta variación se deba a Covid-19.
+
 
 #TODO Series temporales.
 ts()-Convertir a serie temporal.
@@ -455,8 +547,25 @@ ggplotly(p)
 
 Muchas familias (17), no se saca nada en claro.
 
-#DATASET 4
 
+```{r}
+p <- dfMAPAConsumo %>%
+  filter(CCAA == 'Cataluña') %>%
+  filter(Producto %in% productos) %>%
+  ggplot()+
+  geom_line(aes(x=Fecha, y=`Precio medio kg`, col=Producto), size=1)+
+  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+  scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  ggtitle('Gasto per cápita - 5 productos con más volumen')
+
+ggplotly(p)
+```
+
+
+#DATASET4
 ```{r}
 dfComercioExterior <- read_delim("data/Dataset4.- Comercio Exterior de Espana.txt", "|", escape_double = FALSE, col_types = cols(Value = col_character()), 
     trim_ws = TRUE, na=":")
@@ -469,75 +578,123 @@ dfComercioExterior$VALUE_IN_EUROS_EXPORT <- as.numeric(dfComercioExterior$VALUE_
 
 dfComercioExterior<-mutate(dfComercioExterior,YEAR_MONTH=paste(as.character(year(my(PERIOD))),as.character(month(my(PERIOD),label=T))))
 
+#Solución marronera a lo de las fechas
+Sys.setlocale('LC_TIME', 'English')
+dfComercioExterior$PERIOD <- as.Date(as.yearmon(dfComercioExterior$PERIOD, format='%b. %Y'))
 head(dfComercioExterior)
-View(dfComercioExterior)
+
+#hay una fecha que sale con NA porque es el total del año, yo la quitaría
+dfComercioExterior <- dfComercioExterior[!is.na(dfComercioExterior$PERIOD), ]
 ```
 El dataset 4 daba problemas porque las filas cuyo producto era "Fresh or dried citrus fruit (excl. oranges, lemons..." estaban mal codificadas y tenian una columna de más, esto se ha corregido previamente con un editor de texto.
 
 *Importante:* La columna REPORTER es la que nos indica el sujeto de la transacción, la columna PARTNER es siempre España mientras que REPORTER indica con quién ha operado España, por tanto cuando hablamos de importaciones del REPORTER realmente hablamos de exportaciones de España y viceversa.
 
-```{r}
-totalImpKg<-sum(unlist(dfComercioExterior$QUANTITY_IN_100KG_IMPORT),na.rm = T)
-totalExpKg<-sum(unlist(dfComercioExterior$QUANTITY_IN_100KG_EXPORT),na.rm = T)
-totalImpEur<-sum(unlist(dfComercioExterior$VALUE_IN_EUROS_IMPORT),na.rm = T)
-totalExpEur<-sum(unlist(dfComercioExterior$VALUE_IN_EUROS_EXPORT),na.rm = T)
 
-print(paste("Total importaciones a toneladas:      ",totalExpKg/10))
-print(paste("Total exportaciones desde toneladas:  ",totalImpKg/10))
-print(paste("Total importaciones a España en €:    ",totalExpEur))
-print(paste("Total exportaciones desde España en €:",totalImpEur))
+```{r}
+dfComercioExterior %>%
+  group_by(year(PERIOD)) %>%
+  summarise('Exp(€)' = sum(VALUE_IN_EUROS_IMPORT, na.rm = T),
+            'Imp(€)' = sum(VALUE_IN_EUROS_EXPORT, na.rm = T), 
+            'Exp(ton)' = sum(QUANTITY_IN_100KG_IMPORT, na.rm=T)/10,
+            'Imp(ton)' = sum(QUANTITY_IN_100KG_EXPORT, na.rm=T)/10)
+```
+
+
+```{r}
+dfComercioExterior %>%
+  group_by(PERIOD) %>%
+  summarise('Exp(€)' = sum(VALUE_IN_EUROS_IMPORT, na.rm = T),
+            'Imp(€)' = sum(VALUE_IN_EUROS_EXPORT, na.rm = T)) %>%
+  ggplot()+
+  geom_line(aes(x=PERIOD, y=`Exp(€)`), col='red')+
+  geom_line(aes(x=PERIOD, y=`Imp(€)`), col='blue')+
+  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
+  ggtitle('Evolución exportaciones e importaciones (euros)')
 ```
 
 ```{r}
-#TODO corregir esti para que el eje X aparezca bien ordenado
-dfComercioExteriorFilt<-filter(dfComercioExterior,REPORTER=="Poland")
-ggplotly(ggplot(data=dfComercioExteriorFilt,aes(x=YEAR_MONTH,y=VALUE_IN_EUROS_EXPORT,color=PRODUCT))+geom_point()+theme(legend.position = "none",axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)))
+dfComercioExterior %>%
+  group_by(PERIOD) %>%
+  summarise('Exp(ton)' = sum(QUANTITY_IN_100KG_IMPORT, na.rm=T)/10,
+            'Imp(ton)' = sum(QUANTITY_IN_100KG_EXPORT, na.rm=T)/10) %>%
+  ggplot()+
+  geom_line(aes(x=PERIOD, y=`Exp(ton)`), col='red')+
+  geom_line(aes(x=PERIOD, y=`Imp(ton)`), col='blue')+
+  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
+  ggtitle('Evolución exportaciones e importaciones (toneladas)')
 ```
 
+Las importaciones mantuvieron el mismo comportamiento que otros años.
+Las exportaciones parece que siempre caen en febrero y suben en marzo. En verano parece que siempre hay otro pico que en el año 2020 no se observó.
 
 #DATASET 5
 ```{r}
-dfCovid <- read_delim("data/Dataset5_Coronavirus_cases.txt", "|", escape_double = FALSE, trim_ws = TRUE) %>% 
-  dplyr::select(-day, -year) %>% 
-  mutate(`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`=
-           as.numeric(gsub("," ,".", `Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`)))
-dfCovid$dateRep <- dmy(dfCovid$dateRep)
+# dfCovid <- read_delim("data/Dataset5_Coronavirus_cases.txt", "|", escape_double = FALSE, trim_ws = TRUE) %>% 
+#   dplyr::select(-day, -year) %>% 
+#   mutate(`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`=
+#            as.numeric(gsub("," ,".", `Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`)))
+# dfCovid$dateRep <- dmy(dfCovid$dateRep)
+
+dfCovid <- read_delim("data/Dataset5_Coronavirus_cases.txt", "|", escape_double = FALSE, col_types = cols(dateRep = col_date(format = "%d/%m/%Y")), na='0', locale = locale(decimal_mark = ","), trim_ws = TRUE)
 
 head(dfCovid)
 ```
 
 ```{r}
 #Filtrar los datos españoles.
-dfCovid_Espana <- dfCovid %>% filter(countriesAndTerritories %in% 'Spain') %>% arrange(dateRep)
-#ponerle a la columna casos y muertes, NA donde hay 0.
-dfCovid_Espana$cases[dfCovid_Espana$cases == '0'] <- NA
-dfCovid_Espana$deaths[dfCovid_Espana$deaths == '0'] <- NA
-head(dfCovid_Espana)
+# dfCovid %>%
+#   filter(countriesAndTerritories %in% 'Spain') %>%
+#   ggplot()+
+#   geom_line(aes(x=dateRep, y=cases))
 
-#casos
-# ggplot() + 
-#   geom_line(data=subset(dfCovid_Espana, !is.na(cases)), aes(x=dateRep, y=cases))+
-#   geom_smooth(data=subset(dfCovid_Espana, !is.na(cases)), aes(x=dateRep, y=cases))
-#muertes
-# ggplot() +
-#   geom_line(data=subset(dfCovid_Espana, !is.na(deaths)), aes(x=dateRep, y=deaths))+
-#   geom_smooth(data=subset(dfCovid_Espana, !is.na(deaths)), aes(x=dateRep, y=deaths))
-# 
 #incidencia acumulada
-ggplot(dfCovid_Espana) +
-  geom_line(aes(x=dateRep, y=`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`), col='dark blue')+
-  labs(x='Fecha', y='IA 14', title='Evolución IA14 España')+
+dfCovid %>%
+  filter(countriesAndTerritories %in% 'Spain', dateRep > '2020-03-01') %>%
+  ggplot()+
+  geom_line(aes(x=dateRep, y=`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`))+
   scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
-  theme_minimal()+
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+  labs(x='Fecha', y='IA 14', title='Evolución IA14 España')
 
+dfCovid %>%
+  filter(continentExp == 'Europe', dateRep > '2020-03-01') %>%
+  group_by(dateRep) %>%
+  summarise(media = mean(`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`, na.rm=T)) %>%
+  ggplot()+
+  geom_line(aes(x=dateRep, y=media))+
+  scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+  labs(x='Fecha', y='IA 14', title='Evolución IA14 Europa')
+  
 ```
 
-Gráfico casos: existen datos registrados cada dos o tres días, que se corresponden con el acumulado de esos días. Por tanto, no tiene mucho sentido trabajar con esos datos.
+Usar incidencia acumulada.
 
-Gráfico muertes: ídem que casos, incluso datos negativos!!
+#Conclusiones consumo:
 
-Habría que usar alguna aproximación de ellos?
+- Aumento tanto de precios como de consumo en el período de marzo-mayo.
+
+- Aumentó el consumo de los hogares. Al haber confinamiento, la gente podía dedicarle más tiempo a cocinar y por ende, comer mejor. Los oferta agrícola se puede considerar muy inelástica; al darse un aumento de la demanda de bienes agrícolas, se traslada principalmente a los precios.
+
+-Precios frutas: 
+  - Sufren una variación en abril del 11,4% respecto al año pasado. En 2019, sufrió una variación negativa respecto 2018, pero en 2018 también sufrió una variación positiva del 3.1% respecto al año anterior.
+  - Los precios de la fruta son variables. En este caso se puede concluir que ha habido una variación extraordinaria respecto a los años anteriores.
+
+-Precios Legumbres/Hortalizas:
+  - Sufre una variación anual respecto al año 2019 del 3.9% en abril y del 2,7% en mayo. En el año 2019, hubo una variación en estos meses del 8.1% y 5% respecto 2018, por lo que la variación en este año fue mayor.
+  - Aunque los precios fueron superiores al año 2019, en 2019 en el mismo período aumentaron más respecto al año anterior. No está del todo claro que esta variación se deba a Covid-19.
+
+-Por tanto: incidencia mayor en los precios de las frutas. El consumo pc de frutas aumentó y se mantuvo, mientras que el consumo pc de hortalizas aumentó el primer mes pero luego empezó a caer a niveles de otros años.
+
 
 
 Mapa de España, para utilizarlo más adelante.
