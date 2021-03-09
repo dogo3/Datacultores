@@ -70,16 +70,22 @@ dfMAPAConsumo_Total$Mes <- factor(dfMAPAConsumo_Total$Mes, levels=niveles, label
 dfMAPAConsumo_Total$Producto <- as.factor(dfMAPAConsumo_Total$Producto)
 dfMAPAConsumo_Total <- unite(dfMAPAConsumo_Total, Mes, Año, col='Fecha', sep='/',remove=F)
 dfMAPAConsumo_Total$Fecha <- as.Date(as.yearmon(dfMAPAConsumo_Total$Fecha, format='%m/%Y'))
+
+dfMAPAConsumo$Mes <- factor(dfMAPAConsumo$Mes, levels=niveles, labels=c(1:12))
+dfMAPAConsumo <- unite(dfMAPAConsumo, Mes, Año, col='Fecha', sep='/',remove=F)
+dfMAPAConsumo$Fecha <- as.Date(as.yearmon(dfMAPAConsumo$Fecha, format='%m/%Y'))
 str(dfMAPAConsumo_Total)
 ```
 
 Tenemos 51 tipos de productos. Ahora podemos ver la evolución.
 
 ```{r}
-ggplot(dfMAPAConsumo_Total)+
+p <- ggplot(dfMAPAConsumo_Total)+
   geom_line(aes(x=Fecha, y=`Precio medio kg`, col=Producto))+
   scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
   theme(legend.position = "none",axis.text.x = element_text(angle = 60, vjust = 1, hjust=1))
+
+ggplotly(p)
 ```
 Muchas cosas y muy feo
 
@@ -109,7 +115,7 @@ p <- dfMAPAConsumo_Total %>%
   geom_line(aes(x=Fecha, y=`Precio medio kg`, col=Producto), size=1)+
   geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
   geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
-  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=3, col='red')+
   scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
   ggtitle('Precio medio - 5 productos con más volumen')
@@ -463,6 +469,23 @@ ggplotly(p)
 
 Muchas familias (17), no se saca nada en claro.
 
+```{r}
+p <- dfMAPAConsumo %>%
+  filter(CCAA == 'Cataluña') %>%
+  filter(Producto %in% productos) %>%
+  ggplot()+
+  geom_line(aes(x=Fecha, y=`Precio medio kg`, col=Producto), size=1)+
+  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+  scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  ggtitle('Gasto per cápita - 5 productos con más volumen')
+
+ggplotly(p)
+```
+
+
 #DATASET4
 ```{r}
 dfComercioExterior <- read_delim("data/Dataset4.- Comercio Exterior de Espana.txt", "|", escape_double = FALSE, col_types = cols(Value = col_character()), 
@@ -488,18 +511,6 @@ El dataset 4 daba problemas porque las filas cuyo producto era "Fresh or dried c
 
 *Importante:* La columna REPORTER es la que nos indica el sujeto de la transacción, la columna PARTNER es siempre España mientras que REPORTER indica con quién ha operado España, por tanto cuando hablamos de importaciones del REPORTER realmente hablamos de exportaciones de España y viceversa.
 
-TODO->HECHO esta suma está mal porque hay una fila que tiene el total del año (la que ahora en fecha sale con NA). Quitar esa fila es más fácil
-```{r}
-# totalImpKg<-sum(unlist(dfComercioExterior$QUANTITY_IN_100KG_IMPORT),na.rm = T)
-# totalExpKg<-sum(unlist(dfComercioExterior$QUANTITY_IN_100KG_EXPORT),na.rm = T)
-# totalImpEur<-sum(unlist(dfComercioExterior$VALUE_IN_EUROS_IMPORT),na.rm = T)
-# totalExpEur<-sum(unlist(dfComercioExterior$VALUE_IN_EUROS_EXPORT),na.rm = T)
-# 
-# print(paste("Total importaciones a toneladas:      ",totalExpKg/10))
-# print(paste("Total exportaciones desde España toneladas:  ",totalImpKg/10))
-# print(paste("Total importaciones a España en €:    ",totalExpEur))
-# print(paste("Total exportaciones desde España en €:",totalImpEur))
-```
 
 ```{r}
 dfComercioExterior %>%
@@ -510,11 +521,6 @@ dfComercioExterior %>%
             'Imp(ton)' = sum(QUANTITY_IN_100KG_EXPORT, na.rm=T)/10)
 ```
 
-```{r}
-#TODO corregir esti para que el eje X aparezca bien ordenado
-dfComercioExteriorFilt<-filter(dfComercioExterior,REPORTER=="Poland")
-ggplotly(ggplot(data=dfComercioExteriorFilt,aes(x=YEAR_MONTH,y=VALUE_IN_EUROS_EXPORT,color=PRODUCT))+geom_point()+theme(legend.position = "none",axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)))
-```
 
 ```{r}
 dfComercioExterior %>%
@@ -579,13 +585,37 @@ dfCovid %>%
   scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
   labs(x='Fecha', y='IA 14', title='Evolución IA14 España')
+
+dfCovid %>%
+  filter(continentExp == 'Europe', dateRep > '2020-03-01') %>%
+  group_by(dateRep) %>%
+  summarise(media = mean(`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`, na.rm=T)) %>%
+  ggplot()+
+  geom_line(aes(x=dateRep, y=media))+
+  scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+  labs(x='Fecha', y='IA 14', title='Evolución IA14 Europa')
+  
 ```
 
-Gráfico casos: existen datos registrados cada dos o tres días, que se corresponden con el acumulado de esos días. Por tanto, no tiene mucho sentido trabajar con esos datos.
-
-Gráfico muertes: ídem que casos, incluso datos negativos!!
-
 Usar incidencia acumulada.
+
+#Conclusiones consumo:
+
+- Aumento tanto de precios como de consumo en el período de marzo-mayo.
+
+- Aumentó el consumo de los hogares. Al haber confinamiento, la gente podía dedicarle más tiempo a cocinar y por ende, comer mejor. Los oferta agrícola se puede considerar muy inelástica; al darse un aumento de la demanda de bienes agrícolas, se traslada principalmente a los precios.
+
+-Precios frutas: 
+  - Sufren una variación en abril del 11,4% respecto al año pasado. En 2019, sufrió una variación negativa respecto 2018, pero en 2018 también sufrió una variación positiva del 3.1% respecto al año anterior.
+  - Los precios de la fruta son variables. En este caso se puede concluir que ha habido una variación extraordinaria respecto a los años anteriores.
+
+-Precios Legumbres/Hortalizas:
+  - Sufre una variación anual respecto al año 2019 del 3.9% en abril y del 2,7% en mayo. En el año 2019, hubo una variación en estos meses del 8.1% y 5% respecto 2018, por lo que la variación en este año fue mayor.
+  - Aunque los precios fueron superiores al año 2019, en 2019 en el mismo período aumentaron más respecto al año anterior. No está del todo claro que esta variación se deba a Covid-19.
+
+-Por tanto: incidencia mayor en los precios de las frutas. El consumo pc de frutas aumentó y se mantuvo, mientras que el consumo pc de hortalizas aumentó el primer mes pero luego empezó a caer a niveles de otros años.
+
 
 
 Mapa de España, para utilizarlo más adelante.
