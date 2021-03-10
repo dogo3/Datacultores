@@ -44,6 +44,8 @@ library(plotly)
 library(lubridate)
 library(forcats)
 library(zoo)
+library(gganimate)
+library(countrycode)
 ```
 
 #DATASET1
@@ -585,6 +587,7 @@ head(dfComercioExterior)
 
 #hay una fecha que sale con NA porque es el total del año, yo la quitaría
 dfComercioExterior <- dfComercioExterior[!is.na(dfComercioExterior$PERIOD), ]
+View(dfComercioExterior)
 ```
 El dataset 4 daba problemas porque las filas cuyo producto era "Fresh or dried citrus fruit (excl. oranges, lemons..." estaban mal codificadas y tenian una columna de más, esto se ha corregido previamente con un editor de texto.
 
@@ -675,9 +678,72 @@ dfCovid %>%
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
   labs(x='Fecha', y='IA 14', title='Evolución IA14 Europa')
   
+
 ```
 
 Usar incidencia acumulada.
+
+Creamos una función para traducir entre los distintos formatos años que encontramos a través de los datasets.
+
+```{r}
+# ISO2 <- c("AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK")
+# 
+# Comun <- c("Austria","Bélgica","Bulgaria","Chipre","República Checa","Alemania","Dinamarca","Estonia","España","Finlandia","Francia","Grecia","Croacia","Hungría","Irlanda","Italia","Lituania","Luxemburgo","Letonia","Malta","Países Bajos","Polonia","Portugal","Rumanía","Suecia","Eslovenia","Eslovaquia")
+# 
+# NombresComercioExterior<-c("Austria","Belgium (incl. Luxembourg 'LU' -> 1998)","Bulgaria","Cyprus","Czechia","Germany (incl. German Democratic Republic 'DD' from 1991)","Denmark","Estonia","Spain (incl. Canary Islands 'XB' from 1997)","Finland","France (incl. Saint Barthélemy 'BL' -> 2012| incl. French Guiana 'GF', Guadeloupe 'GP', Martinique 'MQ', Réunion 'RE' from 1997| incl. Mayotte 'YT' from 2014)","Greece","Croatia","Hungary","Ireland (Eire)","Italy (incl. San Marino 'SM' -> 1993)","Lithuania","Luxembourg","Latvia","Malta","Netherlands","Poland","Portugal","Romania","Sweden","Slovenia","Slovakia")
+# write.csv(data.frame(ISO2,Comun,NombresComercioExterior),"data/conversionPaises.csv",row.names = T)
+
+conversionPaises <- read.csv("./data/conversionPaises.csv",stringsAsFactors = FALSE)
+translateCountry <- function(country,from,to){
+  return(conversionPaises[conversionPaises[[from]]==country,to][1])
+}
+#translateCountry("Austria",from="NombresComercioEsterior",to="ISO2")
+#translateCountry("ES",from = "ISO2",to = "NombresComercioExterior")
+```
+
+
+
+Vamos a intentar ver la relación entre la IA de la covid y la tasa de cobertura en exportaciones/importaciones.
+```{r}
+UE <- c("AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK")
+
+
+
+dfCovidEurMes <- group_by(dfCovid,month,geoId) %>% 
+  filter(geoId %in% UE) %>%
+  summarise(IAMeanMonth = mean(`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`, na.rm=T)) %>%
+  filter_all(all_vars(!is.nan(.)))
+
+dfTasaCobertura <- mutate(dfComercioExterior,month=month(PERIOD)) %>%
+  group_by(REPORTER,month) %>%
+  summarise(monthTotalImp = sum(VALUE_IN_EUROS_IMPORT,na.rm = T),monthTotalExp = sum(VALUE_IN_EUROS_EXPORT,na.rm = T)) %>%
+  mutate(TasaCobertura = monthTotalExp/monthTotalImp) %>%
+  mutate(geoId=translateCountry(REPORTER,from="NombresComercioExterior",to="ISO2")) %>%
+  dplyr::select(TasaCobertura,month,geoId) %>%
+  filter_all(all_vars(!is.na(.)))
+
+dfComExtCovid <- inner_join(dfCovidEurMes,dfTasaCobertura,by=c("geoId"="geoId","month"="month"))%>%dplyr::select(-REPORTER)
+View(dfComExtCovid)
+```
+
+
+```{r}
+
+g <- ggplot(dfComExtCovid,aes(x=TasaCobertura, y=IAMeanMonth)) +
+  geom_point(aes(frame = month, text = geoId)) +
+  geom_text(label=rownames(mtcars))+
+  # add_text(textposition = "top right") +
+  geom_smooth(aes(group = month,frame=month), 
+              method = "lm", 
+              show.legend = FALSE) +
+  scale_x_log10()  # convert to log scale
+
+ggplotly(g, height = 900, width = 700) %>%
+        animation_opts(frame = 50,
+                       easing = "linear",
+                       redraw = FALSE)
+```
+
 
 #Conclusiones consumo:
 
