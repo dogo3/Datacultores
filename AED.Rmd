@@ -44,8 +44,7 @@ library(plotly)
 library(lubridate)
 library(forcats)
 library(zoo)
-library(gganimate)
-library(countrycode)
+library(treemapify)
 ```
 
 #DATASET1
@@ -581,7 +580,9 @@ dfComercioExterior$VALUE_IN_EUROS_EXPORT <- as.numeric(dfComercioExterior$VALUE_
 dfComercioExterior<-mutate(dfComercioExterior,YEAR_MONTH=paste(as.character(year(my(PERIOD))),as.character(month(my(PERIOD),label=T))))
 
 #Solución marronera a lo de las fechas
-Sys.setlocale('LC_TIME', 'English')
+# Sys.setlocale('LC_TIME', 'English') #TODO esto no va
+Sys.setlocale("LC_ALL","en_US.utf8")
+#Sys.getlocale()
 dfComercioExterior$PERIOD <- as.Date(as.yearmon(dfComercioExterior$PERIOD, format='%b. %Y'))
 head(dfComercioExterior)
 
@@ -635,6 +636,26 @@ dfComercioExterior %>%
   scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
   ggtitle('Evolución exportaciones e importaciones (toneladas)')
 ```
+
+```{r}
+g<-dfComercioExterior %>%
+  mutate(YEAR=factor(year(PERIOD))) %>%
+  mutate(REPORTER_COMUN=translateCountry(country = REPORTER,from = "NombresComercioExterior",to="Comun")) %>%
+  group_by(REPORTER_COMUN,YEAR) %>%
+  summarise(Exp = sum(VALUE_IN_EUROS_IMPORT, na.rm = T),
+            Imp = sum(VALUE_IN_EUROS_EXPORT, na.rm = T)) %>%
+  drop_na() %>%
+  pivot_longer(cols=c(Exp,Imp),names_to="Movimiento") %>%
+  ggplot(aes(area = value, fill=REPORTER_COMUN, label = REPORTER_COMUN)) +
+    geom_treemap(colour="black") +
+    facet_grid(vars(rows=YEAR),vars(cols=Movimiento)) + 
+    theme(legend.position = "none")+
+    geom_treemap_text(colour = "white", place = "centre",grow = F)
+g
+```
+
+Vemos como los países dónde más exportamos son Alemania, Francia, Países Bajos, Italia, Portugal y Polonia, mientras que aquellos de los que más importamos son Portugal, Francia, Países Bajos, Italia, Bélgica y Grecia
+
 
 Las importaciones mantuvieron el mismo comportamiento que otros años.
 Las exportaciones parece que siempre caen en febrero y suben en marzo. En verano parece que siempre hay otro pico que en el año 2020 no se observó.
@@ -695,9 +716,26 @@ Creamos una función para traducir entre los distintos formatos años que encont
 
 conversionPaises <- read.csv("./data/conversionPaises.csv",stringsAsFactors = FALSE)
 translateCountry <- function(country,from,to){
-  return(conversionPaises[conversionPaises[[from]]==country,to][1])
+  l<-list(c())
+  for(i in seq_len(length(country))){
+      l[[i]] <-   conversionPaises[conversionPaises[[from]]==country[i],to][1]
+  }
+  return(unlist(l))
 }
-#translateCountry("Austria",from="NombresComercioEsterior",to="ISO2")
+View(dfComercioExterior%>%mutate(REPORTER_NEW=traslateCountry(country = REPORTER,from = "NombresComercioExterior",to="Comun")))
+unique(dfComercioExterior$REPORTER)
+View(dfComercioExterior)
+
+country <- c("Belgium (incl. Luxembourg 'LU' -> 1998)","Belgium (incl. Luxembourg 'LU' -> 1998)")
+from <- "NombresComercioExterior"
+to <- "Comun"
+l<-list(c())
+for(i in seq_len(length(country))){
+    l[[i]] <-   conversionPaises[conversionPaises[[from]]==country[i],to][1]
+  }
+l
+
+translateCountry(country,from="NombresComercioExterior",to="Comun")
 #translateCountry("ES",from = "ISO2",to = "NombresComercioExterior")
 ```
 
@@ -714,7 +752,8 @@ dfCovidEurMes <- group_by(dfCovid,month,geoId) %>%
   summarise(IAMeanMonth = mean(`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`, na.rm=T)) %>%
   filter_all(all_vars(!is.nan(.)))
 
-dfTasaCobertura <- mutate(dfComercioExterior,month=month(PERIOD)) %>%
+dfTasaCobertura <- filter(dfComercioExterior,year(PERIOD) == 2020) %>%
+  mutate(month=month(PERIOD)) %>%
   group_by(REPORTER,month) %>%
   summarise(monthTotalImp = sum(VALUE_IN_EUROS_IMPORT,na.rm = T),monthTotalExp = sum(VALUE_IN_EUROS_EXPORT,na.rm = T)) %>%
   mutate(TasaCobertura = monthTotalExp/monthTotalImp) %>%
@@ -723,23 +762,24 @@ dfTasaCobertura <- mutate(dfComercioExterior,month=month(PERIOD)) %>%
   filter_all(all_vars(!is.na(.)))
 
 dfComExtCovid <- inner_join(dfCovidEurMes,dfTasaCobertura,by=c("geoId"="geoId","month"="month"))%>%dplyr::select(-REPORTER)
+View(dfCovidEurMes)
+View(dfTasaCobertura)
 View(dfComExtCovid)
 ```
 
 
-```{r}
 
+```{r}
+#TODO comprobar que la TC está bien calculada
 g <- ggplot(dfComExtCovid,aes(x=TasaCobertura, y=IAMeanMonth)) +
-  geom_point(aes(frame = month, text = geoId)) +
-  geom_text(label=rownames(mtcars))+
-  # add_text(textposition = "top right") +
+  geom_point(aes(frame = month, label = geoId)) +
   geom_smooth(aes(group = month,frame=month), 
               method = "lm", 
               show.legend = FALSE) +
   scale_x_log10()  # convert to log scale
 
-ggplotly(g, height = 900, width = 700) %>%
-        animation_opts(frame = 50,
+ggplotly(g, height = 700, width = 700) %>%
+        animation_opts(frame = 200,
                        easing = "linear",
                        redraw = FALSE)
 ```
