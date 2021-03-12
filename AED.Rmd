@@ -71,45 +71,6 @@ dfMAPAConsumo_Total$Mes <- factor(dfMAPAConsumo_Total$Mes, levels=meses, labels=
 dfMAPAConsumo_Total$Producto <- as.factor(dfMAPAConsumo_Total$Producto)
 dfMAPAConsumo_Total <- unite(dfMAPAConsumo_Total, Mes, Año, col='Fecha', sep='/',remove=F)
 dfMAPAConsumo_Total$Fecha <- as.Date(as.yearmon(dfMAPAConsumo_Total$Fecha, format='%m/%Y'))
-
-
-```
-
-```{r}
-# dfMAPAConsumo_Total <- arrange(dfMAPAConsumo_Total,Fecha)
-# head(dfMAPAConsumo_Total)
-# 
-# #diffAnyo <- function(df,colDatoBase,colDatoNuevo,colFecha){
-# 
-# #df<-head(dfMAPAConsumo_Total)
-# df<-dfMAPAConsumo_Total%>%select(c("Fecha","Volumen (miles de kg),Producto"))%>%filter(year(Fecha)==2018 | year(Fecha)==2019)
-# View(df)
-# colDatoBase<-"Volumen (miles de kg)"
-# colDatoNuevo<-"DifVol"
-# colFecha<-"Fecha"
-# #Para cada fila
-# for(r in df[[colFecha]]){
-#   #Si no hay dato del año anterior, ponemos NA
-#   #if(df[r,][colFecha] - years(1) in )
-#   #Si hay dato del año anterior, calulamos la diferencia
-#   #print(df[r,][colFecha] - years(1))
-#   #print(df[df[colFecha]==df[r,][colFecha][[1]] - years(1)])
-#   #print(df[colFecha]==r-years(1))
-#   
-#   #print(df[df[[colFecha]]==as.Date(r),])
-#   
-#   if((as.Date(r)-years(1)) %in% (df[[colFecha]])){
-#     df[colDatoNuevo] <- df[df[[colFecha]]==as.Date(r),] - df[df[[colFecha]]==as.Date(r)-years(1),]
-#   }
-# }
-# 
-# View(df)
-# 
-# #}
-# 
-# #diffAnyo(head(dfMAPAConsumo_Total),"Volumen (mules de kg)","DifVol","Fecha")
-# # dfMAPAConsumo_Total%>%arange(Producto)
-# # dfMAPAConsumo_Total2018
 ```
 
 ```{r}
@@ -122,43 +83,29 @@ str(dfMAPAConsumo_Total)
 
 Calculo diferencias mensuales
 ```{r}
-#Añadimos la diferencia a 1 mes
-anyoVacio<-rep(NA,12)
-#as.vector(diff(zoo(x), na.pad=TRUE))
-# dfMAPAConsumo_Total$VolDif<-as.vector(diff(zoo(dfMAPAConsumo_Total$"Volumen (miles de kg)"),lag = 12,na.pad = T)) 
-# dfMAPAConsumo_Total$ValDif<-as.vector(diff(zoo(dfMAPAConsumo_Total$`Valor (miles de €)`),lag = 12,na.pad = T)) 
-# dfMAPAConsumo_Total$PmDif<-as.vector(diff(zoo(dfMAPAConsumo_Total$`Precio medio kg`),lag = 12,na.pad = T)) 
-# dfMAPAConsumo_Total$PenDif<-as.vector(diff(zoo(dfMAPAConsumo_Total$`Penetración (%)`),lag = 12,na.pad = T)) 
-# dfMAPAConsumo_Total$CpDif<-as.vector(diff(zoo(dfMAPAConsumo_Total$`Consumo per capita`),lag = 12,na.pad = T)) 
-# dfMAPAConsumo_Total$GpDif<-as.vector(diff(zoo(dfMAPAConsumo_Total$`Gasto per capita`),lag = 12,na.pad = T)) 
-
-# dfMAPAConsumo_Gr<-dfMAPAConsumo %>% group_by(Producto,CCAA,Fecha) %>% summarise(`Diff Volumen (miles de kg)`=`Volumen (miles de kg)`,`Volumen (miles de kg)`=`Volumen (miles de kg)`)
-
 
 #Simplifico el df
-dfMAPAConsumo_S<-dfMAPAConsumo %>%select(Producto,CCAA,Fecha,`Volumen (miles de kg)`) %>% filter(Producto %in% c("AGUACATE","AJOS"), CCAA=="Total Nacional")
-
-
-# dfMAPAConsumo_Gr<-dfMAPAConsumo_S %>% group_by(Producto,CCAA,Fecha) %>% summarise(`Lagged Volumen (miles de kg)`=dplyr::lag(`Volumen (miles de kg)`),`Volumen (miles de kg)`=`Volumen (miles de kg)`)
-
-dfMAPAConsumo_Gr<-dfMAPAConsumo_S %>%arrange(Producto,CCAA,Fecha)%>% group_by(Producto,CCAA)%>%mutate(`Diff Volumen (miles de kg)` =`Volumen (miles de kg)`-dplyr::lag(`Volumen (miles de kg)`))
-  
-
-# View(dfMAPAConsumo_Gr)
-
-p <- dfMAPAConsumo_Gr%>%
-  ggplot()+
-  geom_line(aes(x=Fecha, y=`Diff Volumen (miles de kg)`,col=Producto), size=1)+
-  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
-  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
-  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=3, col='red')+
-  scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
-  ggtitle('Precio medio - 5 productos con más volumen')+ theme(legend.position = "none")
-
-ggplotly(p)
-
-# View(dfMAPAConsumo_Gr)
+# dfMAPAConsumo_S<-dfMAPAConsumo %>%dplyr::select(Producto,CCAA,Fecha,`Volumen (miles de kg)`) %>% filter(Producto %in% c("AGUACATE","AJOS"), CCAA=="Total Nacional")
+# 
+# 
+# # dfMAPAConsumo_Gr<-dfMAPAConsumo_S %>% group_by(Producto,CCAA,Fecha) %>% summarise(`Lagged Volumen (miles de kg)`=dplyr::lag(`Volumen (miles de kg)`),`Volumen (miles de kg)`=`Volumen (miles de kg)`)
+# 
+# dfMAPAConsumo_Gr<-dfMAPAConsumo_S %>%arrange(Producto,CCAA,Fecha)%>% group_by(Producto,CCAA)%>%mutate(`Diff Volumen (miles de kg)` =`Volumen (miles de kg)`-dplyr::lag(`Volumen (miles de kg)`))
+#   
+# 
+# # View(dfMAPAConsumo_Gr)
+# 
+# p <- dfMAPAConsumo_Gr%>%
+#   ggplot()+
+#   geom_line(aes(x=Fecha, y=`Diff Volumen (miles de kg)`,col=Producto), size=1)+
+#   geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+#   geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+#   geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=3, col='red')+
+#   scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+#   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+#   ggtitle('Precio medio - 5 productos con más volumen')+ theme(legend.position = "none")
+# 
+# ggplotly(p)
 ```
 
 
@@ -192,8 +139,8 @@ dfVol
 Obviamos los tres primeros por ser totales.
 
 ```{r}
-productos <- as.character(dfVol$Producto[4:8])
-productos
+top5Productos <- as.character(dfVol$Producto[4:8])
+top5Productos
 ```
 
 ```{r}
@@ -212,7 +159,7 @@ productos
 
 ```{r}
 p <- dfMAPAConsumo_Total %>% 
-  filter(Producto %in% productos) %>%
+  filter(Producto %in% top5Productos) %>%
   ggplot()+
   geom_line(aes(x=Fecha, y=`Precio medio kg`, col=Producto), size=1)+
   geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
@@ -234,7 +181,7 @@ El precio de las naranjas sí ha subido más, pero en el resto no se aprecia nin
 
 ```{r}
 p <- dfMAPAConsumo_Total %>% 
-  filter(Producto %in% productos) %>%
+  filter(Producto %in% top5Productos) %>%
   ggplot()+
   geom_line(aes(x=Fecha, y=`Consumo per capita`, col=Producto), size=1)+
   geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
@@ -254,7 +201,7 @@ En general parece que ha aumentado el gasto de todos.
 
 ```{r}
 p <- dfMAPAConsumo_Total %>% 
-  filter(Producto %in% productos) %>%
+  filter(Producto %in% top5Productos) %>%
   ggplot()+
   geom_line(aes(x=Fecha, y=`Gasto per capita`, col=Producto), size=1)+
   geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
@@ -266,6 +213,42 @@ p <- dfMAPAConsumo_Total %>%
 
 ggplotly(p)
 ```
+
+Vamos a ver ahora las diferencias mensuales de gasto en este top 5 de productos más consumidos.
+
+```{r}
+p<-dfMAPAConsumo_Total %>% 
+  arrange(Producto,CCAA,Fecha) %>% 
+  group_by(Producto,CCAA)%>%
+  mutate(`Diff Gasto per capita` =`Gasto per capita`-dplyr::lag(`Gasto per capita`)) %>%
+  filter(Producto %in% top5Productos)%>% 
+  ggplot(aes(x=Fecha, y=`Diff Gasto per capita`,col=Producto))+
+  geom_line( size=0.5)+
+  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=3, col='red')+
+  scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  ggtitle('Diferencia Gasto per Cápita - 5 productos con más volumen')+ theme(legend.position = "none")
+ggplotly(p)
+```
+
+
+#NOTICIAS VITAMINA C
+### Primera ola
+https://www.elindependiente.com/vida-sana/salud/2020/04/27/no-solo-lavarse-las-manos-mas-dosis-diaria-de-vitaminas-c-y-d-contra-el-coronavirus/
+https://www.redaccionmedica.com/virico/noticias/coronavirus-influencers-vitamina-c-reduce-afeccion--5303
+https://us.marca.com/claro/mas-trending/2020/03/26/5e7d03f046163f246f8b4583.html
+https://www.bbc.com/mundo/noticias-52058837
+https://www.diariosur.es/sociedad/mercadona-triplica-ventas-20200504095435-nt.html?ref=https%3A%2F%2Fwww.google.es%2F
+
+### Fin primera ola
+https://www.elespanol.com/ciencia/nutricion/20200326/mentira-vitamina-virus-naranja-no-previene-contagio/477203981_0.html
+https://www.xataka.com.mx/medicina-y-salud/segob-regalo-gotas-citricos-a-gobernadores-covid-19-este-remedio-aval-cientifico-que-usa-gobierno-mexico
+https://www.consalud.es/pacientes/canal-educacion-sanitaria/vitaminas-covid-19-que-debes-saber_81480_102.html
+
+
+
 
 A partir de marzo 2020 se gasta más en estos productos.
 Este comportamiento se ha visto reflejado en el consumo (se aprecia un mayor consumo en todos los productos, con pico máx en abril)
@@ -662,6 +645,18 @@ dfComercioExterior %>%
   scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
   ggtitle('Evolución exportaciones e importaciones (toneladas)')
 ```
+Creamos una función para traducir entre los distintos formatos años que encontramos a través de los datasets.
+
+```{r}
+conversionPaises <- read.csv("./data/conversionPaises.csv",stringsAsFactors = FALSE)
+translateCountry <- function(country,from,to){
+  l<-list(c())
+  for(i in seq_len(length(country))){
+      l[[i]] <-   conversionPaises[conversionPaises[[from]]==country[i],to][1]
+  }
+  return(unlist(l))
+}
+```
 
 ```{r}
 g<-dfComercioExterior %>%
@@ -730,18 +725,7 @@ dfCovid %>%
 
 Usar incidencia acumulada.
 
-Creamos una función para traducir entre los distintos formatos años que encontramos a través de los datasets.
 
-```{r}
-conversionPaises <- read.csv("./data/conversionPaises.csv",stringsAsFactors = FALSE)
-translateCountry <- function(country,from,to){
-  l<-list(c())
-  for(i in seq_len(length(country))){
-      l[[i]] <-   conversionPaises[conversionPaises[[from]]==country[i],to][1]
-  }
-  return(unlist(l))
-}
-```
 
 
 
@@ -796,17 +780,16 @@ noviembre2020<-as.Date("2020/11/01",format="%Y/%m/%d")
 
 #Primer dataset (MAPA)
 dfMAPAConsumoCorr <-  dfMAPAConsumo%>%filter(CCAA=="Total Nacional" & Fecha>=marzo2020 & Fecha<=noviembre2020)%>%group_by(Fecha)%>%summarise("ConsumoVol"=mean(`Volumen (miles de kg)`,na.rm=T),"ConsumoEur"=mean(`Valor (miles de €)`,na.rm=T),"Precio"=mean(`Precio medio kg`,na.rm=T))
-View(dfMAPAConsumoCorr)
+# View(dfMAPAConsumoCorr)
 ```
 ```{r}
 #Cuarto dataset (comercio exterior)
 dfComExteriorCorr <- dfComercioExterior%>%filter(PERIOD>=marzo2020 & PERIOD<=noviembre2020)%>%group_by(PERIOD)%>%summarise(ImportEur=mean(VALUE_IN_EUROS_EXPORT,na.rm=T),ExportEur=mean(VALUE_IN_EUROS_IMPORT,na.rm=T))%>%dplyr::rename(Fecha=PERIOD)
-View(dfComExteriorCorr)
+# View(dfComExteriorCorr)
 ```
 ```{r}
 #Quinto dataset (covid)
 diciembre2019 <- as.Date("01/12/2019",format="%d/%m/%Y")
-month(diciembre2019)
 dfCovidCorr <- dfCovid %>%
   filter(countriesAndTerritories %in% 'Spain') %>%
   filter(month>=3 & month<=11) %>%
@@ -815,16 +798,19 @@ dfCovidCorr <- dfCovid %>%
   summarise(IA_14 = mean(IA_14)) %>%
   mutate(Fecha=diciembre2019+months(month)) %>%
   select(-month)
-View(dfCovidCorr)
+# View(dfCovidCorr)
 ```
 ```{r}
 dfCorr <- inner_join(dfCovidCorr,dfComExteriorCorr)%>%
   inner_join(dfMAPAConsumoCorr)%>%
-  select(-Fecha)
+  dplyr::select(-Fecha)
 M <- cor(dfCorr)
 
 library(corrplot)
-corrplot(M, method = "square")
+res1 <- cor.mtest(dfCorr, conf.level = .95)
+
+corrplot(M, p.mat = res1$p, insig = "label_sig",
+         sig.level = c(.001, .01, .05), pch.cex = .9, pch.col = "white")
 ```
 
 
