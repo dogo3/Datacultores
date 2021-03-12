@@ -132,7 +132,44 @@ anyoVacio<-rep(NA,12)
 # dfMAPAConsumo_Total$CpDif<-as.vector(diff(zoo(dfMAPAConsumo_Total$`Consumo per capita`),lag = 12,na.pad = T)) 
 # dfMAPAConsumo_Total$GpDif<-as.vector(diff(zoo(dfMAPAConsumo_Total$`Gasto per capita`),lag = 12,na.pad = T)) 
 
-View(dfMAPAConsumo_Total)
+# dfMAPAConsumo_Gr<-dfMAPAConsumo %>% group_by(Producto,CCAA,Fecha) %>% summarise(`Diff Volumen (miles de kg)`=`Volumen (miles de kg)`,`Volumen (miles de kg)`=`Volumen (miles de kg)`)
+
+
+#Simplifico el df
+dfMAPAConsumo_S<-dfMAPAConsumo %>%select(Producto,CCAA,Fecha,`Volumen (miles de kg)`) %>% filter(Producto %in% c("AGUACATE","AJOS"), CCAA=="Total Nacional")
+
+
+# dfMAPAConsumo_Gr<-dfMAPAConsumo_S %>% group_by(Producto,CCAA,Fecha) %>% summarise(`Lagged Volumen (miles de kg)`=dplyr::lag(`Volumen (miles de kg)`),`Volumen (miles de kg)`=`Volumen (miles de kg)`)
+
+dfMAPAConsumo_Gr<-dfMAPAConsumo_S %>%arrange(Producto,CCAA,Fecha)%>% group_by(Producto,CCAA)%>%mutate(laggedVolume =dplyr::lag(`Volumen (miles de kg)`))
+  
+
+
+# dfMAPAConsumo_Gr$laggedVolume <-dplyr::lag(dfMAPAConsumo_Gr$`Volumen (miles de kg)`) 
+
+# summarise(`Volumen (miles de kg)`=`Volumen (miles de kg)`) %>% group_by(Producto,CCAA)
+
+dfMAPAConsumo_Gr$`Diff Volumen (miles de kg)`<-dfMAPAConsumo_Gr$`Volumen (miles de kg)`-dfMAPAConsumo_Gr$laggedVolume
+
+# dfMAPAConsumo_Gr %>% summarise(`Diff Volumen (miles de kg)`=`Diff Volumen (miles de kg)`)
+
+
+View(dfMAPAConsumo_Gr)
+
+p <- dfMAPAConsumo_Gr%>%
+  ggplot()+
+  geom_line(aes(x=Fecha, y=`Diff Volumen (miles de kg)`,col=Producto), size=1)+
+  geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+  geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=3, col='red')+
+  scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+  ggtitle('Precio medio - 5 productos con más volumen')+ theme(legend.position = "none")
+
+ggplotly(p)
+
+# View(dfMAPAConsumo_Total)
+View(dfMAPAConsumo_Gr)
 ```
 
 
@@ -654,7 +691,7 @@ g<-dfComercioExterior %>%
 g
 ```
 
-Vemos como los países dónde más exportamos son Alemania, Francia, Países Bajos, Italia, Portugal y Polonia, mientras que aquellos de los que más importamos son Portugal, Francia, Países Bajos, Italia, Bélgica y Grecia
+Vemos como los países dónde más exportamos son Alemania, Francia, Países Bajos, Italia, Portugal y Polonia, mientras que aquellos de los que más importamos son Portugal, Francia, Países Bajos, Italia, Bélgica y Grecia.
 
 
 Las importaciones mantuvieron el mismo comportamiento que otros años.
@@ -801,6 +838,14 @@ ggplotly(g, height = 700, width = 700) %>%
 
 -Por tanto: incidencia mayor en los precios de las frutas. El consumo pc de frutas aumentó y se mantuvo, mientras que el consumo pc de hortalizas aumentó el primer mes pero luego empezó a caer a niveles de otros años.
 
+
+# Recopilatorio de variables a correlacionar
+  Todos los datos tendrían que ser sólo de 2020
+  -IA covid 14 dias (dato diario)
+  -TC (dato mensual)
+  -Precio medio
+  -Volumen consumo
+  
 
 
 Mapa de España, para utilizarlo más adelante.
