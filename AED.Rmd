@@ -141,18 +141,8 @@ dfMAPAConsumo_S<-dfMAPAConsumo %>%select(Producto,CCAA,Fecha,`Volumen (miles de 
 
 # dfMAPAConsumo_Gr<-dfMAPAConsumo_S %>% group_by(Producto,CCAA,Fecha) %>% summarise(`Lagged Volumen (miles de kg)`=dplyr::lag(`Volumen (miles de kg)`),`Volumen (miles de kg)`=`Volumen (miles de kg)`)
 
-dfMAPAConsumo_Gr<-dfMAPAConsumo_S %>%arrange(Producto,CCAA,Fecha)%>% group_by(Producto,CCAA)%>%mutate(laggedVolume =dplyr::lag(`Volumen (miles de kg)`))
+dfMAPAConsumo_Gr<-dfMAPAConsumo_S %>%arrange(Producto,CCAA,Fecha)%>% group_by(Producto,CCAA)%>%mutate(`Diff Volumen (miles de kg)` =`Volumen (miles de kg)`-dplyr::lag(`Volumen (miles de kg)`))
   
-
-
-# dfMAPAConsumo_Gr$laggedVolume <-dplyr::lag(dfMAPAConsumo_Gr$`Volumen (miles de kg)`) 
-
-# summarise(`Volumen (miles de kg)`=`Volumen (miles de kg)`) %>% group_by(Producto,CCAA)
-
-dfMAPAConsumo_Gr$`Diff Volumen (miles de kg)`<-dfMAPAConsumo_Gr$`Volumen (miles de kg)`-dfMAPAConsumo_Gr$laggedVolume
-
-# dfMAPAConsumo_Gr %>% summarise(`Diff Volumen (miles de kg)`=`Diff Volumen (miles de kg)`)
-
 
 View(dfMAPAConsumo_Gr)
 
