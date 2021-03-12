@@ -733,13 +733,6 @@ Usar incidencia acumulada.
 Creamos una función para traducir entre los distintos formatos años que encontramos a través de los datasets.
 
 ```{r}
-# ISO2 <- c("AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK")
-# 
-# Comun <- c("Austria","Bélgica","Bulgaria","Chipre","República Checa","Alemania","Dinamarca","Estonia","España","Finlandia","Francia","Grecia","Croacia","Hungría","Irlanda","Italia","Lituania","Luxemburgo","Letonia","Malta","Países Bajos","Polonia","Portugal","Rumanía","Suecia","Eslovenia","Eslovaquia")
-# 
-# NombresComercioExterior<-c("Austria","Belgium (incl. Luxembourg 'LU' -> 1998)","Bulgaria","Cyprus","Czechia","Germany (incl. German Democratic Republic 'DD' from 1991)","Denmark","Estonia","Spain (incl. Canary Islands 'XB' from 1997)","Finland","France (incl. Saint Barthélemy 'BL' -> 2012| incl. French Guiana 'GF', Guadeloupe 'GP', Martinique 'MQ', Réunion 'RE' from 1997| incl. Mayotte 'YT' from 2014)","Greece","Croatia","Hungary","Ireland (Eire)","Italy (incl. San Marino 'SM' -> 1993)","Lithuania","Luxembourg","Latvia","Malta","Netherlands","Poland","Portugal","Romania","Sweden","Slovenia","Slovakia")
-# write.csv(data.frame(ISO2,Comun,NombresComercioExterior),"data/conversionPaises.csv",row.names = T)
-
 conversionPaises <- read.csv("./data/conversionPaises.csv",stringsAsFactors = FALSE)
 translateCountry <- function(country,from,to){
   l<-list(c())
@@ -748,12 +741,6 @@ translateCountry <- function(country,from,to){
   }
   return(unlist(l))
 }
-# View(dfComercioExterior%>%mutate(REPORTER_NEW=traslateCountry(country = REPORTER,from = "NombresComercioExterior",to="Comun")))
-# unique(dfComercioExterior$REPORTER)
-# View(dfComercioExterior)
-
-# translateCountry(country,from="NombresComercioExterior",to="Comun")
-#translateCountry("ES",from = "ISO2",to = "NombresComercioExterior")
 ```
 
 
@@ -800,6 +787,50 @@ ggplotly(g, height = 700, width = 700) %>%
                        easing = "linear",
                        redraw = FALSE)
 ```
+
+
+#Corrpot
+```{r}
+marzo2020<-as.Date("2020/03/01",format="%Y/%m/%d")
+noviembre2020<-as.Date("2020/11/01",format="%Y/%m/%d")
+
+#Primer dataset (MAPA)
+dfMAPAConsumoCorr <-  dfMAPAConsumo%>%filter(CCAA=="Total Nacional" & Fecha>=marzo2020 & Fecha<=noviembre2020)%>%group_by(Fecha)%>%summarise("ConsumoVol"=mean(`Volumen (miles de kg)`,na.rm=T),"ConsumoEur"=mean(`Valor (miles de €)`,na.rm=T),"Precio"=mean(`Precio medio kg`,na.rm=T))
+View(dfMAPAConsumoCorr)
+```
+```{r}
+#Cuarto dataset (comercio exterior)
+dfComExteriorCorr <- dfComercioExterior%>%filter(PERIOD>=marzo2020 & PERIOD<=noviembre2020)%>%group_by(PERIOD)%>%summarise(ImportEur=mean(VALUE_IN_EUROS_EXPORT,na.rm=T),ExportEur=mean(VALUE_IN_EUROS_IMPORT,na.rm=T))%>%dplyr::rename(Fecha=PERIOD)
+View(dfComExteriorCorr)
+```
+```{r}
+#Quinto dataset (covid)
+diciembre2019 <- as.Date("01/12/2019",format="%d/%m/%Y")
+month(diciembre2019)
+dfCovidCorr <- dfCovid %>%
+  filter(countriesAndTerritories %in% 'Spain') %>%
+  filter(month>=3 & month<=11) %>%
+  rename(IA_14=`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`)%>%
+  group_by(month) %>% 
+  summarise(IA_14 = mean(IA_14)) %>%
+  mutate(Fecha=diciembre2019+months(month)) %>%
+  select(-month)
+View(dfCovidCorr)
+```
+```{r}
+dfCorr <- inner_join(dfCovidCorr,dfComExteriorCorr)%>%
+  inner_join(dfMAPAConsumoCorr)%>%
+  select(-Fecha)
+M <- cor(dfCorr)
+
+library(corrplot)
+corrplot(M, method = "square")
+```
+
+
+
+
+
 
 
 #Conclusiones consumo:
