@@ -113,7 +113,7 @@ dfMAPAConsumo_Total$Fecha <- as.Date(as.yearmon(dfMAPAConsumo_Total$Fecha, forma
 ```
 
 ```{r}
-dfMAPAConsumo$Mes <- factor(dfMAPAConsumo$Mes, levels=niveles, labels=c(1:12))
+dfMAPAConsumo$Mes <- factor(dfMAPAConsumo$Mes, levels=meses, labels=c(1:12))
 dfMAPAConsumo <- unite(dfMAPAConsumo, Mes, Año, col='Fecha', sep='/',remove=F)
 dfMAPAConsumo$Fecha <- as.Date(as.yearmon(dfMAPAConsumo$Fecha, format='%m/%Y'))
 str(dfMAPAConsumo_Total)
@@ -144,7 +144,7 @@ dfMAPAConsumo_S<-dfMAPAConsumo %>%select(Producto,CCAA,Fecha,`Volumen (miles de 
 dfMAPAConsumo_Gr<-dfMAPAConsumo_S %>%arrange(Producto,CCAA,Fecha)%>% group_by(Producto,CCAA)%>%mutate(`Diff Volumen (miles de kg)` =`Volumen (miles de kg)`-dplyr::lag(`Volumen (miles de kg)`))
   
 
-View(dfMAPAConsumo_Gr)
+# View(dfMAPAConsumo_Gr)
 
 p <- dfMAPAConsumo_Gr%>%
   ggplot()+
@@ -158,8 +158,7 @@ p <- dfMAPAConsumo_Gr%>%
 
 ggplotly(p)
 
-# View(dfMAPAConsumo_Total)
-View(dfMAPAConsumo_Gr)
+# View(dfMAPAConsumo_Gr)
 ```
 
 
@@ -615,7 +614,7 @@ head(dfComercioExterior)
 
 #hay una fecha que sale con NA porque es el total del año, yo la quitaría
 dfComercioExterior <- dfComercioExterior[!is.na(dfComercioExterior$PERIOD), ]
-View(dfComercioExterior)
+# View(dfComercioExterior)
 ```
 El dataset 4 daba problemas porque las filas cuyo producto era "Fresh or dried citrus fruit (excl. oranges, lemons..." estaban mal codificadas y tenian una columna de más, esto se ha corregido previamente con un editor de texto.
 
@@ -749,20 +748,11 @@ translateCountry <- function(country,from,to){
   }
   return(unlist(l))
 }
-View(dfComercioExterior%>%mutate(REPORTER_NEW=traslateCountry(country = REPORTER,from = "NombresComercioExterior",to="Comun")))
-unique(dfComercioExterior$REPORTER)
-View(dfComercioExterior)
+# View(dfComercioExterior%>%mutate(REPORTER_NEW=traslateCountry(country = REPORTER,from = "NombresComercioExterior",to="Comun")))
+# unique(dfComercioExterior$REPORTER)
+# View(dfComercioExterior)
 
-country <- c("Belgium (incl. Luxembourg 'LU' -> 1998)","Belgium (incl. Luxembourg 'LU' -> 1998)")
-from <- "NombresComercioExterior"
-to <- "Comun"
-l<-list(c())
-for(i in seq_len(length(country))){
-    l[[i]] <-   conversionPaises[conversionPaises[[from]]==country[i],to][1]
-  }
-l
-
-translateCountry(country,from="NombresComercioExterior",to="Comun")
+# translateCountry(country,from="NombresComercioExterior",to="Comun")
 #translateCountry("ES",from = "ISO2",to = "NombresComercioExterior")
 ```
 
@@ -789,9 +779,9 @@ dfTasaCobertura <- filter(dfComercioExterior,year(PERIOD) == 2020) %>%
   filter_all(all_vars(!is.na(.)))
 
 dfComExtCovid <- inner_join(dfCovidEurMes,dfTasaCobertura,by=c("geoId"="geoId","month"="month"))%>%dplyr::select(-REPORTER)
-View(dfCovidEurMes)
-View(dfTasaCobertura)
-View(dfComExtCovid)
+# View(dfCovidEurMes)
+# View(dfTasaCobertura)
+# View(dfComExtCovid)
 ```
 
 
