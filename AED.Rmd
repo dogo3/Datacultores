@@ -217,6 +217,18 @@ ggplotly(p)
 Vamos a ver ahora las diferencias mensuales de gasto en este top 5 de productos más consumidos.
 
 ```{r}
+
+df<-dfMAPAConsumo_Total %>%
+  arrange(Producto,CCAA,Fecha) %>%
+  group_by(Producto,CCAA)%>%
+  mutate(`Diff Gasto per capita` =`Gasto per capita`-dplyr::lag(`Gasto per capita`),
+         `Diff Volumen (miles de kg)`= `Volumen (miles de kg)`-dplyr::lag(`Volumen (miles de kg)`),
+         `Diff Valor (miles de €)`=`Valor (miles de €)`-dplyr::lag(`Valor (miles de €)`),
+         `Diff Precio medio kg`=`Precio medio kg`-dplyr::lag(`Precio medio kg`),
+         `Diff Penetración (%)`=`Penetración (%)`-dplyr::lag(`Penetración (%)`),
+         `Diff Consumo per capita`=`Consumo per capita`-dplyr::lag(`Consumo per capita`))
+saveRDS(df,file="data/app/MAPAConsumo.rds")
+
 p<-dfMAPAConsumo_Total %>% 
   arrange(Producto,CCAA,Fecha) %>% 
   group_by(Producto,CCAA)%>%
@@ -231,6 +243,8 @@ p<-dfMAPAConsumo_Total %>%
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
   ggtitle('Diferencia Gasto per Cápita - 5 productos con más volumen')+ theme(legend.position = "none")
 ggplotly(p)
+
+colnames(df)
 ```
 
 
