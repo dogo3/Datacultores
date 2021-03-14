@@ -1,6 +1,7 @@
 library(ggplot2)
 
 top5Productos<-c("PATATAS FRESCAS","NARANJAS","TOMATES","PLATANOS","MANZANAS")
+totalesMAPA <- c('T.HORTALIZAS FRESCAS', 'T.FRUTAS FRESCAS')
 dfMAPAConsumo <- readRDS("data/app/MAPAConsumo.rds")
 
 
@@ -8,7 +9,7 @@ shinyServer(function(input, output) {
   
   
   output$selProd_MAPA<-renderUI({
-    selectizeInput("selProd_MAPA","Productos",choices=unique(dfMAPAConsumo$Producto),multiple=TRUE,selected=top5Productos,options = list(plugins= list('remove_button')))
+    selectizeInput("selProd_MAPA","Productos",choices=unique(dfMAPAConsumo$Producto),multiple=TRUE,selected=totalesMAPA,options = list(plugins= list('remove_button')))
   })
   output$selVar_MAPA<-renderUI({
     selectInput("selVar_MAPA","Productos",choices=colnames(dfMAPAConsumo)[c(-seq_len(5),-12:-19)],selected=c("Gasto per capita"))
@@ -25,7 +26,7 @@ shinyServer(function(input, output) {
   
   listaProductosMAPA<-reactive({
     if(is.null(input$selProd_MAPA)){
-      return(top5Productos) 
+      return(totalesMAPA) 
     }else{
       return(input$selProd_MAPA)
     }
