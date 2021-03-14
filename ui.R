@@ -56,6 +56,7 @@ body <- dashboardBody(
                 h3("Precios de Andalucía"),
                 uiOutput('selectAndalucia'),
                 plotlyOutput('preciosAndalucia'),
+                uiOutput('precios_andalucia'),
                 width=12
               )
             ),
@@ -65,6 +66,7 @@ body <- dashboardBody(
                 h3("Precios MercaMadrid"),
                 uiOutput('selectMadrid'),
                 plotlyOutput('preciosMadrid'),
+                uiOutput('precios_madrid'),
                 width=12
               )
             ),
@@ -74,13 +76,15 @@ body <- dashboardBody(
                 h3("Precios Mercabarna"),
                 uiOutput('selectBarna'),
                 plotlyOutput('preciosBarna'),
+                uiOutput('precios_barna'),
                 width=12
               )
             ),
             
             fluidRow(
               box(plotlyOutput('preciosIPC_indice')),
-              box(plotlyOutput('preciosIPC_varanual'))
+              box(plotlyOutput('preciosIPC_varanual')),
+              box(uiOutput('precios_ipc'), width=12)
             )
     ),
     
@@ -92,7 +96,8 @@ body <- dashboardBody(
                 uiOutput("selPais_ComExt"),
                 plotOutput("treemapComExt"),
                 width=12
-              )
+              ),
+              box(uiOutput('comercio_exterior'), width=12)
             ),
             fluidRow(
               box(
