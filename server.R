@@ -7,7 +7,18 @@ dfMAPAConsumo <- readRDS("data/app/MAPAConsumo.rds")
 andalucia <- readRDS("data/app/preciosAndalucia.rds")
 mercaMadrid <- readRDS("data/app/preciosMadrid.rds")
 mercaBarna <- readRDS("data/app/preciosBarna.rds")
+comercioExterior<-readRDS("data/app/ComercioExterior.rds")
+comExtTreemap <- readRDS("data/app/ComExtTreemap.rds")
 IPC <- readRDS("data/app/IPC.rds")
+
+conversionPaises <- read.csv("./data/conversionPaises.csv",stringsAsFactors = FALSE)
+translateCountry <- function(country,from,to){
+  l<-list(c())
+  for(i in seq_len(length(country))){
+    l[[i]] <-   conversionPaises[conversionPaises[[from]]==country[i],to][1]
+  }
+  return(unlist(l))
+}
 
 
 shinyServer(function(input, output) {
@@ -67,7 +78,7 @@ shinyServer(function(input, output) {
   output$MAPAVitC <- renderPlotly({
     print(variableMAPAVitC())
     df <- dfMAPAConsumo %>% filter(Producto %in% productosVitC) 
-    p<-ggplot(df,aes(x=Fecha, y=df[[variableMAPAVitC()]],col=Producto))+
+    g<-ggplot(df,aes(x=Fecha, y=df[[variableMAPAVitC()]],col=Producto))+
       geom_line( size=0.5)+
       geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
       geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
@@ -76,7 +87,43 @@ shinyServer(function(input, output) {
       ylab(variableMAPA())+
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
       ggtitle(variableMAPAVitC())+ theme(legend.position = "none")
-    ggplotly(p)
+    ggplotly(g)
+  })
+  
+  #TREEMAP COMERCIO EXTERIOR
+  
+  output$selAnyo_TreemapComExt<-renderUI({
+    selectizeInput("selAnyo_TreemapComExt","Años",choices=unique(comExtTreemap$YEAR),
+                   multiple=TRUE,selected=unique(comExtTreemap$YEAR),
+                   options = list(plugins= list('remove_button')))
+  })
+  
+  output$selPais_TreemapComExt<-renderUI({
+    selectizeInput("selPais_TreemapComExt","Países",choices=unique(comExtTreemap$REPORTER_COMUN),
+                   #Por defecto ponemos los países con los que más operaciones hay
+                   multiple=TRUE,selected=c("Alemania","Francia","Países Bajos","Italia","Portugal","Polonia","Bélgica","Grecia"),
+                   options = list(plugins= list('remove_button'),minItems=1))
+  })
+  
+  anyoTreemapComExt<-reactive({
+      return(input$selAnyo_TreemapComExt)
+  })
+  
+  paisTreemapComExt <- reactive({
+      return(input$selPais_TreemapComExt)
+  })
+  
+  output$treemapComExt <- renderPlot({
+    if(is.null(anyoTreemapComExt()) | is.null(paisTreemapComExt())){
+      " "
+    }else{
+    comExtTreemap %>% filter(YEAR %in% anyoTreemapComExt() & REPORTER_COMUN %in% paisTreemapComExt())%>%
+      ggplot(aes(area = value, fill=REPORTER_COMUN, label = REPORTER_COMUN)) +
+      geom_treemap(colour="black") +
+      facet_grid(vars(rows=YEAR),vars(cols=Movimiento)) + 
+      theme(legend.position = "none")+
+      geom_treemap_text(colour = "white", place = "centre",grow = F)
+    }
   })
   
   

@@ -10,7 +10,8 @@ sidebar <- dashboardSidebar(
     sidebarMenu(
       id="sidebar",
       menuItem("Principal", tabName = "principal", icon = icon("home")),
-      menuItem("Precios", tabName = "precios", icon = icon("money-bill-alt"))
+      menuItem("Precios", tabName = "precios", icon = icon("money-bill-alt")),
+      menuItem("Comercio Exterior", tabName = "comercioExterior", icon = icon("th"))
       
     )
   )
@@ -69,7 +70,19 @@ body <- dashboardBody(
               box(plotlyOutput('preciosIPC_indice')),
               box(plotlyOutput('preciosIPC_varanual'))
             )
+    ),
+    
+    tabItem(tabName = "comercioExterior",
+            fluidRow(
+              box(
+                uiOutput("selAnyo_TreemapComExt"),
+                uiOutput("selPais_TreemapComExt"),
+                plotOutput("treemapComExt"),
+                width=12
+              )
+            )
     )
+    
   )
 )
 
