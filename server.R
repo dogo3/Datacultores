@@ -18,7 +18,12 @@ vitaminaC <- readRDS('data/app/vitaminaCGoogle.rds')
 textoConsumo_1<-readLines('txt/Consumo_1.txt', encoding = 'UTF-8')
 textoConsumo_2_1<-readLines('txt/Consumo_2_1.txt', encoding = 'UTF-8')
 textoConsumo_2_2<-readLines('txt/Consumo_2_2.txt', encoding = 'UTF-8')
-
+textoConsumo_2_2<-readLines('txt/Consumo_2_2.txt', encoding = 'UTF-8')
+textoprecios_andalucia<-readLines('txt/andalucia.txt', encoding = 'UTF-8')
+textoprecios_barna<-readLines('txt/barna.txt', encoding = 'UTF-8')
+textoprecios_madrid<-readLines('txt/madrid.txt', encoding = 'UTF-8')
+textoprecios_ipc<-readLines('txt/ipc.txt', encoding = 'UTF-8')
+textocomercio_exterior<-readLines('txt/ComercioExterior.txt', encoding = 'UTF-8')
 
 conversionPaises <- read.csv("./data/conversionPaises.csv",stringsAsFactors = FALSE)
 translateCountry <- function(country,from,to){
@@ -356,4 +361,35 @@ shinyServer(function(input, output) {
     replacedText <- lapply(splitText, p)
     return(replacedText)
   })
+  
+  output$precios_andalucia <- renderUI({
+    splitText <- stringi::stri_split(str = textoprecios_andalucia, regex = '\\n')
+    replacedText <- lapply(splitText, p)
+    return(replacedText)
+  })
+  
+  output$precios_barna <- renderUI({
+    splitText <- stringi::stri_split(str = textoprecios_barna, regex = '\\n')
+    replacedText <- lapply(splitText, p)
+    return(replacedText)
+  })
+  
+  output$precios_madrid <- renderUI({
+    splitText <- stringi::stri_split(str = textoprecios_madrid, regex = '\\n')
+    replacedText <- lapply(splitText, p)
+    return(replacedText)
+  })
+  
+  output$precios_ipc <- renderUI({
+    splitText <- stringi::stri_split(str = textoprecios_ipc, regex = '\\n')
+    replacedText <- lapply(splitText, p)
+    return(replacedText)
+  })
+  
+  output$comercio_exterior <- renderUI({
+    splitText <- stringi::stri_split(str = textocomercio_exterior, regex = '\\n')
+    replacedText <- lapply(splitText, p)
+    return(replacedText)
+  })
+
 })
