@@ -683,6 +683,17 @@ translateCountry <- function(country,from,to){
   }
   return(unlist(l))
 }
+
+
+# dfComExtTreemap<-dfComercioExterior %>%
+#       mutate(YEAR=factor(year(PERIOD))) %>%
+#       mutate(REPORTER_COMUN=translateCountry(country = REPORTER,from = "NombresComercioExterior",to="Comun")) %>%
+#       group_by(REPORTER_COMUN,YEAR) %>%
+#       summarise(Exp = sum(VALUE_IN_EUROS_IMPORT, na.rm = T),
+#                 Imp = sum(VALUE_IN_EUROS_EXPORT, na.rm = T)) %>%
+#       drop_na() %>%
+#       pivot_longer(cols=c(Exp,Imp),names_to="Movimiento")
+# saveRDS(dfComExtTreemap,"./data/app/ComExtTreemap.rds")
 ```
 
 ```{r}
