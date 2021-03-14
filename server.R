@@ -174,6 +174,9 @@ shinyServer(function(input, output) {
   })
   
   output$preciosAndalucia <- renderPlotly({
+    
+    validate(need(input$selectAndalucia, ""))
+    
     andalucia %>%
       filter(SUBSECTOR %in% input$selectAndalucia) %>%
       group_by(SUBSECTOR, INICIO) %>%
@@ -197,6 +200,9 @@ shinyServer(function(input, output) {
   })
   
   output$preciosMadrid <- renderPlotly({
+    
+    validate(need(input$selectMadrid, ""))
+    
     mercaMadrid %>% 
       filter(familia %in% input$selectMadrid) %>%
       group_by(familia, Fecha) %>% 
@@ -211,8 +217,8 @@ shinyServer(function(input, output) {
       labs(x='Fecha', y='Precio medio', title='Precio medio por familias')
   })
   
-  output$selectizeBarna <- renderUI({
-    selectInput('selectBarna', 'Selecciona las familias', 
+  output$selectBarna <- renderUI({
+    selectizeInput('selectBarna', 'Selecciona las familias', 
                 choices = unique(mercaBarna$familia), 
                 selected = c('FRUTAS CÍTRICOS', 'FRUTAS HUESO', 'FRUTAS SEMILLA',
                              'HORTALIZAS BULBOS', 'HORTALIZAS FRUTO', 'HORTALIZAS INFLORESC.',
@@ -221,6 +227,9 @@ shinyServer(function(input, output) {
   })
   
   output$preciosBarna <- renderPlotly({
+    
+    validate(need(input$selectBarna, ""))
+    
     mercaBarna %>% 
       filter(familia %in% input$selectBarna) %>%
       group_by(familia, Fecha) %>% 
