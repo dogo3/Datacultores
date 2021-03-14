@@ -10,7 +10,7 @@ sidebar <- dashboardSidebar(
     sidebarMenu(
       id="sidebar",
       menuItem("Principal", tabName = "principal", icon = icon("home")),
-      menuItem("Widgets", icon = icon("th"), tabName = "widgets")
+      menuItem("Precios", icon = icon("th"), tabName = "precios")
       
     )
   )
@@ -35,7 +35,8 @@ body <- dashboardBody(
             width=12),
       ),
     ),
-    tabItem(tabName = "widgets",
+    
+    tabItem(tabName = "precios",
             h2("Widgets tab content")
     )
   )
