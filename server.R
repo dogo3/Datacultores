@@ -1,5 +1,6 @@
 library(ggplot2)
 library(treemapify)
+library(lubridate)
 
 top5Productos<-c("PATATAS FRESCAS","NARANJAS","TOMATES","PLATANOS","MANZANAS")
 totalesMAPA <- c('T.HORTALIZAS FRESCAS', 'T.FRUTAS FRESCAS')
@@ -122,8 +123,9 @@ shinyServer(function(input, output) {
   # Lineplots comercio exterior
   
   output$lineComExtEur<- renderPlotly({
-    print(head(comercioExterior))
+    validate(need(input$selPais_TreemapComExt, ""))
     p<-comercioExterior %>%
+      filter(translateCountry(country=REPORTER,from = "NombresComercioExterior",to="Comun") %in% input$selPais_TreemapComExt)%>%
       group_by(PERIOD) %>%
       summarise('Exp(€)' = sum(VALUE_IN_EUROS_IMPORT, na.rm = T),
                 'Imp(€)' = sum(VALUE_IN_EUROS_EXPORT, na.rm = T)) %>%
@@ -141,7 +143,9 @@ shinyServer(function(input, output) {
   })
   
   output$lineComExtTon<- renderPlotly({
+    validate(need(input$selPais_TreemapComExt, ""))
     p<-comercioExterior %>%
+      filter(translateCountry(country=REPORTER,from = "NombresComercioExterior",to="Comun") %in% input$selPais_TreemapComExt)%>%
       group_by(PERIOD) %>%
       summarise('Exp(ton)' = sum(QUANTITY_IN_100KG_IMPORT, na.rm=T)/10,
                 'Imp(ton)' = sum(QUANTITY_IN_100KG_EXPORT, na.rm=T)/10) %>%
