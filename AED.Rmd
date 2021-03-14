@@ -333,7 +333,7 @@ ggplotly(p)
 ```
 
 Solo frutas.
-
+#TODO arreglar
 ```{r}
 p <- dfMAPAConsumo_Total %>% 
   filter(Producto %in% productos[1]) %>%
