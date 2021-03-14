@@ -370,6 +370,7 @@ p <- dfMAPAConsumo_Total %>%
   ggtitle('Precio medio, consumo pc y gasto pc - Hortalizas frescas')
 
 ggplotly(p)
+
 ```
 
 He puesto escala logarítmica. Se observa mejor que sube TODO. El aumento del gasto se debe tanto a un aumento del consumo como de los precios, aunque creo que los precios han tenido menor influencia (puedo pensar alguna manera economista de respaldar esto)
@@ -433,6 +434,8 @@ Frutas:
 IPC %>%
   filter(Clases == 'Legumbres/Hortalizas') %>%
   filter(`Tipo de dato` == 'Variación anual' ,month(Periodo) %in% c(3,4,5))
+
+
 ```
 
 Legumbres/Hortalizas:
@@ -541,6 +544,7 @@ p <- dfMercaMadrid %>%
   ggtitle('Precio medio por familias')
 
 ggplotly(p)
+
 ```
 
 Todos los años parece que sube para marzo-abril.
@@ -570,6 +574,8 @@ p <- dfMercaBarna %>%
   ggtitle('Precio medio por familias')
 
 ggplotly(p)
+
+
 ```
 
 ```{r}
