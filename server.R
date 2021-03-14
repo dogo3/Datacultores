@@ -106,19 +106,11 @@ shinyServer(function(input, output) {
                    options = list(plugins= list('remove_button'),minItems=1))
   })
   
-  anyoTreemapComExt<-reactive({
-      return(input$selAnyo_TreemapComExt)
-  })
-  
-  paisTreemapComExt <- reactive({
-      return(input$selPais_TreemapComExt)
-  })
-  
   output$treemapComExt <- renderPlot({
-    if(is.null(anyoTreemapComExt()) | is.null(paisTreemapComExt())){
+    if(is.null(input$selAnyo_TreemapComExt) | is.null(input$selPais_TreemapComExt)){
       " "
     }else{
-    comExtTreemap %>% filter(YEAR %in% anyoTreemapComExt() & REPORTER_COMUN %in% paisTreemapComExt())%>%
+    comExtTreemap %>% filter(YEAR %in% input$selAnyo_TreemapComExt & REPORTER_COMUN %in% input$selPais_TreemapComExt)%>%
       ggplot(aes(area = value, fill=REPORTER_COMUN, label = REPORTER_COMUN)) +
       geom_treemap(colour="black") +
       facet_grid(vars(rows=YEAR),vars(cols=Movimiento)) + 
@@ -170,11 +162,11 @@ shinyServer(function(input, output) {
   ## TABPANEL PRECIOS
   
   output$selectAndalucia <- renderUI({
-    selectInput('selectAndalucia', 'Selecciona los subsectores', 
+    selectizeInput('selectAndalucia', 'Selecciona los subsectores', 
                 choices = unique(andalucia$SUBSECTOR), 
                 selected = c('Citricos', 'Frutales no cítricos', "Hortícolas al aire libre", 
                              'Hortícolas protegidos'), 
-                multiple = T)
+                multiple = T, options = list(plugins= list('remove_button'),minItems=1))
   })
   
   output$preciosAndalucia <- renderPlotly({
@@ -194,10 +186,10 @@ shinyServer(function(input, output) {
   })
   
   output$selectMadrid <- renderUI({
-    selectInput('selectMadrid', 'Selecciona las familias', 
+    selectizeInput('selectMadrid', 'Selecciona las familias', 
                 choices = unique(mercaMadrid$familia), 
                 selected = c('FRUTAS', 'HORTALIZAS'), 
-                multiple = T)
+                multiple = T, options = list(plugins= list('remove_button'),minItems=1))
   })
   
   output$preciosMadrid <- renderPlotly({
@@ -215,13 +207,13 @@ shinyServer(function(input, output) {
       labs(x='Fecha', y='Precio medio', title='Precio medio por familias')
   })
   
-  output$selectBarna <- renderUI({
+  output$selectizeBarna <- renderUI({
     selectInput('selectBarna', 'Selecciona las familias', 
                 choices = unique(mercaBarna$familia), 
                 selected = c('FRUTAS CÍTRICOS', 'FRUTAS HUESO', 'FRUTAS SEMILLA',
                              'HORTALIZAS BULBOS', 'HORTALIZAS FRUTO', 'HORTALIZAS INFLORESC.',
                              'HORTALIZAS TALLOS'), 
-                multiple = T)
+                multiple = T, options = list(plugins= list('remove_button'),minItems=1))
   })
   
   output$preciosBarna <- renderPlotly({
