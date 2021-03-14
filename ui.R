@@ -20,6 +20,9 @@ sidebar <- dashboardSidebar(
 body <- dashboardBody(
   tags$script(HTML("$('body').addClass('fixed');")),
   
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")),
+  
   tabItems(
     tabItem(tabName = "consumo",
             fluidRow(
