@@ -12,6 +12,12 @@ mercaBarna <- readRDS("data/app/preciosBarna.rds")
 comercioExterior<-readRDS("data/app/ComercioExterior.rds")
 comExtTreemap <- readRDS("data/app/ComExtTreemap.rds")
 IPC <- readRDS("data/app/IPC.rds")
+vitaminaC <- readRDS('data/app/vitaminaCGoogle.rds')
+
+textoConsumo_1<-readLines('txt/Consumo_1.txt', encoding = 'UTF-8')
+textoConsumo_2_1<-readLines('txt/Consumo_2_1.txt', encoding = 'UTF-8')
+textoConsumo_2_2<-readLines('txt/Consumo_2_2.txt', encoding = 'UTF-8')
+
 
 conversionPaises <- read.csv("./data/conversionPaises.csv",stringsAsFactors = FALSE)
 translateCountry <- function(country,from,to){
@@ -63,9 +69,10 @@ shinyServer(function(input, output) {
   
   
   output$MAPA <- renderPlotly({
-    print(variableMAPA())
+    
     df <- dfMAPAConsumo %>% filter(Producto %in% listaProductosMAPA()) 
-    p<-ggplot(df,aes(x=Fecha, y=df[[variableMAPA()]],col=Producto))+
+    
+    ggplot(df,aes(x=Fecha, y=df[[variableMAPA()]],col=Producto))+
       geom_line( size=0.5)+
       geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
       geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
@@ -73,14 +80,14 @@ shinyServer(function(input, output) {
       scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
       ylab(variableMAPA())+
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
-      ggtitle(variableMAPA())+ theme(legend.position = "none")
-    ggplotly(p)
+      ggtitle(variableMAPA())
   })
   
   output$MAPAVitC <- renderPlotly({
-    print(variableMAPAVitC())
+
     df <- dfMAPAConsumo %>% filter(Producto %in% productosVitC) 
-    g<-ggplot(df,aes(x=Fecha, y=df[[variableMAPAVitC()]],col=Producto))+
+    
+    ggplot(df,aes(x=Fecha, y=df[[variableMAPAVitC()]],col=Producto))+
       geom_line( size=0.5)+
       geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
       geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
@@ -88,8 +95,7 @@ shinyServer(function(input, output) {
       scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
       ylab(variableMAPA())+
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
-      ggtitle(variableMAPAVitC())+ theme(legend.position = "none")
-    ggplotly(g)
+      ggtitle(variableMAPAVitC())
   })
   
   #TREEMAP COMERCIO EXTERIOR
@@ -274,6 +280,47 @@ shinyServer(function(input, output) {
     
     ggplotly(p) %>% layout(legend = list(orientation = "h", x = 0.4, y = -0.4))
     
+  })
+  
+  
+  #EXPLICACIONES
+  output$consumo_1 <- renderUI({
+    splitText <- stringi::stri_split(str = textoConsumo_1, regex = '\\n')
+    replacedText <- lapply(splitText, p)
+    return(replacedText)
+  })
+  
+  output$consumo_2_1 <- renderUI({
+    splitText <- stringi::stri_split(str = textoConsumo_2_1, regex = '\\n')
+    replacedText <- lapply(splitText, p)
+    return(replacedText)
+  })
+  
+  output$vitaminas <- renderPlotly({
+    p <- ggplot(vitaminaC) +
+      geom_line(aes(x=Semana, y=Valor), col='goldenrod', size=1)+
+      geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+      geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+      geom_hline(yintercept=0)+
+      scale_x_date(date_breaks = '2 months',date_labels = "%b %Y")+
+      theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+      labs(x='Fecha', y='Nº búsquedas', title='Número de búsquedas en Google: vitamina C')
+    
+    ggplotly(p) %>%   layout(margin = list(b=160),
+                             annotations = 
+                               list(x = 1, y = -0.5,
+                                    text = "Fuente: trends.google.es", 
+                                    showarrow = F, xref='paper', yref='paper', 
+                                    xanchor='right', yanchor='auto', xshift=0, yshift=0,
+                                    font=list(size=12, color="blue"))
+    )
+      
+  })
+  
+  output$consumo_2_2 <- renderUI({
+    splitText <- stringi::stri_split(str = textoConsumo_2_2, regex = '\\n')
+    replacedText <- lapply(splitText, p)
+    return(replacedText)
   })
   
 })

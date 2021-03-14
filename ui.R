@@ -18,23 +18,32 @@ sidebar <- dashboardSidebar(
 )
 
 body <- dashboardBody(
-  # Boxes need to be put in a row (or column)
+  tags$script(HTML("$('body').addClass('fixed');")),
+  
   tabItems(
-    tabItem(
-      tabName = "consumo",
-      fluidRow(
-        box(uiOutput("selProd_MAPA"),
-            uiOutput("selVar_MAPA"),
-            checkboxInput("checkbox_diffMAPA","Mostrar diferencias mensuales",value=FALSE),
-            plotlyOutput("MAPA"),
-            width=12),
-      ),
-      fluidRow(
-        box(uiOutput("selVar_MAPAVitC"),
-            checkboxInput("checkbox_diffMAPAVitC","Mostrar diferencias mensuales",value=FALSE),
-            plotlyOutput("MAPAVitC"),
-            width=12),
-      ),
+    tabItem(tabName = "consumo",
+            fluidRow(
+              box(
+                h3('Análisis del consumo'),
+                uiOutput("selProd_MAPA"),
+                uiOutput("selVar_MAPA"),
+                checkboxInput("checkbox_diffMAPA","Mostrar diferencias mensuales",value=FALSE),
+                plotlyOutput("MAPA"),
+                uiOutput('consumo_1'),
+                width=12),
+            ),
+      
+            fluidRow(
+              box(
+                h3('Casos excepcionales'),
+                uiOutput("selVar_MAPAVitC"),
+                checkboxInput("checkbox_diffMAPAVitC","Mostrar diferencias mensuales",value=FALSE),
+                plotlyOutput("MAPAVitC"),
+                uiOutput('consumo_2_1'),
+                plotlyOutput('vitaminas'),
+                uiOutput('consumo_2_2'),
+                width=12),
+            ),
     ),
     
     tabItem(tabName = "precios",
@@ -97,4 +106,4 @@ body <- dashboardBody(
 )
 
 
-ui <- dashboardPage(header,sidebar,body)
+ui <- dashboardPage(header,sidebar,body, skin='purple')
