@@ -3,7 +3,7 @@ library(shinydashboard)
 library(shiny)
 library(plotly)
 
-header <- dashboardHeader(title = "Basic dashboard",disable=FALSE)
+header <- dashboardHeader(title = "UniversityHack 2021",disable=FALSE)
 
 sidebar <- dashboardSidebar(
   fixedPanel(
@@ -36,11 +36,12 @@ body <- dashboardBody(
             fluidRow(
               box(
                 h3('Casos excepcionales'),
+                uiOutput('consumo_2_1'),
+                plotlyOutput('vitaminas'),
+                p('Siendo 100 la máxima popularidad que puede tener una búsqueda, vemos como se alcanzó en marzo de 2020.'),
                 uiOutput("selVar_MAPAVitC"),
                 checkboxInput("checkbox_diffMAPAVitC","Mostrar diferencias mensuales",value=FALSE),
                 plotlyOutput("MAPAVitC"),
-                uiOutput('consumo_2_1'),
-                plotlyOutput('vitaminas'),
                 uiOutput('consumo_2_2'),
                 width=12),
             ),
@@ -75,7 +76,6 @@ body <- dashboardBody(
             ),
             
             fluidRow(
-              h3("IPC"),
               box(plotlyOutput('preciosIPC_indice')),
               box(plotlyOutput('preciosIPC_varanual'))
             )
@@ -84,6 +84,7 @@ body <- dashboardBody(
     tabItem(tabName = "comercioExterior",
             fluidRow(
               box(
+                h3('Exportaciones e Importaciones'),
                 uiOutput("selAnyo_ComExt"),
                 uiOutput("selPais_ComExt"),
                 plotOutput("treemapComExt"),
@@ -101,6 +102,7 @@ body <- dashboardBody(
               )
             )
     ),
+    
     tabItem(tabName = "impacto_covid",
             fluidRow(
               box(
@@ -108,6 +110,7 @@ body <- dashboardBody(
                 width=12
               )
             ),
+            
             fluidRow(
               box(
                 plotlyOutput("plotAgregadoCovid"),

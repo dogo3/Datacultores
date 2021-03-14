@@ -35,14 +35,18 @@ shinyServer(function(input, output) {
   
   
   output$selProd_MAPA<-renderUI({
-    selectizeInput("selProd_MAPA","Productos",choices=unique(dfMAPAConsumo$Producto),multiple=TRUE,selected=totalesMAPA,options = list(plugins= list('remove_button')))
+    selectizeInput("selProd_MAPA","Selecciona los productos",
+                   choices=unique(dfMAPAConsumo$Producto),multiple=TRUE,selected=totalesMAPA,
+                   options = list(plugins= list('remove_button')))
   })
   output$selVar_MAPA<-renderUI({
-    selectInput("selVar_MAPA","Variable",choices=colnames(dfMAPAConsumo)[c(-seq_len(5),-12:-19)],selected=c("Gasto per capita"))
+    selectInput("selVar_MAPA","Selecciona la variable",
+                choices=colnames(dfMAPAConsumo)[c(-seq_len(5),-12:-19)],selected=c("Gasto per capita"))
   })
   
   output$selVar_MAPAVitC<-renderUI({
-    selectInput("selVar_MAPAVitC","Variable",choices=colnames(dfMAPAConsumo)[c(-seq_len(5),-12:-19)],selected=c("Gasto per capita"))
+    selectInput("selVar_MAPAVitC","Selecciona la variable",
+                choices=colnames(dfMAPAConsumo)[c(-seq_len(5),-12:-19)],selected=c("Gasto per capita"))
   })
   
   variableMAPA<-reactive({
@@ -61,17 +65,19 @@ shinyServer(function(input, output) {
     }
   })
   
-  listaProductosMAPA<-reactive({
-    if(is.null(input$selProd_MAPA)){
-      return(totalesMAPA) 
-    }else{
-      return(input$selProd_MAPA)
-    }
-  })
+  # listaProductosMAPA<-reactive({
+  #   if(is.null(input$selProd_MAPA)){
+  #     return(totalesMAPA) 
+  #   }else{
+  #     return(input$selProd_MAPA)
+  #   }
+  # })
   
   
   output$MAPA <- renderPlotly({
-    df <- dfMAPAConsumo %>% filter(Producto %in% listaProductosMAPA()) 
+    validate(need(variableMAPA(), ""))
+    #df <- dfMAPAConsumo %>% filter(Producto %in% listaProductosMAPA()) 
+    df <- dfMAPAConsumo %>% filter(Producto %in% input$selProd_MAPA)
     
     ggplot(df,aes(x=Fecha, y=df[[variableMAPA()]],col=Producto))+
       geom_line( size=0.5)+
@@ -85,6 +91,8 @@ shinyServer(function(input, output) {
   })
   
   output$MAPAVitC <- renderPlotly({
+    validate(need(variableMAPAVitC(), ""))
+    
     df <- dfMAPAConsumo %>% filter(Producto %in% productosVitC) 
     
     ggplot(df,aes(x=Fecha, y=df[[variableMAPAVitC()]],col=Producto))+
@@ -93,7 +101,7 @@ shinyServer(function(input, output) {
       geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
       geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=3, col='red')+
       scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
-      ylab(variableMAPA())+
+      ylab(variableMAPAVitC())+
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
       ggtitle(variableMAPAVitC())
   })
@@ -101,13 +109,13 @@ shinyServer(function(input, output) {
   #TREEMAP COMERCIO EXTERIOR
   
   output$selAnyo_ComExt<-renderUI({
-    selectizeInput("selAnyo_ComExt","Años",choices=unique(comExtTreemap$YEAR),
+    selectizeInput("selAnyo_ComExt","Selecciona los años",choices=unique(comExtTreemap$YEAR),
                    multiple=TRUE,selected=unique(comExtTreemap$YEAR),
                    options = list(plugins= list('remove_button')))
   })
   
   output$selPais_ComExt<-renderUI({
-    selectizeInput("selPais_ComExt","Países",choices=unique(comExtTreemap$REPORTER_COMUN),
+    selectizeInput("selPais_ComExt","Selecciona los países",choices=unique(comExtTreemap$REPORTER_COMUN),
                    #Por defecto ponemos los países con los que más operaciones hay
                    multiple=TRUE,selected=c("Alemania","Francia","Países Bajos","Italia","Portugal","Polonia","Bélgica","Grecia"),
                    options = list(plugins= list('remove_button'),minItems=1))
@@ -148,7 +156,7 @@ shinyServer(function(input, output) {
       geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
       geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
-      scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
+      scale_x_date(date_breaks = "2 months",date_labels = "%b %Y")+
       ylab("Euros")+
       ggtitle('Evolución exportaciones e importaciones (euros)')
   })
@@ -163,7 +171,7 @@ shinyServer(function(input, output) {
       geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
       geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
-      scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
+      scale_x_date(date_breaks = "2 months",date_labels = "%b %Y")+
       ylab("Toneladas")+
       ggtitle('Evolución exportaciones e importaciones (toneladas)')
     ggplotly(p)
@@ -234,6 +242,9 @@ shinyServer(function(input, output) {
   })
   
   output$preciosBarna <- renderPlotly({
+    
+    validate(need(input$selectBarna, ""))
+    
     mercaBarna %>% 
       filter(familia %in% input$selectBarna) %>%
       group_by(familia, Fecha) %>% 
@@ -258,7 +269,7 @@ shinyServer(function(input, output) {
       geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
       scale_x_date(date_breaks = '2 months',date_labels = "%b %Y")+
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
-      labs(x='Fecha', y='Índice', title='Índice')
+      labs(x='Fecha', y='Índice', title='Índice IPC')
     
     ggplotly(p) %>% layout(legend = list(orientation = "h", x = 0.4, y = -0.4))
   })
@@ -274,7 +285,7 @@ shinyServer(function(input, output) {
       geom_hline(yintercept=0)+
       scale_x_date(date_breaks = '2 months',date_labels = "%b %Y")+
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
-      labs(x='Fecha', y='Índice', title='Variación anual')
+      labs(x='Fecha', y='Índice', title='Variación anual IPC')
     
     ggplotly(p) %>% layout(legend = list(orientation = "h", x = 0.4, y = -0.4))
   })
@@ -293,7 +304,7 @@ shinyServer(function(input, output) {
     
   output$plotAgregadoCovid <- renderPlotly({
     validate(need(input$selPais_Covid, "Cargando"))
-    print(head(COVID))
+
     filter(COVID,countriesAndTerritories %in% input$selPais_Covid &
            dateRep > '2020-03-01') %>%
     group_by(dateRep) %>%
