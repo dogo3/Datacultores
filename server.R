@@ -4,6 +4,10 @@ top5Productos<-c("PATATAS FRESCAS","NARANJAS","TOMATES","PLATANOS","MANZANAS")
 totalesMAPA <- c('T.HORTALIZAS FRESCAS', 'T.FRUTAS FRESCAS')
 productosVitC <- c("KIWI","NARANJAS","MANDARINAS","BROCOLI")
 dfMAPAConsumo <- readRDS("data/app/MAPAConsumo.rds")
+preciosAndalucia <- readRDS("data/app/preciosAndalucia.rds")
+preciosMadrid <- readRDS("data/app/preciosMadrid.rds")
+preciosBarna <- readRDS("data/app/preciosBarna.rds")
+IPC <- readRDS("data/app/IPC.rds")
 
 
 shinyServer(function(input, output) {
