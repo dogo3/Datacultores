@@ -10,7 +10,7 @@ sidebar <- dashboardSidebar(
     sidebarMenu(
       id="sidebar",
       menuItem("Principal", tabName = "principal", icon = icon("home")),
-      menuItem("Precios", tabName = "precios", icon = icon("th")),
+      menuItem("Precios", tabName = "precios", icon = icon("money-bill-alt")),
       menuItem("Comercio Exterior", tabName = "comercioExterior", icon = icon("th"))
       
     )
@@ -38,15 +38,38 @@ body <- dashboardBody(
     ),
     
     tabItem(tabName = "precios",
-            h3("Precios de Andalucía"),
-            plotlyOutput('preciosAndalucia'),
-            h3("Precios MercaMadrid"),
-            plotlyOutput('preciosMadrid'),
-            h3("Precios Mercabarna"),
-            plotlyOutput('preciosBarna'),
-            h3("IPC"),
-            plotlyOutput('preciosIPC_indice'),
-            plotlyOutput('preciosIPC_varanual')
+            fluidRow(
+              box(
+                h3("Precios de Andalucía"),
+                uiOutput('selectAndalucia'),
+                plotlyOutput('preciosAndalucia'),
+                width=12
+              )
+            ),
+            
+            fluidRow(
+              box(
+                h3("Precios MercaMadrid"),
+                uiOutput('selectMadrid'),
+                plotlyOutput('preciosMadrid'),
+                width=12
+              )
+            ),
+            
+            fluidRow(
+              box(
+                h3("Precios Mercabarna"),
+                uiOutput('selectBarna'),
+                plotlyOutput('preciosBarna'),
+                width=12
+              )
+            ),
+            
+            fluidRow(
+              h3("IPC"),
+              box(plotlyOutput('preciosIPC_indice')),
+              box(plotlyOutput('preciosIPC_varanual'))
+            )
     ),
     
     tabItem(tabName = "comercioExterior",
