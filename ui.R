@@ -6,11 +6,13 @@ library(plotly)
 header <- dashboardHeader(title = "Basic dashboard",disable=FALSE)
 
 sidebar <- dashboardSidebar(
-  sidebarMenu(
-    id="sidebar",
-    menuItem("Principal", tabName = "principal", icon = icon("home")),
-    menuItem("Widgets", icon = icon("th"), tabName = "widgets")
-    
+  fixedPanel(
+    sidebarMenu(
+      id="sidebar",
+      menuItem("Principal", tabName = "principal", icon = icon("home")),
+      menuItem("Widgets", icon = icon("th"), tabName = "widgets")
+      
+    )
   )
 )
 
@@ -24,6 +26,12 @@ body <- dashboardBody(
             uiOutput("selVar_MAPA"),
             checkboxInput("checkbox_diffMAPA","Mostrar diferencias mensuales",value=FALSE),
             plotlyOutput("MAPA"),
+            width=12),
+      ),
+      fluidRow(
+        box(uiOutput("selVar_MAPAVitC"),
+            checkboxInput("checkbox_diffMAPAVitC","Mostrar diferencias mensuales",value=FALSE),
+            plotlyOutput("MAPAVitC"),
             width=12),
       ),
     ),
