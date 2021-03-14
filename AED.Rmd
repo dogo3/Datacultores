@@ -572,6 +572,11 @@ p <- dfMercaBarna %>%
 ggplotly(p)
 ```
 
+```{r}
+mercaMadrid <- readRDS("data/app/preciosMadrid.rds")
+mercaBarna <- readRDS("data/app/preciosBarna.rds")
+```
+
 Muchas familias (17), no se saca nada en claro.
 
 
