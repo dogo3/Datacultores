@@ -84,8 +84,17 @@ shinyServer(function(input, output) {
   
   ## TABPANEL PRECIOS
   
+  output$selectAndalucia <- renderUI({
+    selectInput('selectAndalucia', 'Selecciona los subsectores', 
+                choices = unique(andalucia$SUBSECTOR), 
+                selected = c('Citricos', 'Frutales no cítricos', "Hortícolas al aire libre", 
+                             'Hortícolas protegidos'), 
+                multiple = T)
+  })
+  
   output$preciosAndalucia <- renderPlotly({
     andalucia %>%
+      filter(SUBSECTOR %in% input$selectAndalucia) %>%
       group_by(SUBSECTOR, INICIO) %>%
       summarise(PRECIO_MEDIO = mean(PRECIO), .groups = 'keep') %>%
       ggplot()+
@@ -99,8 +108,16 @@ shinyServer(function(input, output) {
       labs(x='Fecha', y='Precio medio', title='Precio medio por subsectores')
   })
   
+  output$selectMadrid <- renderUI({
+    selectInput('selectMadrid', 'Selecciona las familias', 
+                choices = unique(mercaMadrid$familia), 
+                selected = c('FRUTAS', 'HORTALIZAS'), 
+                multiple = T)
+  })
+  
   output$preciosMadrid <- renderPlotly({
     mercaMadrid %>% 
+      filter(familia %in% input$selectMadrid) %>%
       group_by(familia, Fecha) %>% 
       summarise(precio_medio = mean(price_mean), .groups='keep') %>%
       ggplot() + 
@@ -113,8 +130,18 @@ shinyServer(function(input, output) {
       labs(x='Fecha', y='Precio medio', title='Precio medio por familias')
   })
   
+  output$selectBarna <- renderUI({
+    selectInput('selectBarna', 'Selecciona las familias', 
+                choices = unique(mercaBarna$familia), 
+                selected = c('FRUTAS CÍTRICOS', 'FRUTAS HUESO', 'FRUTAS SEMILLA',
+                             'HORTALIZAS BULBOS', 'HORTALIZAS FRUTO', 'HORTALIZAS INFLORESC.',
+                             'HORTALIZAS TALLOS'), 
+                multiple = T)
+  })
+  
   output$preciosBarna <- renderPlotly({
     mercaBarna %>% 
+      filter(familia %in% input$selectBarna) %>%
       group_by(familia, Fecha) %>% 
       summarise(precio_medio = mean(price_mean), .groups='keep') %>%
       ggplot() + 
@@ -128,20 +155,22 @@ shinyServer(function(input, output) {
   })
   
   output$preciosIPC_indice <- renderPlotly({
-    IPC %>%
+    p <- IPC %>%
       filter(`Tipo de dato` == 'Índice') %>%
       ggplot()+
       geom_line(aes(x=Periodo, y=Total, col=Clases), size=1)+
       geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
       geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
       geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
-      scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+      scale_x_date(date_breaks = '2 months',date_labels = "%b %Y")+
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
-      ggtitle('Índice IPC')
+      labs(x='Fecha', y='Índice', title='Índice')
+    
+    ggplotly(p) %>% layout(legend = list(orientation = "h", x = 0.4, y = -0.4))
   })
   
   output$preciosIPC_varanual <- renderPlotly({
-    IPC %>%
+    p <- IPC %>%
       filter(`Tipo de dato` == 'Variación anual') %>%
       ggplot()+
       geom_line(aes(x=Periodo, y=Total, col=Clases), size=1)+
@@ -149,9 +178,12 @@ shinyServer(function(input, output) {
       geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
       geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
       geom_hline(yintercept=0)+
-      scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+      scale_x_date(date_breaks = '2 months',date_labels = "%b %Y")+
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
-      ggtitle('Índice IPC')
+      labs(x='Fecha', y='Índice', title='Variación anual')
+    
+    ggplotly(p) %>% layout(legend = list(orientation = "h", x = 0.4, y = -0.4))
+    
   })
   
 })
