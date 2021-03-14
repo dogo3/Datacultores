@@ -10,9 +10,9 @@ andalucia <- readRDS("data/app/preciosAndalucia.rds")
 mercaMadrid <- readRDS("data/app/preciosMadrid.rds")
 mercaBarna <- readRDS("data/app/preciosBarna.rds")
 comercioExterior<-readRDS("data/app/ComercioExterior.rds")
-
 comExtTreemap <- readRDS("data/app/ComExtTreemap.rds")
 IPC <- readRDS("data/app/IPC.rds")
+COVID <-readRDS("data/app/COVID.rds")
 
 conversionPaises <- read.csv("./data/conversionPaises.csv",stringsAsFactors = FALSE)
 translateCountry <- function(country,from,to){
@@ -22,6 +22,7 @@ translateCountry <- function(country,from,to){
   }
   return(unlist(l))
 }
+UE <- c("AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK")
 
 
 shinyServer(function(input, output) {
@@ -64,7 +65,6 @@ shinyServer(function(input, output) {
   
   
   output$MAPA <- renderPlotly({
-    print(variableMAPA())
     df <- dfMAPAConsumo %>% filter(Producto %in% listaProductosMAPA()) 
     p<-ggplot(df,aes(x=Fecha, y=df[[variableMAPA()]],col=Producto))+
       geom_line( size=0.5)+
@@ -79,7 +79,6 @@ shinyServer(function(input, output) {
   })
   
   output$MAPAVitC <- renderPlotly({
-    print(variableMAPAVitC())
     df <- dfMAPAConsumo %>% filter(Producto %in% productosVitC) 
     g<-ggplot(df,aes(x=Fecha, y=df[[variableMAPAVitC()]],col=Producto))+
       geom_line( size=0.5)+
@@ -125,7 +124,6 @@ shinyServer(function(input, output) {
   
   comercioExteriorReact<- reactive({
     paises <- translateCountry(input$selPais_ComExt,from = "Comun",to="NombresComercioExterior")
-    print(paises)
     comercioExterior %>%
       filter(REPORTER %in% paises)%>%
       group_by(PERIOD) %>%
@@ -137,7 +135,6 @@ shinyServer(function(input, output) {
   
   output$lineComExtEur<- renderPlotly({
     validate(need(input$selPais_ComExt, ""))
-    print(comercioExteriorReact())
       ggplot(comercioExteriorReact())+
       geom_line(aes(x=PERIOD, y=`Exp(€)`), col='red')+
       geom_line(aes(x=PERIOD, y=`Imp(€)`), col='blue')+
@@ -231,9 +228,6 @@ shinyServer(function(input, output) {
   })
   
   output$preciosBarna <- renderPlotly({
-    
-    validate(need(input$selectBarna, ""))
-    
     mercaBarna %>% 
       filter(familia %in% input$selectBarna) %>%
       group_by(familia, Fecha) %>% 
@@ -277,7 +271,33 @@ shinyServer(function(input, output) {
       labs(x='Fecha', y='Índice', title='Variación anual')
     
     ggplotly(p) %>% layout(legend = list(orientation = "h", x = 0.4, y = -0.4))
-    
   })
+  
+  
+  
+  # COVID
+  
+  output$selPais_Covid <- renderUI({
+    selectizeInput('selPais_Covid', 'Selecciona países', 
+                   #choices = translateCountry(country=unique(COVID$geoId),from="ISO2",to="Comun"), 
+                   choices = unique(COVID$countriesAndTerritories),
+                   selected = unique(filter(COVID,countriesAndTerritories %in% translateCountry(UE,from="ISO2",to="NombresCOVID"))$countriesAndTerritories), 
+                   multiple = T, options = list(plugins= list('remove_button'),minItems=1))
+  })
+    
+  output$plotAgregadoCovid <- renderPlotly({
+    validate(need(input$selPais_Covid, "Cargando"))
+    print(head(COVID))
+    filter(COVID,countriesAndTerritories %in% input$selPais_Covid &
+           dateRep > '2020-03-01') %>%
+    group_by(dateRep) %>%
+    summarise(media = weighted.mean(x=`IA14`,w=`pop`, na.rm=T)) %>%
+    ggplot()+
+    geom_line(aes(x=dateRep, y=media))+
+    scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+    labs(x='Fecha', y='IA 14', title='Evolución IA Ponderada Países Seleccionados')
+  })
+  
   
 })

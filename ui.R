@@ -11,8 +11,8 @@ sidebar <- dashboardSidebar(
       id="sidebar",
       menuItem("Consumo", tabName = "consumo", icon = icon("shopping-cart")),
       menuItem("Precios", tabName = "precios", icon = icon("money-bill-alt")),
-      menuItem("Comercio Exterior", tabName = "comercioExterior", icon = icon("globe"))
-      
+      menuItem("Comercio Exterior", tabName = "comercioExterior", icon = icon("globe")),
+      menuItem("Impacto COVID", tabName = "impacto_covid", icon = icon("virus"))
     )
   )
 )
@@ -91,7 +91,25 @@ body <- dashboardBody(
                 width=6
               )
             )
-    )
+    ),
+    tabItem(tabName = "impacto_covid",
+            fluidRow(
+              box(
+                uiOutput("selPais_Covid"),
+                width=12
+              )
+            ),
+            fluidRow(
+              box(
+                plotlyOutput("plotAgregadoCovid"),
+                width=5
+              ),
+              box(
+                plotlyOutput("plotTC"),
+                width=7
+              )
+            )
+          )
     
   )
 )
