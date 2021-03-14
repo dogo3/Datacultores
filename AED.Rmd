@@ -775,10 +775,11 @@ UE <- c("AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "GR", 
 
 
 
-dfCovidEurMes <- group_by(dfCovid,month,geoId) %>% 
+dfCovidEurMes <- group_by(dfCovid,countriesAndTerritories,month,geoId,popData2019) %>% 
   filter(geoId %in% UE) %>%
   summarise(IAMeanMonth = mean(`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`, na.rm=T)) %>%
-  filter_all(all_vars(!is.nan(.)))
+  rename(pop=popData2019)%>%
+  dplyr::filter_all(all_vars(!is.nan(.)))
 
 dfTasaCobertura <- filter(dfComercioExterior,year(PERIOD) == 2020) %>%
   mutate(month=month(PERIOD)) %>%
@@ -790,6 +791,8 @@ dfTasaCobertura <- filter(dfComercioExterior,year(PERIOD) == 2020) %>%
   filter_all(all_vars(!is.na(.)))
 
 dfComExtCovid <- inner_join(dfCovidEurMes,dfTasaCobertura,by=c("geoId"="geoId","month"="month"))%>%dplyr::select(-REPORTER)
+# saveRDS(dfComExtCovid,"data/app/ComExtCovid.rds")
+
 # View(dfCovidEurMes)
 # View(dfTasaCobertura)
 # View(dfComExtCovid)
@@ -798,7 +801,6 @@ dfComExtCovid <- inner_join(dfCovidEurMes,dfTasaCobertura,by=c("geoId"="geoId","
 
 
 ```{r}
-#TODO comprobar que la TC está bien calculada
 g <- ggplot(dfComExtCovid,aes(x=TasaCobertura, y=IAMeanMonth)) +
   geom_point(aes(frame = month, label = geoId)) +
   geom_smooth(aes(group = month,frame=month), 
