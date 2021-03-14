@@ -557,7 +557,6 @@ dfMercaBarna <- read_delim("data/Dataset3b_Datos_MercaBarna.txt", "|", escape_do
 dfMercaBarna <- unite(dfMercaBarna, MONTH, YEAR, col='Fecha', sep='/',remove=F)
 dfMercaBarna$Fecha <- as.Date(as.yearmon(dfMercaBarna$Fecha, format='%m/%Y'))
 head(dfMercaBarna)
-View(dfMercaBarna)
 ```
 
 ```{r}
@@ -820,7 +819,7 @@ dfCovidCorr <- dfCovid %>%
   group_by(month) %>% 
   summarise(IA_14 = mean(IA_14)) %>%
   mutate(Fecha=diciembre2019+months(month)) %>%
-  select(-month)
+  dplyr::select(-month)
 # View(dfCovidCorr)
 ```
 ```{r}
