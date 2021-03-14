@@ -54,7 +54,7 @@ server <- function(input, output) {
   
   variableMAPA<-reactive({
     if(input$checkbox_diffMAPA){
-      return("Diff "+input$selVar_MAPA)
+      return(paste("Diff",input$selVar_MAPA))
     }else{
       return(input$selVar_MAPA)
     }
