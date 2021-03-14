@@ -851,6 +851,10 @@ res1 <- cor.mtest(dfCorr, conf.level = .95)
 
 corrplot(M, p.mat = res1$p, insig = "label_sig",
          sig.level = c(.001, .01, .05), pch.cex = .9, pch.col = "white")
+
+# View(dfCovid)
+# df<-dfCovid%>%dplyr::select(geoId,countriesAndTerritories,continentExp,dateRep,day,month,`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`,pop=`popData2019`)%>%rename(IA14=`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`)
+# saveRDS(df,"data/app/COVID.rds")
 ```
 
 
