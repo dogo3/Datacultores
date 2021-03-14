@@ -57,6 +57,16 @@ body <- dashboardBody(
                 plotOutput("treemapComExt"),
                 width=12
               )
+            ),
+            fluidRow(
+              box(
+                plotlyOutput("lineComExtEur"),
+                width=6
+              ),
+              box(
+                plotlyOutput("lineComExtTon"),
+                width=6
+              )
             )
     )
     

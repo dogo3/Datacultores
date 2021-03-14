@@ -126,7 +126,44 @@ shinyServer(function(input, output) {
     }
   })
   
+  # Lineplots comercio exterior
   
+  output$lineComExtEur<- renderPlotly({
+    print(head(comercioExterior))
+    p<-comercioExterior %>%
+      group_by(PERIOD) %>%
+      summarise('Exp(€)' = sum(VALUE_IN_EUROS_IMPORT, na.rm = T),
+                'Imp(€)' = sum(VALUE_IN_EUROS_EXPORT, na.rm = T)) %>%
+      ggplot()+
+      geom_line(aes(x=PERIOD, y=`Exp(€)`), col='red')+
+      geom_line(aes(x=PERIOD, y=`Imp(€)`), col='blue')+
+      geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+      geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+      geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+      theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+      scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
+      ylab("Euros")+
+      ggtitle('Evolución exportaciones e importaciones (euros)')
+    ggplotly(p)
+  })
+  
+  output$lineComExtTon<- renderPlotly({
+    p<-comercioExterior %>%
+      group_by(PERIOD) %>%
+      summarise('Exp(ton)' = sum(QUANTITY_IN_100KG_IMPORT, na.rm=T)/10,
+                'Imp(ton)' = sum(QUANTITY_IN_100KG_EXPORT, na.rm=T)/10) %>%
+      ggplot()+
+      geom_line(aes(x=PERIOD, y=`Exp(ton)`), col='red')+
+      geom_line(aes(x=PERIOD, y=`Imp(ton)`), col='blue')+
+      geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+      geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+      geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+      theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+      scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
+      ylab("Toneladas")+
+      ggtitle('Evolución exportaciones e importaciones (toneladas)')
+    ggplotly(p)
+  })
   
   
   ## TABPANEL PRECIOS
