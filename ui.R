@@ -9,9 +9,9 @@ sidebar <- dashboardSidebar(
   fixedPanel(
     sidebarMenu(
       id="sidebar",
-      menuItem("Principal", tabName = "principal", icon = icon("home")),
+      menuItem("Consumo", tabName = "consumo", icon = icon("shopping-cart")),
       menuItem("Precios", tabName = "precios", icon = icon("money-bill-alt")),
-      menuItem("Comercio Exterior", tabName = "comercioExterior", icon = icon("th"))
+      menuItem("Comercio Exterior", tabName = "comercioExterior", icon = icon("globe"))
       
     )
   )
@@ -21,7 +21,7 @@ body <- dashboardBody(
   # Boxes need to be put in a row (or column)
   tabItems(
     tabItem(
-      tabName = "principal",
+      tabName = "consumo",
       fluidRow(
         box(uiOutput("selProd_MAPA"),
             uiOutput("selVar_MAPA"),
