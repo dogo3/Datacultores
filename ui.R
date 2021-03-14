@@ -10,7 +10,7 @@ sidebar <- dashboardSidebar(
     sidebarMenu(
       id="sidebar",
       menuItem("Principal", tabName = "principal", icon = icon("home")),
-      menuItem("Precios", icon = icon("th"), tabName = "precios")
+      menuItem("Precios", tabName = "precios", icon = icon("th"))
       
     )
   )
@@ -37,8 +37,18 @@ body <- dashboardBody(
     ),
     
     tabItem(tabName = "precios",
-            h2("Widgets tab content")
+            h3("Precios de Andalucía"),
+            plotlyOutput('preciosAndalucia'),
+            h3("Precios MercaMadrid"),
+            plotlyOutput('preciosMadrid'),
+            h3("Precios Mercabarna"),
+            plotlyOutput('preciosBarna'),
+            h3("IPC"),
+            plotlyOutput('preciosIPC_indice'),
+            plotlyOutput('preciosIPC_varanual')
     )
   )
 )
+
+
 ui <- dashboardPage(header,sidebar,body)

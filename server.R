@@ -4,9 +4,9 @@ top5Productos<-c("PATATAS FRESCAS","NARANJAS","TOMATES","PLATANOS","MANZANAS")
 totalesMAPA <- c('T.HORTALIZAS FRESCAS', 'T.FRUTAS FRESCAS')
 productosVitC <- c("KIWI","NARANJAS","MANDARINAS","BROCOLI")
 dfMAPAConsumo <- readRDS("data/app/MAPAConsumo.rds")
-preciosAndalucia <- readRDS("data/app/preciosAndalucia.rds")
-preciosMadrid <- readRDS("data/app/preciosMadrid.rds")
-preciosBarna <- readRDS("data/app/preciosBarna.rds")
+andalucia <- readRDS("data/app/preciosAndalucia.rds")
+mercaMadrid <- readRDS("data/app/preciosMadrid.rds")
+mercaBarna <- readRDS("data/app/preciosBarna.rds")
 IPC <- readRDS("data/app/IPC.rds")
 
 
@@ -78,4 +78,80 @@ shinyServer(function(input, output) {
       ggtitle(variableMAPAVitC())+ theme(legend.position = "none")
     ggplotly(p)
   })
+  
+  
+  
+  
+  ## TABPANEL PRECIOS
+  
+  output$preciosAndalucia <- renderPlotly({
+    andalucia %>%
+      group_by(SUBSECTOR, INICIO) %>%
+      summarise(PRECIO_MEDIO = mean(PRECIO), .groups = 'keep') %>%
+      ggplot()+
+      geom_line(aes(x=INICIO, y=PRECIO_MEDIO, col=SUBSECTOR))+
+      geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+      geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+      geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+      theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+      scale_x_date(date_breaks = "2 months",date_labels = "%b %Y")+
+      scale_y_log10()+
+      labs(x='Fecha', y='Precio medio', title='Precio medio por subsectores')
+  })
+  
+  output$preciosMadrid <- renderPlotly({
+    mercaMadrid %>% 
+      group_by(familia, Fecha) %>% 
+      summarise(precio_medio = mean(price_mean), .groups='keep') %>%
+      ggplot() + 
+      geom_line(aes(x=Fecha, y=precio_medio, col=familia))+
+      geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+      geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+      geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+      theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+      scale_x_date(date_breaks = "2 months",date_labels = "%b %Y")+
+      labs(x='Fecha', y='Precio medio', title='Precio medio por familias')
+  })
+  
+  output$preciosBarna <- renderPlotly({
+    mercaBarna %>% 
+      group_by(familia, Fecha) %>% 
+      summarise(precio_medio = mean(price_mean), .groups='keep') %>%
+      ggplot() + 
+      geom_line(aes(x=Fecha, y=precio_medio, col=familia))+
+      geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+      geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+      geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+      theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+      scale_x_date(date_breaks = "2 months",date_labels = "%b %Y")+
+      labs(x='Fecha', y='Precio medio', title='Precio medio por familias')
+  })
+  
+  output$preciosIPC_indice <- renderPlotly({
+    IPC %>%
+      filter(`Tipo de dato` == 'Índice') %>%
+      ggplot()+
+      geom_line(aes(x=Periodo, y=Total, col=Clases), size=1)+
+      geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+      geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+      geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+      scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+      theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+      ggtitle('Índice IPC')
+  })
+  
+  output$preciosIPC_varanual <- renderPlotly({
+    IPC %>%
+      filter(`Tipo de dato` == 'Variación anual') %>%
+      ggplot()+
+      geom_line(aes(x=Periodo, y=Total, col=Clases), size=1)+
+      geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
+      geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
+      geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
+      geom_hline(yintercept=0)+
+      scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+      theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
+      ggtitle('Índice IPC')
+  })
+  
 })
