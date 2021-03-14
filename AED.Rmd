@@ -218,16 +218,16 @@ Vamos a ver ahora las diferencias mensuales de gasto en este top 5 de productos 
 
 ```{r}
 
-df<-dfMAPAConsumo_Total %>%
-  arrange(Producto,CCAA,Fecha) %>%
-  group_by(Producto,CCAA)%>%
-  mutate(`Diff Gasto per capita` =`Gasto per capita`-dplyr::lag(`Gasto per capita`),
-         `Diff Volumen (miles de kg)`= `Volumen (miles de kg)`-dplyr::lag(`Volumen (miles de kg)`),
-         `Diff Valor (miles de €)`=`Valor (miles de €)`-dplyr::lag(`Valor (miles de €)`),
-         `Diff Precio medio kg`=`Precio medio kg`-dplyr::lag(`Precio medio kg`),
-         `Diff Penetración (%)`=`Penetración (%)`-dplyr::lag(`Penetración (%)`),
-         `Diff Consumo per capita`=`Consumo per capita`-dplyr::lag(`Consumo per capita`))
-saveRDS(df,file="data/app/MAPAConsumo.rds")
+# df<-dfMAPAConsumo_Total %>%
+#   arrange(Producto,CCAA,Fecha) %>%
+#   group_by(Producto,CCAA)%>%
+#   mutate(`Diff Gasto per capita` =`Gasto per capita`-dplyr::lag(`Gasto per capita`),
+#          `Diff Volumen (miles de kg)`= `Volumen (miles de kg)`-dplyr::lag(`Volumen (miles de kg)`),
+#          `Diff Valor (miles de €)`=`Valor (miles de €)`-dplyr::lag(`Valor (miles de €)`),
+#          `Diff Precio medio kg`=`Precio medio kg`-dplyr::lag(`Precio medio kg`),
+#          `Diff Penetración (%)`=`Penetración (%)`-dplyr::lag(`Penetración (%)`),
+#          `Diff Consumo per capita`=`Consumo per capita`-dplyr::lag(`Consumo per capita`))
+# saveRDS(df,file="data/app/MAPAConsumo.rds")
 
 p<-dfMAPAConsumo_Total %>% 
   arrange(Producto,CCAA,Fecha) %>% 
@@ -509,6 +509,8 @@ p <- dfPreciosAndalucia %>%
   ggtitle('Precio medio por subsectores')
 
 ggplotly(p)
+
+
 ```
 
 Casi todos bajan después de la línea roja >:(
@@ -547,10 +549,11 @@ Estaba en descenso pero justo para marzo, empiezan a subir.
 #DATASET3B
 
 ```{r}
-dfMercaBarna <- read_delim("data/Dataset3b_Datos_MercaBarna.txt", "|", escape_double = FALSE, trim_ws = TRUE, locale = locale(decimal_mark = ","))
+dfMercaBarna <- read_delim("data/Dataset3b_Datos_MercaBarna.txt", "|", escape_double = FALSE, trim_ws = TRUE, locale = locale(decimal_mark = ",",encoding = "UTF-8"))
 dfMercaBarna <- unite(dfMercaBarna, MONTH, YEAR, col='Fecha', sep='/',remove=F)
 dfMercaBarna$Fecha <- as.Date(as.yearmon(dfMercaBarna$Fecha, format='%m/%Y'))
 head(dfMercaBarna)
+View(dfMercaBarna)
 ```
 
 ```{r}
@@ -757,7 +760,7 @@ dfCovidEurMes <- group_by(dfCovid,month,geoId) %>%
 dfTasaCobertura <- filter(dfComercioExterior,year(PERIOD) == 2020) %>%
   mutate(month=month(PERIOD)) %>%
   group_by(REPORTER,month) %>%
-  summarise(monthTotalImp = sum(VALUE_IN_EUROS_IMPORT,na.rm = T),monthTotalExp = sum(VALUE_IN_EUROS_EXPORT,na.rm = T)) %>%
+  summarise(monthTotalImp = sum(VALUE_IN_EUROS_EXPORT,na.rm = T),monthTotalExp = sum(VALUE_IN_EUROS_IMPORT,na.rm = T)) %>%
   mutate(TasaCobertura = monthTotalExp/monthTotalImp) %>%
   mutate(geoId=translateCountry(REPORTER,from="NombresComercioExterior",to="ISO2")) %>%
   dplyr::select(TasaCobertura,month,geoId) %>%
