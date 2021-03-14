@@ -10,6 +10,7 @@ andalucia <- readRDS("data/app/preciosAndalucia.rds")
 mercaMadrid <- readRDS("data/app/preciosMadrid.rds")
 mercaBarna <- readRDS("data/app/preciosBarna.rds")
 comercioExterior<-readRDS("data/app/ComercioExterior.rds")
+
 comExtTreemap <- readRDS("data/app/ComExtTreemap.rds")
 IPC <- readRDS("data/app/IPC.rds")
 
@@ -94,24 +95,24 @@ shinyServer(function(input, output) {
   
   #TREEMAP COMERCIO EXTERIOR
   
-  output$selAnyo_TreemapComExt<-renderUI({
-    selectizeInput("selAnyo_TreemapComExt","Años",choices=unique(comExtTreemap$YEAR),
+  output$selAnyo_ComExt<-renderUI({
+    selectizeInput("selAnyo_ComExt","Años",choices=unique(comExtTreemap$YEAR),
                    multiple=TRUE,selected=unique(comExtTreemap$YEAR),
                    options = list(plugins= list('remove_button')))
   })
   
-  output$selPais_TreemapComExt<-renderUI({
-    selectizeInput("selPais_TreemapComExt","Países",choices=unique(comExtTreemap$REPORTER_COMUN),
+  output$selPais_ComExt<-renderUI({
+    selectizeInput("selPais_ComExt","Países",choices=unique(comExtTreemap$REPORTER_COMUN),
                    #Por defecto ponemos los países con los que más operaciones hay
                    multiple=TRUE,selected=c("Alemania","Francia","Países Bajos","Italia","Portugal","Polonia","Bélgica","Grecia"),
                    options = list(plugins= list('remove_button'),minItems=1))
   })
   
   output$treemapComExt <- renderPlot({
-    if(is.null(input$selAnyo_TreemapComExt) | is.null(input$selPais_TreemapComExt)){
+    if(is.null(input$selAnyo_ComExt) | is.null(input$selPais_ComExt)){
       " "
     }else{
-    comExtTreemap %>% filter(YEAR %in% input$selAnyo_TreemapComExt & REPORTER_COMUN %in% input$selPais_TreemapComExt)%>%
+    comExtTreemap %>% filter(YEAR %in% input$selAnyo_ComExt & REPORTER_COMUN %in% input$selPais_ComExt)%>%
       ggplot(aes(area = value, fill=REPORTER_COMUN, label = REPORTER_COMUN)) +
       geom_treemap(colour="black") +
       facet_grid(vars(rows=YEAR),vars(cols=Movimiento)) + 
@@ -122,14 +123,22 @@ shinyServer(function(input, output) {
   
   # Lineplots comercio exterior
   
-  output$lineComExtEur<- renderPlotly({
-    validate(need(input$selPais_TreemapComExt, ""))
-    p<-comercioExterior %>%
-      filter(translateCountry(country=REPORTER,from = "NombresComercioExterior",to="Comun") %in% input$selPais_TreemapComExt)%>%
+  comercioExteriorReact<- reactive({
+    paises <- translateCountry(input$selPais_ComExt,from = "Comun",to="NombresComercioExterior")
+    print(paises)
+    comercioExterior %>%
+      filter(REPORTER %in% paises)%>%
       group_by(PERIOD) %>%
       summarise('Exp(€)' = sum(VALUE_IN_EUROS_IMPORT, na.rm = T),
-                'Imp(€)' = sum(VALUE_IN_EUROS_EXPORT, na.rm = T)) %>%
-      ggplot()+
+                'Imp(€)' = sum(VALUE_IN_EUROS_EXPORT, na.rm = T),
+                'Exp(ton)' = sum(QUANTITY_IN_100KG_IMPORT, na.rm=T)/10,
+                'Imp(ton)' = sum(QUANTITY_IN_100KG_EXPORT, na.rm=T)/10)
+  })
+  
+  output$lineComExtEur<- renderPlotly({
+    validate(need(input$selPais_ComExt, ""))
+    print(comercioExteriorReact())
+      ggplot(comercioExteriorReact())+
       geom_line(aes(x=PERIOD, y=`Exp(€)`), col='red')+
       geom_line(aes(x=PERIOD, y=`Imp(€)`), col='blue')+
       geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
@@ -139,16 +148,11 @@ shinyServer(function(input, output) {
       scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
       ylab("Euros")+
       ggtitle('Evolución exportaciones e importaciones (euros)')
-    ggplotly(p)
   })
   
   output$lineComExtTon<- renderPlotly({
-    validate(need(input$selPais_TreemapComExt, ""))
-    p<-comercioExterior %>%
-      filter(translateCountry(country=REPORTER,from = "NombresComercioExterior",to="Comun") %in% input$selPais_TreemapComExt)%>%
-      group_by(PERIOD) %>%
-      summarise('Exp(ton)' = sum(QUANTITY_IN_100KG_IMPORT, na.rm=T)/10,
-                'Imp(ton)' = sum(QUANTITY_IN_100KG_EXPORT, na.rm=T)/10) %>%
+    validate(need(input$selPais_ComExt, ""))
+    p<-comercioExteriorReact() %>%
       ggplot()+
       geom_line(aes(x=PERIOD, y=`Exp(ton)`), col='red')+
       geom_line(aes(x=PERIOD, y=`Imp(ton)`), col='blue')+

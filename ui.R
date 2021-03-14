@@ -75,8 +75,8 @@ body <- dashboardBody(
     tabItem(tabName = "comercioExterior",
             fluidRow(
               box(
-                uiOutput("selAnyo_TreemapComExt"),
-                uiOutput("selPais_TreemapComExt"),
+                uiOutput("selAnyo_ComExt"),
+                uiOutput("selPais_ComExt"),
                 plotOutput("treemapComExt"),
                 width=12
               )
