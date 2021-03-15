@@ -18,6 +18,9 @@ sidebar <- dashboardSidebar(
 )
 
 body <- dashboardBody(
+  
+  use_waiter(),
+  
   tags$script(HTML("$('body').addClass('fixed');")),
   
   tags$head(
