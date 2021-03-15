@@ -21,18 +21,6 @@ ComExtCovid <- readRDS("data/app/ComExtCovid.rds")
 vitaminaC <- readRDS('data/app/vitaminaCGoogle.rds')
 
 
-# textoConsumo_1<-readLines('txt/Consumo_1.txt', encoding = 'UTF-8')
-# textoConsumo_2_1<-readLines('txt/Consumo_2_1.txt', encoding = 'UTF-8')
-# textoConsumo_2_2<-readLines('txt/Consumo_2_2.txt', encoding = 'UTF-8')
-# textoConsumo_2_2<-readLines('txt/Consumo_2_2.txt', encoding = 'UTF-8')
-# textoprecios_andalucia<-readLines('txt/andalucia.txt', encoding = 'UTF-8')
-# textoprecios_barna<-readLines('txt/barna.txt', encoding = 'UTF-8')
-# textoprecios_madrid<-readLines('txt/madrid.txt', encoding = 'UTF-8')
-# textoprecios_ipc_1<-readLines('txt/ipc_1.txt', encoding = 'UTF-8')
-# textoprecios_ipc<-readLines('txt/ipc.txt', encoding = 'UTF-8')
-# textocomercio_exterior<-readLines('txt/ComercioExterior.txt', encoding = 'UTF-8')
-
-
 conversionPaises <- read.csv("./data/conversionPaises.csv",stringsAsFactors = FALSE)
 translateCountry <- function(country,from,to){
   l<-list(c())
@@ -48,7 +36,7 @@ shinyServer(function(input, output) {
   
   # w <- Waiter$new(html = loading_screen, color = "white")
   # w$show()
-  Sys.sleep(2.5) 
+  # Sys.sleep(2.5) 
   waiter_hide()
   
   
