@@ -38,19 +38,12 @@ translateCountry <- function(country,from,to){
 UE <- c("AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK")
 
 
-gif <- paste0("https://i.pinimg.com/originals/17/04/1b/17041b6908ddd354c369b7bcb095823a.gif")
-
-loading_screen <- tagList(
-  h3("Datacultores", style = "color:gray;"),
-  img(src = gif, height = "300px")
-)
-
 shinyServer(function(input, output) {
   
-  w <- Waiter$new(html = loading_screen, color = "white")
-  w$show()
+  # w <- Waiter$new(html = loading_screen, color = "white")
+  # w$show()
   Sys.sleep(4) 
-  w$hide()
+  waiter_hide()
   
   
   output$selProd_MAPA<-renderUI({
