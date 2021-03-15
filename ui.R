@@ -5,7 +5,7 @@ library(plotly)
 library(waiter)
 
 gif <- paste0("https://i.pinimg.com/originals/17/04/1b/17041b6908ddd354c369b7bcb095823a.gif")
-gif <- paste('www/agri.gif')
+gif <- paste0('./www/agri.gif')
 loading_screen <- tagList(
   h2("Datacultores", style = "color:gray;"),
   img(src = gif, height = "300px"), 
@@ -140,6 +140,12 @@ body <- dashboardBody(
               box(
                 plotlyOutput("plotTC"),
                 width=7
+              )
+            ),
+            fluidRow(
+              box(
+                plotlyOutput("plotCovidPaises"),
+                width=12
               )
             )
           )

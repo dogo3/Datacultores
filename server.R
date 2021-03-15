@@ -42,7 +42,7 @@ shinyServer(function(input, output) {
   
   # w <- Waiter$new(html = loading_screen, color = "white")
   # w$show()
-  Sys.sleep(4) 
+  # Sys.sleep(4) 
   waiter_hide()
   
   
@@ -330,6 +330,7 @@ shinyServer(function(input, output) {
   
   
   output$plotTC <- renderPlotly({
+    validate(need(input$selPais_Covid, "Cargando"))
     g <- ggplot( filter(ComExtCovid,`countriesAndTerritories` %in% input$selPais_Covid)
                  ,aes(x=TasaCobertura, y=IAMeanMonth)) +
       geom_point(aes(frame = month, label = geoId)) +
@@ -342,6 +343,19 @@ shinyServer(function(input, output) {
       animation_opts(frame = 200,
                      easing = "linear",
                      redraw = FALSE)
+  })
+  
+  output$plotCovidPaises <- renderPlotly({
+    validate(need(input$selPais_Covid, "Cargando"))
+    
+    filter(COVID,countriesAndTerritories %in% input$selPais_Covid &
+             dateRep > '2020-03-01') %>%
+    
+      ggplot()+
+      geom_line(aes(x=dateRep, y=IA14, col=countriesAndTerritories))+
+      scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
+      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+      labs(x='Fecha', y='IA 14', title='Evolución IA Países Seleccionados')
   })
   
   
