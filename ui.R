@@ -52,7 +52,7 @@ body <- dashboardBody(
             fluidRow(
               box(
                 h3('Casos excepcionales'),
-                includeMarkdown('txt/Consumo_2_1.txt'),
+                includeMarkdown('txt/Consumo_2_1.md'),
                 plotlyOutput('vitaminas'),
                 p('Siendo 100 la máxima popularidad que puede tener una búsqueda, vemos como se alcanzó en marzo de 2020.'),
                 uiOutput("selVar_MAPAVitC"),
@@ -69,7 +69,6 @@ body <- dashboardBody(
                 h3("Precios de Andalucía"),
                 uiOutput('selectAndalucia'),
                 plotlyOutput('preciosAndalucia'),
-                #uiOutput('precios_andalucia'),
                 width=12
               ),
               box(
@@ -108,12 +107,12 @@ body <- dashboardBody(
             fluidRow(
               box(
                 h3('Índice de precios al consumo'),
-                uiOutput('precios_ipc_1'),
+                includeMarkdown('txt/ipc_1.md'),
                 width=12
                 ),
               box(plotlyOutput('preciosIPC_indice'), width=6),
               box(plotlyOutput('preciosIPC_varanual'), width=6),
-              box(includeMarkdown('txt/ipc,md'), width=12)
+              box(includeMarkdown('txt/ipc.md'), width=12)
             )
     ),
     

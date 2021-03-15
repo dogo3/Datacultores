@@ -20,20 +20,19 @@ COVID <-readRDS("data/app/COVID.rds")
 ComExtCovid <- readRDS("data/app/ComExtCovid.rds")
 vitaminaC <- readRDS('data/app/vitaminaCGoogle.rds')
 
-<<<<<<< HEAD
-textoConsumo_1<-readLines('txt/Consumo_1.txt', encoding = 'UTF-8')
-textoConsumo_2_1<-readLines('txt/Consumo_2_1.txt', encoding = 'UTF-8')
-textoConsumo_2_2<-readLines('txt/Consumo_2_2.txt', encoding = 'UTF-8')
-textoConsumo_2_2<-readLines('txt/Consumo_2_2.txt', encoding = 'UTF-8')
-textoprecios_andalucia<-readLines('txt/andalucia.txt', encoding = 'UTF-8')
-textoprecios_barna<-readLines('txt/barna.txt', encoding = 'UTF-8')
-textoprecios_madrid<-readLines('txt/madrid.txt', encoding = 'UTF-8')
-textoprecios_ipc_1<-readLines('txt/ipc_1.txt', encoding = 'UTF-8')
-textoprecios_ipc<-readLines('txt/ipc.txt', encoding = 'UTF-8')
-textocomercio_exterior<-readLines('txt/ComercioExterior.txt', encoding = 'UTF-8')
 
-=======
->>>>>>> 2586ba7a00ba4a6393d5ee518993ac5307f76fcc
+# textoConsumo_1<-readLines('txt/Consumo_1.txt', encoding = 'UTF-8')
+# textoConsumo_2_1<-readLines('txt/Consumo_2_1.txt', encoding = 'UTF-8')
+# textoConsumo_2_2<-readLines('txt/Consumo_2_2.txt', encoding = 'UTF-8')
+# textoConsumo_2_2<-readLines('txt/Consumo_2_2.txt', encoding = 'UTF-8')
+# textoprecios_andalucia<-readLines('txt/andalucia.txt', encoding = 'UTF-8')
+# textoprecios_barna<-readLines('txt/barna.txt', encoding = 'UTF-8')
+# textoprecios_madrid<-readLines('txt/madrid.txt', encoding = 'UTF-8')
+# textoprecios_ipc_1<-readLines('txt/ipc_1.txt', encoding = 'UTF-8')
+# textoprecios_ipc<-readLines('txt/ipc.txt', encoding = 'UTF-8')
+# textocomercio_exterior<-readLines('txt/ComercioExterior.txt', encoding = 'UTF-8')
+
+
 conversionPaises <- read.csv("./data/conversionPaises.csv",stringsAsFactors = FALSE)
 translateCountry <- function(country,from,to){
   l<-list(c())
@@ -49,11 +48,7 @@ shinyServer(function(input, output) {
   
   # w <- Waiter$new(html = loading_screen, color = "white")
   # w$show()
-<<<<<<< HEAD
   Sys.sleep(2.5) 
-=======
-  # Sys.sleep(4) 
->>>>>>> 2586ba7a00ba4a6393d5ee518993ac5307f76fcc
   waiter_hide()
   
   
@@ -369,20 +364,6 @@ shinyServer(function(input, output) {
       labs(x='Fecha', y='IA 14', title='Evolución IA Países Seleccionados')
   })
   
-  
-  #EXPLICACIONES
-  # output$consumo_1 <- renderText({
-  #   splitText <- stringi::stri_split(str = textoConsumo_1, regex = '\\n')
-  #   replacedText <- lapply(splitText, p)
-  #   return(textoConsumo_1)
-  # })
-  
-  output$consumo_2_1 <- renderUI({
-    splitText <- stringi::stri_split(str = textoConsumo_2_1, regex = '\\n')
-    replacedText <- lapply(splitText, p)
-    return(replacedText)
-  })
-  
   output$vitaminas <- renderPlotly({
     p <- ggplot(vitaminaC) +
       geom_line(aes(x=Semana, y=Valor), col='goldenrod', size=1)+
@@ -403,51 +384,4 @@ shinyServer(function(input, output) {
     )
       
   })
-<<<<<<< HEAD
-  
-  output$consumo_2_2 <- renderUI({
-    splitText <- stringi::stri_split(str = textoConsumo_2_2, regex = '\\n')
-    replacedText <- lapply(splitText, p)
-    return(replacedText)
-  })
-  
-  output$precios_andalucia <- renderUI({
-    splitText <- stringi::stri_split(str = textoprecios_andalucia, regex = '\\n')
-    replacedText <- lapply(splitText, p)
-    return(replacedText)
-  })
-  
-  output$precios_barna <- renderUI({
-    splitText <- stringi::stri_split(str = textoprecios_barna, regex = '\\n')
-    replacedText <- lapply(splitText, p)
-    return(replacedText)
-  })
-  
-  output$precios_madrid <- renderUI({
-    splitText <- stringi::stri_split(str = textoprecios_madrid, regex = '\\n')
-    replacedText <- lapply(splitText, p)
-    return(replacedText)
-  })
-  
-  output$precios_ipc_1 <- renderUI({
-    splitText <- stringi::stri_split(str = textoprecios_ipc_1, regex = '\\n')
-    replacedText <- lapply(splitText, p)
-    return(replacedText)
-  })
-  
-  output$precios_ipc <- renderUI({
-    splitText <- stringi::stri_split(str = textoprecios_ipc, regex = '\\n')
-    replacedText <- lapply(splitText, p)
-    return(replacedText)
-  })
-  
-  output$comercio_exterior <- renderUI({
-    splitText <- stringi::stri_split(str = textocomercio_exterior, regex = '\\n')
-    replacedText <- lapply(splitText, p)
-    return(replacedText)
-  })
-
 })
-=======
-  })
->>>>>>> 2586ba7a00ba4a6393d5ee518993ac5307f76fcc
