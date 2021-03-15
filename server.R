@@ -345,7 +345,7 @@ shinyServer(function(input, output) {
     filter(COVID,country_comun %in% input$selPais_Covid &
              dateRep > '2020-03-01') %>%
       ggplot()+
-      geom_line(aes(x=dateRep, y=IA14, col=countriesAndTerritories))+
+      geom_line(aes(x=dateRep, y=IA14, col=country_comun))+
       scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
       theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
       labs(x='Fecha', y='IA 14', title='Evolución IA Países Seleccionados')
