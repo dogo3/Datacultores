@@ -5,10 +5,11 @@ library(plotly)
 library(waiter)
 
 gif <- paste0("https://i.pinimg.com/originals/17/04/1b/17041b6908ddd354c369b7bcb095823a.gif")
+gif <- "agriT.gif"
 loading_screen <- tagList(
   h2("Datacultores", style = "color:gray;"),
   img(src = gif, height = "300px"), 
-  h4('Labrando los datasets...', style="color:gray;")
+  #h4('Labrando los datasets...', style="color:gray;")
 )
 
 header <- dashboardHeader(title = "UniversityHack 2021",disable=FALSE)
