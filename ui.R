@@ -8,12 +8,8 @@ gif <- paste0("https://i.pinimg.com/originals/17/04/1b/17041b6908ddd354c369b7bcb
 gif <- "agriT.gif"
 loading_screen <- tagList(
   h2("Datacultores", style = "color:black;"),
-  img(src = gif, height = "300px"), 
-<<<<<<< HEAD
-  h4('Labrando los datasets...', style="color:black;")
-=======
-  #h4('Labrando los datasets...', style="color:gray;")
->>>>>>> 4d3f93db492f17f5964522184a6cb71cd5cfba6d
+  img(src = gif, height = "300px")
+  #h4('Labrando los datasets...', style="color:black;")
 )
 
 header <- dashboardHeader(title = "UniversityHack 2021",disable=FALSE)
