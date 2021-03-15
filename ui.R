@@ -2,6 +2,7 @@
 library(shinydashboard)
 library(shiny)
 library(plotly)
+library(waiter)
 
 header <- dashboardHeader(title = "UniversityHack 2021",disable=FALSE)
 
