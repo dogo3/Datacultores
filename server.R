@@ -14,6 +14,7 @@ comercioExterior<-readRDS("data/app/ComercioExterior.rds")
 comExtTreemap <- readRDS("data/app/ComExtTreemap.rds")
 IPC <- readRDS("data/app/IPC.rds")
 COVID <-readRDS("data/app/COVID.rds")
+ComExtCovid <- readRDS("data/app/ComExtCovid.rds")
 vitaminaC <- readRDS('data/app/vitaminaCGoogle.rds')
 
 textoConsumo_1<-readLines('txt/Consumo_1.txt', encoding = 'UTF-8')
@@ -332,6 +333,22 @@ shinyServer(function(input, output) {
     scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
     labs(x='Fecha', y='IA 14', title='Evolución IA Ponderada Países Seleccionados')
+  })
+  
+  
+  output$plotTC <- renderPlotly({
+    g <- ggplot( filter(ComExtCovid,`countriesAndTerritories` %in% input$selPais_Covid)
+                 ,aes(x=TasaCobertura, y=IAMeanMonth)) +
+      geom_point(aes(frame = month, label = geoId)) +
+      geom_smooth(aes(group = month,frame=month), 
+                  method = "lm", 
+                  show.legend = FALSE) +
+      scale_x_log10()  # convert to log scale
+    
+    ggplotly(g) %>%
+      animation_opts(frame = 200,
+                     easing = "linear",
+                     redraw = FALSE)
   })
   
   
