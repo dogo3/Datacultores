@@ -18,6 +18,7 @@ comExtTreemap <- readRDS("data/app/ComExtTreemap.rds")
 IPC <- readRDS("data/app/IPC.rds")
 COVID <-readRDS("data/app/COVID.rds")
 ComExtCovid <- readRDS("data/app/ComExtCovid.rds")
+# ComExtEspCovid
 vitaminaC <- readRDS('data/app/vitaminaCGoogle.rds')
 
 
@@ -29,7 +30,7 @@ translateCountry <- function(country,from,to){
   }
   return(unlist(l))
 }
-UE <- c("AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK")
+UE <- c("AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK","UK")
 
 
 shinyServer(function(input, output) {
@@ -301,17 +302,17 @@ shinyServer(function(input, output) {
   # COVID
   
   output$selPais_Covid <- renderUI({
+    print(unique(COVID$country_comun))
     selectizeInput('selPais_Covid', 'Selecciona países', 
-                   #choices = translateCountry(country=unique(COVID$geoId),from="ISO2",to="Comun"), 
-                   choices = unique(COVID$countriesAndTerritories),
-                   selected = unique(filter(COVID,countriesAndTerritories %in% translateCountry(UE,from="ISO2",to="NombresCOVID"))$countriesAndTerritories), 
+                   choices = unique(COVID$country_comun),
+                   selected = unique(filter(COVID,country_comun %in% translateCountry(UE,from="ISO2",to="Comun"))$country_comun), 
                    multiple = T, options = list(plugins= list('remove_button'),minItems=1))
   })
     
   output$plotAgregadoCovid <- renderPlotly({
     validate(need(input$selPais_Covid, "Cargando"))
-
-    filter(COVID,countriesAndTerritories %in% input$selPais_Covid &
+    
+    filter(COVID,country_comun %in% input$selPais_Covid &
            dateRep > '2020-03-01') %>%
     group_by(dateRep) %>%
     summarise(media = weighted.mean(x=`IA14`,w=`pop`, na.rm=T)) %>%
@@ -325,7 +326,7 @@ shinyServer(function(input, output) {
   
   output$plotTC <- renderPlotly({
     validate(need(input$selPais_Covid, "Cargando"))
-    g <- ggplot( filter(ComExtCovid,`countriesAndTerritories` %in% input$selPais_Covid)
+    g <- ggplot( filter(ComExtCovid,country_comun %in% input$selPais_Covid)
                  ,aes(x=TasaCobertura, y=IAMeanMonth)) +
       geom_point(aes(frame = month, label = geoId)) +
       geom_smooth(aes(group = month,frame=month), 
@@ -341,16 +342,16 @@ shinyServer(function(input, output) {
   
   output$plotCovidPaises <- renderPlotly({
     validate(need(input$selPais_Covid, "Cargando"))
-    
-    filter(COVID,countriesAndTerritories %in% input$selPais_Covid &
+    filter(COVID,country_comun %in% input$selPais_Covid &
              dateRep > '2020-03-01') %>%
-    
       ggplot()+
       geom_line(aes(x=dateRep, y=IA14, col=countriesAndTerritories))+
       scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
       theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
       labs(x='Fecha', y='IA 14', title='Evolución IA Países Seleccionados')
   })
+  
+  # Vitamina C
   
   output$vitaminas <- renderPlotly({
     p <- ggplot(vitaminaC) +

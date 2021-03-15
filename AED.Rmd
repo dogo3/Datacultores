@@ -80,38 +80,6 @@ dfMAPAConsumo$Fecha <- as.Date(as.yearmon(dfMAPAConsumo$Fecha, format='%m/%Y'))
 str(dfMAPAConsumo_Total)
 ```
 
-
-Calculo diferencias mensuales
-```{r}
-
-#Simplifico el df
-# dfMAPAConsumo_S<-dfMAPAConsumo %>%dplyr::select(Producto,CCAA,Fecha,`Volumen (miles de kg)`) %>% filter(Producto %in% c("AGUACATE","AJOS"), CCAA=="Total Nacional")
-# 
-# 
-# # dfMAPAConsumo_Gr<-dfMAPAConsumo_S %>% group_by(Producto,CCAA,Fecha) %>% summarise(`Lagged Volumen (miles de kg)`=dplyr::lag(`Volumen (miles de kg)`),`Volumen (miles de kg)`=`Volumen (miles de kg)`)
-# 
-# dfMAPAConsumo_Gr<-dfMAPAConsumo_S %>%arrange(Producto,CCAA,Fecha)%>% group_by(Producto,CCAA)%>%mutate(`Diff Volumen (miles de kg)` =`Volumen (miles de kg)`-dplyr::lag(`Volumen (miles de kg)`))
-#   
-# 
-# # View(dfMAPAConsumo_Gr)
-# 
-# p <- dfMAPAConsumo_Gr%>%
-#   ggplot()+
-#   geom_line(aes(x=Fecha, y=`Diff Volumen (miles de kg)`,col=Producto), size=1)+
-#   geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
-#   geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
-#   geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=3, col='red')+
-#   scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
-#   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
-#   ggtitle('Precio medio - 5 productos con más volumen')+ theme(legend.position = "none")
-# 
-# ggplotly(p)
-```
-
-
-
-
-
 Tenemos 51 tipos de productos. Ahora podemos ver la evolución.
 
 ```{r}
@@ -771,9 +739,9 @@ Usar incidencia acumulada.
 
 Vamos a intentar ver la relación entre la IA de la covid y la tasa de cobertura en exportaciones/importaciones.
 ```{r}
-UE <- c("AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK")
-
-
+UE <- c("AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK","UK")
+UE_COVID <- c("AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "EL", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK","UK")
+View(dfCovid)
 
 dfCovidEurMes <- group_by(dfCovid,countriesAndTerritories,month,geoId,popData2019) %>% 
   filter(geoId %in% UE) %>%
@@ -790,12 +758,37 @@ dfTasaCobertura <- filter(dfComercioExterior,year(PERIOD) == 2020) %>%
   dplyr::select(TasaCobertura,month,geoId) %>%
   filter_all(all_vars(!is.na(.)))
 
-dfComExtCovid <- inner_join(dfCovidEurMes,dfTasaCobertura,by=c("geoId"="geoId","month"="month"))%>%dplyr::select(-REPORTER)
-# saveRDS(dfComExtCovid,"data/app/ComExtCovid.rds")
+dfComExtCovid <- inner_join(dfCovidEurMes,dfTasaCobertura,by=c("geoId"="geoId","month"="month"))%>%dplyr::select(-REPORTER)%>%
+  mutate(country_comun=translateCountry(geoId,from="ISO2",to="Comun"))
+saveRDS(dfComExtCovid,"data/app/ComExtCovid.rds")
+```
 
-# View(dfCovidEurMes)
-# View(dfTasaCobertura)
-# View(dfComExtCovid)
+```{r}
+ComExtEspMes<-dfComercioExterior %>%
+  mutate(YEAR=factor(year(PERIOD)),MONTH=month(PERIOD)) %>%
+  arrange(YEAR) %>%
+  group_by(YEAR,MONTH) %>%
+  summarise(`ExpEur` = sum(`VALUE_IN_EUROS_IMPORT`, na.rm = T),
+            `ImpEur` = sum(`VALUE_IN_EUROS_EXPORT`, na.rm = T),
+            `ExpTon` = sum(`QUANTITY_IN_100KG_IMPORT`, na.rm = T)/10,
+            `ImpTon` = sum(`QUANTITY_IN_100KG_EXPORT`, na.rm = T)/10) %>%
+  group_by(MONTH)%>%
+  mutate(`DiffExpEuros`=`ExpEur`-dplyr::lag(`ExpEur`),
+         `DiffImpEuros`=`ImpEur`-dplyr::lag(`ImpEur`),
+         `DiffExpTon`=`ExpTon`-dplyr::lag(`ExpTon`),
+         `DiffImpTon`=`ImpTon`-dplyr::lag(`ImpTon`)
+  )%>%filter(YEAR==2020 & MONTH>=2 & MONTH<=11)
+ComExtEspMes
+
+
+dfCovidEspMes <- group_by(dfCovid,month,geoId) %>% 
+  filter(geoId == "ES") %>%
+  summarise(IAMeanMonth = mean(`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`, na.rm=T)) %>%
+  dplyr::filter_all(all_vars(!is.nan(.)))
+
+dfComExtCovidEsp <- dplyr::inner_join(ComExtEspMes,dfCovidEspMes,by=c("MONTH"="month"))
+
+ggplotly(ggplot(dfComExtCovidEsp,aes(x=IAMeanMonth,y=DiffImpTon))+geom_point()+geom_smooth(method="lm"))
 ```
 
 
@@ -855,8 +848,9 @@ corrplot(M, p.mat = res1$p, insig = "label_sig",
          sig.level = c(.001, .01, .05), pch.cex = .9, pch.col = "white")
 
 # View(dfCovid)
-# df<-dfCovid%>%dplyr::select(geoId,countriesAndTerritories,continentExp,dateRep,day,month,`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`,pop=`popData2019`)%>%rename(IA14=`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`)
+# df<-dfCovid%>%dplyr::select(geoId,countriesAndTerritories,continentExp,dateRep,day,month,`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`,pop=`popData2019`)%>%rename(IA14=`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`)%>%filter(geoId %in% UE_COVID)%>%mutate(`country_comun`=translateCountry(countriesAndTerritories,from="NombresCOVID",to="Comun"))
 # saveRDS(df,"data/app/COVID.rds")
+# View(df)
 ```
 
 

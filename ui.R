@@ -21,7 +21,8 @@ sidebar <- dashboardSidebar(
       menuItem("Consumo", tabName = "consumo", icon = icon("shopping-cart")),
       menuItem("Precios", tabName = "precios", icon = icon("money-bill-alt")),
       menuItem("Comercio Exterior", tabName = "comercioExterior", icon = icon("globe")),
-      menuItem("Impacto COVID", tabName = "impacto_covid", icon = icon("virus"))
+      menuItem("Impacto COVID", tabName = "impacto_covid", icon = icon("virus")),
+      menuItem("Conclusiones", tabName = "conclusiones", icon = icon("list-ul"))
     )
   )
 )
