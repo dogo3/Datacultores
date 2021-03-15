@@ -20,6 +20,7 @@ COVID <-readRDS("data/app/COVID.rds")
 ComExtCovid <- readRDS("data/app/ComExtCovid.rds")
 vitaminaC <- readRDS('data/app/vitaminaCGoogle.rds')
 
+<<<<<<< HEAD
 textoConsumo_1<-readLines('txt/Consumo_1.txt', encoding = 'UTF-8')
 textoConsumo_2_1<-readLines('txt/Consumo_2_1.txt', encoding = 'UTF-8')
 textoConsumo_2_2<-readLines('txt/Consumo_2_2.txt', encoding = 'UTF-8')
@@ -31,6 +32,8 @@ textoprecios_ipc_1<-readLines('txt/ipc_1.txt', encoding = 'UTF-8')
 textoprecios_ipc<-readLines('txt/ipc.txt', encoding = 'UTF-8')
 textocomercio_exterior<-readLines('txt/ComercioExterior.txt', encoding = 'UTF-8')
 
+=======
+>>>>>>> 2586ba7a00ba4a6393d5ee518993ac5307f76fcc
 conversionPaises <- read.csv("./data/conversionPaises.csv",stringsAsFactors = FALSE)
 translateCountry <- function(country,from,to){
   l<-list(c())
@@ -46,7 +49,11 @@ shinyServer(function(input, output) {
   
   # w <- Waiter$new(html = loading_screen, color = "white")
   # w$show()
+<<<<<<< HEAD
   Sys.sleep(2.5) 
+=======
+  # Sys.sleep(4) 
+>>>>>>> 2586ba7a00ba4a6393d5ee518993ac5307f76fcc
   waiter_hide()
   
   
@@ -334,6 +341,7 @@ shinyServer(function(input, output) {
   
   
   output$plotTC <- renderPlotly({
+    validate(need(input$selPais_Covid, "Cargando"))
     g <- ggplot( filter(ComExtCovid,`countriesAndTerritories` %in% input$selPais_Covid)
                  ,aes(x=TasaCobertura, y=IAMeanMonth)) +
       geom_point(aes(frame = month, label = geoId)) +
@@ -348,13 +356,26 @@ shinyServer(function(input, output) {
                      redraw = FALSE)
   })
   
+  output$plotCovidPaises <- renderPlotly({
+    validate(need(input$selPais_Covid, "Cargando"))
+    
+    filter(COVID,countriesAndTerritories %in% input$selPais_Covid &
+             dateRep > '2020-03-01') %>%
+    
+      ggplot()+
+      geom_line(aes(x=dateRep, y=IA14, col=countriesAndTerritories))+
+      scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
+      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+      labs(x='Fecha', y='IA 14', title='Evolución IA Países Seleccionados')
+  })
+  
   
   #EXPLICACIONES
-  output$consumo_1 <- renderUI({
-    splitText <- stringi::stri_split(str = textoConsumo_1, regex = '\\n')
-    replacedText <- lapply(splitText, p)
-    return(replacedText)
-  })
+  # output$consumo_1 <- renderText({
+  #   splitText <- stringi::stri_split(str = textoConsumo_1, regex = '\\n')
+  #   replacedText <- lapply(splitText, p)
+  #   return(textoConsumo_1)
+  # })
   
   output$consumo_2_1 <- renderUI({
     splitText <- stringi::stri_split(str = textoConsumo_2_1, regex = '\\n')
@@ -382,6 +403,7 @@ shinyServer(function(input, output) {
     )
       
   })
+<<<<<<< HEAD
   
   output$consumo_2_2 <- renderUI({
     splitText <- stringi::stri_split(str = textoConsumo_2_2, regex = '\\n')
@@ -426,3 +448,6 @@ shinyServer(function(input, output) {
   })
 
 })
+=======
+  })
+>>>>>>> 2586ba7a00ba4a6393d5ee518993ac5307f76fcc
