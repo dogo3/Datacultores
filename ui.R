@@ -45,20 +45,20 @@ body <- dashboardBody(
                 uiOutput("selVar_MAPA"),
                 checkboxInput("checkbox_diffMAPA","Mostrar diferencias mensuales",value=FALSE),
                 plotlyOutput("MAPA"),
-                uiOutput('consumo_1'),
+                includeMarkdown('txt/Consumo_1.md'),
                 width=12),
             ),
       
             fluidRow(
               box(
                 h3('Casos excepcionales'),
-                uiOutput('consumo_2_1'),
+                includeMarkdown('txt/Consumo_2_1.txt'),
                 plotlyOutput('vitaminas'),
                 p('Siendo 100 la máxima popularidad que puede tener una búsqueda, vemos como se alcanzó en marzo de 2020.'),
                 uiOutput("selVar_MAPAVitC"),
                 checkboxInput("checkbox_diffMAPAVitC","Mostrar diferencias mensuales",value=FALSE),
                 plotlyOutput("MAPAVitC"),
-                uiOutput('consumo_2_2'),
+                includeMarkdown('txt/Consumo_2_2.md'),
                 width=12),
             ),
     ),
@@ -69,7 +69,7 @@ body <- dashboardBody(
                 h3("Precios de Andalucía"),
                 uiOutput('selectAndalucia'),
                 plotlyOutput('preciosAndalucia'),
-                uiOutput('precios_andalucia'),
+                includeMarkdown('txt/andalucia.md'),
                 width=12
               )
             ),
@@ -79,7 +79,7 @@ body <- dashboardBody(
                 h3("Precios MercaMadrid"),
                 uiOutput('selectMadrid'),
                 plotlyOutput('preciosMadrid'),
-                uiOutput('precios_madrid'),
+                includeMarkdown('txt/madrid.md'),
                 width=12
               )
             ),
@@ -89,7 +89,7 @@ body <- dashboardBody(
                 h3("Precios Mercabarna"),
                 uiOutput('selectBarna'),
                 plotlyOutput('preciosBarna'),
-                uiOutput('precios_barna'),
+                includeMarkdown('txt/barna.md'),
                 width=12
               )
             ),
@@ -97,7 +97,7 @@ body <- dashboardBody(
             fluidRow(
               box(plotlyOutput('preciosIPC_indice')),
               box(plotlyOutput('preciosIPC_varanual')),
-              box(uiOutput('precios_ipc'), width=12)
+              box(includeMarkdown('txt/ipc,md'), width=12)
             )
     ),
     
@@ -110,7 +110,7 @@ body <- dashboardBody(
                 plotOutput("treemapComExt"),
                 width=12
               ),
-              box(uiOutput('comercio_exterior'), width=12)
+              box(includeMarkdown('txt/ComercioExterior.md'), width=12)
             ),
             fluidRow(
               box(
