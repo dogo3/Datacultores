@@ -7,7 +7,7 @@ library(waiter)
 gif <- paste0("https://i.pinimg.com/originals/17/04/1b/17041b6908ddd354c369b7bcb095823a.gif")
 gif <- "agriT.gif"
 loading_screen <- tagList(
-  h2("Datacultores", style = "color:black;"),
+  h2("Datacultores", style = "color:purple; font-weight: bold;"),
   img(src = gif, height = "300px")
   #h4('Labrando los datasets...', style="color:black;")
 )
