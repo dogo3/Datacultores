@@ -3,6 +3,9 @@ library(treemapify)
 library(lubridate)
 library(waiter)
 
+#install.packages("remotes")
+#remotes::install_github("JohnCoene/waiter")
+
 top5Productos<-c("PATATAS FRESCAS","NARANJAS","TOMATES","PLATANOS","MANZANAS")
 totalesMAPA <- c('T.HORTALIZAS FRESCAS', 'T.FRUTAS FRESCAS')
 productosVitC <- c("KIWI","NARANJAS","MANDARINAS","BROCOLI")
@@ -24,6 +27,7 @@ textoConsumo_2_2<-readLines('txt/Consumo_2_2.txt', encoding = 'UTF-8')
 textoprecios_andalucia<-readLines('txt/andalucia.txt', encoding = 'UTF-8')
 textoprecios_barna<-readLines('txt/barna.txt', encoding = 'UTF-8')
 textoprecios_madrid<-readLines('txt/madrid.txt', encoding = 'UTF-8')
+textoprecios_ipc_1<-readLines('txt/ipc_1.txt', encoding = 'UTF-8')
 textoprecios_ipc<-readLines('txt/ipc.txt', encoding = 'UTF-8')
 textocomercio_exterior<-readLines('txt/ComercioExterior.txt', encoding = 'UTF-8')
 
@@ -42,7 +46,7 @@ shinyServer(function(input, output) {
   
   # w <- Waiter$new(html = loading_screen, color = "white")
   # w$show()
-  Sys.sleep(4) 
+  Sys.sleep(2.5) 
   waiter_hide()
   
   
@@ -399,6 +403,12 @@ shinyServer(function(input, output) {
   
   output$precios_madrid <- renderUI({
     splitText <- stringi::stri_split(str = textoprecios_madrid, regex = '\\n')
+    replacedText <- lapply(splitText, p)
+    return(replacedText)
+  })
+  
+  output$precios_ipc_1 <- renderUI({
+    splitText <- stringi::stri_split(str = textoprecios_ipc_1, regex = '\\n')
     replacedText <- lapply(splitText, p)
     return(replacedText)
   })

@@ -5,7 +5,6 @@ library(plotly)
 library(waiter)
 
 gif <- paste0("https://i.pinimg.com/originals/17/04/1b/17041b6908ddd354c369b7bcb095823a.gif")
-gif <- paste('www/agri.gif')
 loading_screen <- tagList(
   h2("Datacultores", style = "color:gray;"),
   img(src = gif, height = "300px"), 
@@ -30,6 +29,7 @@ body <- dashboardBody(
   
   use_waiter(),
   waiter_show_on_load(html=loading_screen, color='white'),
+  #waiter_preloader(html=loading_screen, color='white'),
   
   tags$script(HTML("$('body').addClass('fixed');")),
   
@@ -69,9 +69,14 @@ body <- dashboardBody(
                 h3("Precios de Andalucía"),
                 uiOutput('selectAndalucia'),
                 plotlyOutput('preciosAndalucia'),
+                #uiOutput('precios_andalucia'),
+                width=12
+              ),
+              box(
                 uiOutput('precios_andalucia'),
                 width=12
               )
+              
             ),
             
             fluidRow(
@@ -79,6 +84,10 @@ body <- dashboardBody(
                 h3("Precios MercaMadrid"),
                 uiOutput('selectMadrid'),
                 plotlyOutput('preciosMadrid'),
+                #uiOutput('precios_madrid'),
+                width=12
+              ),
+              box(
                 uiOutput('precios_madrid'),
                 width=12
               )
@@ -89,14 +98,23 @@ body <- dashboardBody(
                 h3("Precios Mercabarna"),
                 uiOutput('selectBarna'),
                 plotlyOutput('preciosBarna'),
+                #uiOutput('precios_barna'),
+                width=12
+              ),
+              box(
                 uiOutput('precios_barna'),
                 width=12
               )
             ),
             
             fluidRow(
-              box(plotlyOutput('preciosIPC_indice')),
-              box(plotlyOutput('preciosIPC_varanual')),
+              box(
+                h3('Índice de precios al consumo'),
+                uiOutput('precios_ipc_1'),
+                width=12
+                ),
+              box(plotlyOutput('preciosIPC_indice'), width=6),
+              box(plotlyOutput('preciosIPC_varanual'), width=6),
               box(uiOutput('precios_ipc'), width=12)
             )
     ),
@@ -112,6 +130,7 @@ body <- dashboardBody(
               ),
               box(uiOutput('comercio_exterior'), width=12)
             ),
+            
             fluidRow(
               box(
                 plotlyOutput("lineComExtEur"),
