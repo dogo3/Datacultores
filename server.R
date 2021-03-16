@@ -467,7 +467,7 @@ shinyServer(function(input, output) {
   
   output$corrMat<-renderPlot({
     M <- cor(CorrData)
-    res1 <- cor.mtest(dfCorr, conf.level = .95)
+    res1 <- cor.mtest(CorrData, conf.level = .95)
     
     corrplot(M, p.mat = res1$p, insig = "label_sig",
              sig.level = c(.001, .01, .05), pch.cex = .9, pch.col = "white")
