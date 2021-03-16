@@ -1,19 +1,14 @@
-## app.R ##
 library(shinydashboard)
 library(shiny)
 library(plotly)
 library(waiter)
 library(markdown)
 
-gif <- paste0("https://i.pinimg.com/originals/17/04/1b/17041b6908ddd354c369b7bcb095823a.gif")
-gif <- "agriT.gif"
 gifLoad <- "agriTractor.gif"
-url <- "https://twitter.com/intent/tweet?text=Hello%20world&url=https://shiny.rstudio.com/gallery/widget-gallery.html/"
 
 loading_screen <- tagList(
   h2("Datacultores", style = "color:purple; font-weight: bold;"),
   img(src = gifLoad, height = "300px")
-  #h4('Labrando los datasets...', style="color:black;")
 )
 
 header <- dashboardHeader(title = "UniversityHack 2021",disable=FALSE)
@@ -33,11 +28,9 @@ sidebar <- dashboardSidebar(
 )
 
 body <- dashboardBody(
-  # https://www.shinyapps.io/admin/#/signup
   
   use_waiter(),
   waiter_show_on_load(html=loading_screen, color='white'),
-  # waiter_preloader(html=loading_screen, color='white'),
   
   tags$script(HTML("$('body').addClass('fixed');")),
   
