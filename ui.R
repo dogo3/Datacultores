@@ -3,6 +3,7 @@ library(shinydashboard)
 library(shiny)
 library(plotly)
 library(waiter)
+library(markdown)
 
 gif <- paste0("https://i.pinimg.com/originals/17/04/1b/17041b6908ddd354c369b7bcb095823a.gif")
 gif <- "agriT.gif"
@@ -28,6 +29,7 @@ sidebar <- dashboardSidebar(
 )
 
 body <- dashboardBody(
+  # https://www.shinyapps.io/admin/#/signup
   
   use_waiter(),
   waiter_show_on_load(html=loading_screen, color='white'),
@@ -36,7 +38,8 @@ body <- dashboardBody(
   tags$script(HTML("$('body').addClass('fixed');")),
   
   tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")),
+    tags$link(rel = "stylesheet", type = "text/css", href = "custom.css"),
+    tags$link(rel="shortcut icon", href="trigo.ico")),
   
   tabItems(
     tabItem(tabName = "consumo",
@@ -48,7 +51,7 @@ body <- dashboardBody(
                 checkboxInput("checkbox_diffMAPA","Mostrar diferencias mensuales",value=FALSE),
                 plotlyOutput("MAPA"),
                 includeMarkdown('txt/Consumo_1.md'),
-                width=12),
+                width=12)
             ),
       
             fluidRow(
@@ -61,8 +64,8 @@ body <- dashboardBody(
                 checkboxInput("checkbox_diffMAPAVitC","Mostrar diferencias mensuales",value=FALSE),
                 plotlyOutput("MAPAVitC"),
                 includeMarkdown('txt/Consumo_2_2.md'),
-                width=12),
-            ),
+                width=12)
+            )
     ),
     
     tabItem(tabName = "precios",
