@@ -165,6 +165,12 @@ body <- dashboardBody(
             ),
             fluidRow(
               box(
+                includeMarkdown("txt/Covid.md"),
+                width=12
+              )
+            ),
+            fluidRow(
+              box(
                 plotlyOutput("plotCovidPaises"),
                 width=12
               )

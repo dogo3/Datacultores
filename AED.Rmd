@@ -756,7 +756,7 @@ dfTasaCobertura <- filter(dfComercioExterior,year(PERIOD) == 2020) %>%
   mutate(TasaCobertura = monthTotalExp/monthTotalImp) %>%
   mutate(geoId=translateCountry(REPORTER,from="NombresComercioExterior",to="ISO2")) %>%
   dplyr::select(TasaCobertura,month,geoId) %>%
-  filter_all(all_vars(!is.na(.)))
+  dplyr::filter_all(dplyr::all_vars(!is.na(.)))
 
 dfComExtCovid <- inner_join(dfCovidEurMes,dfTasaCobertura,by=c("geoId"="geoId","month"="month"))%>%dplyr::select(-REPORTER)%>%
   mutate(country_comun=translateCountry(geoId,from="ISO2",to="Comun"))
@@ -888,7 +888,7 @@ library(readr)
 vitaminaCGoogle <- read_csv("data/vitaminaCGoogle.csv", 
     col_types = cols(Semana = col_date(format = "%Y-%m-%d")), col_names = c('Semana', 'Valor'),
     skip = 3)
-saveRDS(vitaminaCGoogle, 'vitaminaCGoogle.rds')
+# saveRDS(vitaminaCGoogle, 'vitaminaCGoogle.rds')
 ```
 
 ```{r}
