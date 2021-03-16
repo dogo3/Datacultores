@@ -4,14 +4,17 @@ library(plotly)
 library(waiter)
 library(markdown)
 
-packages = c("shinydashboard","shiny","plotly","waiter","markdown","remotes")
+packages = c("shinydashboard","shiny","plotly","waiter","markdown")
 package.check <- lapply(packages, FUN = function(x) {
   if (!require(x, character.only = TRUE)) {
     install.packages(x, dependencies = TRUE,repos='http://cran.rediris.es')
     library(x, character.only = TRUE)
   }
 })
+<<<<<<< HEAD
 #if(!require("JohnCoene/waiter")) remotes::install_github("JohnCoene/waiter")
+=======
+>>>>>>> 416642a186587bca5721222bb926331668b35c6a
 
 
 gif <- paste0("https://i.pinimg.com/originals/17/04/1b/17041b6908ddd354c369b7bcb095823a.gif")
@@ -42,7 +45,7 @@ sidebar <- dashboardSidebar(
 body <- dashboardBody(
   
   use_waiter(),
-  waiter_show_on_load(html=loading_screen, color='white'),
+  # waiter_show_on_load(html=loading_screen, color='white'),
   
   tags$script(HTML("$('body').addClass('fixed');")),
   
