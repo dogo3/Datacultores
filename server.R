@@ -9,6 +9,8 @@ library(waiter)
 top5Productos<-c("PATATAS FRESCAS","NARANJAS","TOMATES","PLATANOS","MANZANAS")
 totalesMAPA <- c('T.HORTALIZAS FRESCAS', 'T.FRUTAS FRESCAS')
 productosVitC <- c("KIWI","NARANJAS","MANDARINAS","BROCOLI")
+meses <- c('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto',
+           'Septiembre', 'Octubre', 'Noviembre', 'Diciembre')
 dfMAPAConsumo <- readRDS("data_app/MAPAConsumo.rds")
 andalucia <- readRDS("data_app/preciosAndalucia.rds")
 mercaMadrid <- readRDS("data_app/preciosMadrid.rds")
@@ -18,7 +20,7 @@ comExtTreemap <- readRDS("data_app/ComExtTreemap.rds")
 IPC <- readRDS("data_app/IPC.rds")
 COVID <-readRDS("data_app/COVID.rds")
 ComExtCovid <- readRDS("data_app/ComExtCovid.rds")
-# ComExtEspCovid
+ComExtCovidEsp<-readRDS("data_app/ComExtCovidEsp.rds")
 vitaminaC <- readRDS('data_app/vitaminaCGoogle.rds')
 
 
@@ -436,6 +438,29 @@ shinyServer(function(input, output) {
                                     font=list(size=12, color="blue")))
   })
   
+  output$selVar_Covid <- renderUI({
+    selectInput('selVar_Covid', 'Selecciona variable', 
+                   choices = colnames(ComExtCovidEsp)[grepl("^Diferencia",colnames(ComExtCovidEsp))],
+                   selected = "Diferencia Exportaciones Toneladas", 
+                   multiple = F)
+  })
+  
+  output$plotComExtCovidEsp <- renderPlotly({
+    p<-ggplot(ComExtCovidEsp,aes(x=IAMeanMonth,y=ComExtCovidEsp[[input$selVar_Covid]]))+
+               geom_point(aes(text=`MONTH`))+
+               geom_smooth(method="lm")+
+               labs(x="IA media mensual en España",y=input$selVar_Covid)
+    
+    ggplotly(p)%>%
+        layout(margin = list(b=100),
+                            annotations = 
+                              list(x = 1, y = -0.3,
+                                   text = "Fuente: Dataset COVID y comercio exterior", 
+                                   showarrow = F, xref='paper', yref='paper', 
+                                   xanchor='right', yanchor='auto', xshift=0, yshift=0,
+                                   font=list(size=12, color="blue")))
+  })
+    
   # Vitamina C
   
   output$vitaminas <- renderPlotly({
