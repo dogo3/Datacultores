@@ -37,7 +37,7 @@ shinyServer(function(input, output) {
   
   # w <- Waiter$new(html = loading_screen, color = "white")
   # w$show()
-  Sys.sleep(1) 
+  # Sys.sleep(1) 
   waiter_hide()
   
   
@@ -86,7 +86,7 @@ shinyServer(function(input, output) {
     #df <- dfMAPAConsumo %>% filter(Producto %in% listaProductosMAPA()) 
     df <- dfMAPAConsumo %>% filter(Producto %in% input$selProd_MAPA)
     
-    ggplot(df,aes(x=Fecha, y=df[[variableMAPA()]],col=Producto))+
+    p<-ggplot(df,aes(x=Fecha, y=df[[variableMAPA()]],col=Producto))+
       geom_line( size=0.5)+
       geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
       geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
@@ -95,6 +95,13 @@ shinyServer(function(input, output) {
       ylab(variableMAPA())+
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
       ggtitle(variableMAPA())
+    ggplotly(p) %>%   layout(margin = list(b=120),
+                             annotations = 
+                               list(x = 1, y = -0.4,
+                                    text = "Fuente: Dataset Consumo MAPA", 
+                                    showarrow = F, xref='paper', yref='paper', 
+                                    xanchor='right', yanchor='auto', xshift=0, yshift=0,
+                                    font=list(size=12, color="blue")))
   })
   
   output$MAPAVitC <- renderPlotly({
@@ -102,7 +109,7 @@ shinyServer(function(input, output) {
     
     df <- dfMAPAConsumo %>% filter(Producto %in% productosVitC) 
     
-    ggplot(df,aes(x=Fecha, y=df[[variableMAPAVitC()]],col=Producto))+
+    p<-ggplot(df,aes(x=Fecha, y=df[[variableMAPAVitC()]],col=Producto))+
       geom_line( size=0.5)+
       geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
       geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
@@ -111,6 +118,14 @@ shinyServer(function(input, output) {
       ylab(variableMAPAVitC())+
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
       ggtitle(variableMAPAVitC())
+    ggplotly(p) %>%   layout(legend = list(orientation = "h", x = 0.4, y = -0.4),
+                             margin = list(b=100),
+                             annotations = 
+                               list(x = 1, y = -0.4,
+                                    text = "Fuente: Dataset Consumo MAPA", 
+                                    showarrow = F, xref='paper', yref='paper', 
+                                    xanchor='right', yanchor='auto', xshift=0, yshift=0,
+                                    font=list(size=12, color="blue")))
   })
   
   #TREEMAP COMERCIO EXTERIOR
@@ -129,16 +144,16 @@ shinyServer(function(input, output) {
   })
   
   output$treemapComExt <- renderPlot({
-    if(is.null(input$selAnyo_ComExt) | is.null(input$selPais_ComExt)){
-      " "
-    }else{
+    validate(need(input$selPais_ComExt, "Cargando"))
+    validate(need(input$selAnyo_ComExt, "Cargando"))
     comExtTreemap %>% filter(YEAR %in% input$selAnyo_ComExt & REPORTER_COMUN %in% input$selPais_ComExt)%>%
       ggplot(aes(area = value, fill=REPORTER_COMUN, label = REPORTER_COMUN)) +
       geom_treemap(colour="black") +
       facet_grid(vars(rows=YEAR),vars(cols=Movimiento)) + 
-      theme(legend.position = "none")+
-      geom_treemap_text(colour = "white", place = "centre",grow = F)
-    }
+      theme(legend.position = "none",plot.caption = element_text(color = "blue"))+
+      geom_treemap_text(colour = "white", place = "centre",grow = F)+
+      labs(caption="Fuente: Dataset Comercio Exterior")
+  
   })
   
   # Lineplots comercio exterior
@@ -157,7 +172,7 @@ shinyServer(function(input, output) {
   
   output$lineComExtEur<- renderPlotly({
     validate(need(input$selPais_ComExt, "Cargando"))
-      ggplot(comercioExteriorReact())+
+      p<-ggplot(comercioExteriorReact())+
       geom_line(aes(x=PERIOD, y=`Exp(€)`), col='red')+
       geom_line(aes(x=PERIOD, y=`Imp(€)`), col='blue')+
       geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
@@ -167,6 +182,14 @@ shinyServer(function(input, output) {
       scale_x_date(date_breaks = "2 months",date_labels = "%b %Y")+
       ylab("Euros")+
       ggtitle('Evolución exportaciones e importaciones (euros)')
+      ggplotly(p) %>%   layout(legend = list(orientation = "h", x = 0.4, y = -0.4),
+                               margin = list(b=100),
+                               annotations = 
+                                 list(x = 1, y = -0.4,
+                                      text = "Fuente: Dataset Comercio Exterior", 
+                                      showarrow = F, xref='paper', yref='paper', 
+                                      xanchor='right', yanchor='auto', xshift=0, yshift=0,
+                                      font=list(size=12, color="blue")))
   })
   
   output$lineComExtTon<- renderPlotly({
@@ -182,7 +205,14 @@ shinyServer(function(input, output) {
       scale_x_date(date_breaks = "2 months",date_labels = "%b %Y")+
       ylab("Toneladas")+
       ggtitle('Evolución exportaciones e importaciones (toneladas)')
-    ggplotly(p)
+    ggplotly(p) %>%   layout(legend = list(orientation = "h", x = 0.4, y = -0.4),
+                             margin = list(b=100),
+                             annotations = 
+                               list(x = 1, y = -0.4,
+                                    text = "Fuente: Dataset Comercio Exterior", 
+                                    showarrow = F, xref='paper', yref='paper', 
+                                    xanchor='right', yanchor='auto', xshift=0, yshift=0,
+                                    font=list(size=12, color="blue")))
   })
   
   
@@ -200,7 +230,7 @@ shinyServer(function(input, output) {
     
     validate(need(input$selectAndalucia, "Cargando"))
     
-    andalucia %>%
+    p<-andalucia %>%
       filter(SUBSECTOR %in% input$selectAndalucia) %>%
       group_by(SUBSECTOR, INICIO) %>%
       summarise(PRECIO_MEDIO = mean(PRECIO), .groups = 'keep') %>%
@@ -213,6 +243,14 @@ shinyServer(function(input, output) {
       scale_x_date(date_breaks = "2 months",date_labels = "%b %Y")+
       scale_y_log10()+
       labs(x='Fecha', y='Precio medio', title='Precio medio por subsectores')
+    ggplotly(p) %>%   layout(legend = list(orientation = "h", x = 0.4, y = -0.4),
+                             margin = list(b=120),
+                             annotations = 
+                               list(x = 1, y = -0.4,
+                                    text = "Fuente: Dataset precios Andalucía", 
+                                    showarrow = F, xref='paper', yref='paper', 
+                                    xanchor='right', yanchor='auto', xshift=0, yshift=0,
+                                    font=list(size=12, color="blue")))
   })
   
   output$selectMadrid <- renderUI({
@@ -226,7 +264,7 @@ shinyServer(function(input, output) {
     
     validate(need(input$selectMadrid, "Cargando"))
     
-    mercaMadrid %>% 
+    p<-mercaMadrid %>% 
       filter(familia %in% input$selectMadrid) %>%
       group_by(familia, Fecha) %>% 
       summarise(precio_medio = mean(price_mean), .groups='keep') %>%
@@ -238,6 +276,14 @@ shinyServer(function(input, output) {
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
       scale_x_date(date_breaks = "2 months",date_labels = "%b %Y")+
       labs(x='Fecha', y='Precio medio', title='Precio medio por familias')
+    ggplotly(p) %>%   layout(legend = list(orientation = "h", x = 0.4, y = -0.4),
+                             margin = list(b=120),
+                             annotations = 
+                               list(x = 1, y = -0.4,
+                                    text = "Fuente: Dataset precios MercaMadrid", 
+                                    showarrow = F, xref='paper', yref='paper', 
+                                    xanchor='right', yanchor='auto', xshift=0, yshift=0,
+                                    font=list(size=12, color="blue")))
   })
   
   output$selectBarna <- renderUI({
@@ -253,7 +299,7 @@ shinyServer(function(input, output) {
     
     validate(need(input$selectBarna, "Cargando"))
     
-    mercaBarna %>% 
+    p<-mercaBarna %>% 
       filter(familia %in% input$selectBarna) %>%
       group_by(familia, Fecha) %>% 
       summarise(precio_medio = mean(price_mean), .groups='keep') %>%
@@ -265,6 +311,14 @@ shinyServer(function(input, output) {
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
       scale_x_date(date_breaks = "2 months",date_labels = "%b %Y")+
       labs(x='Fecha', y='Precio medio', title='Precio medio por familias')
+    ggplotly(p) %>%   layout(legend = list(orientation = "h", x = 0.4, y = -0.4),
+                             margin = list(b=120),
+                             annotations = 
+                               list(x = 1, y = -0.4,
+                                    text = "Fuente: Dataset precios MercaBarna", 
+                                    showarrow = F, xref='paper', yref='paper', 
+                                    xanchor='right', yanchor='auto', xshift=0, yshift=0,
+                                    font=list(size=12, color="blue")))
   })
   
   output$preciosIPC_indice <- renderPlotly({
@@ -279,7 +333,14 @@ shinyServer(function(input, output) {
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
       labs(x='Fecha', y='Índice', title='Índice IPC')
     
-    ggplotly(p) %>% layout(legend = list(orientation = "h", x = 0.4, y = -0.4))
+    ggplotly(p) %>%   layout(legend = list(orientation = "h", x = 0.4, y = -0.4),
+                             margin = list(b=80),
+                             annotations = 
+                               list(x = 1, y = -0.6,
+                                    text = "Fuente: Instituto Nacional de Estadística", 
+                                    showarrow = F, xref='paper', yref='paper', 
+                                    xanchor='right', yanchor='auto', xshift=0, yshift=0,
+                                    font=list(size=12, color="blue")))
   })
   
   output$preciosIPC_varanual <- renderPlotly({
@@ -294,8 +355,14 @@ shinyServer(function(input, output) {
       scale_x_date(date_breaks = '2 months',date_labels = "%b %Y")+
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
       labs(x='Fecha', y='Índice', title='Variación anual IPC')
-    
-    ggplotly(p) %>% layout(legend = list(orientation = "h", x = 0.4, y = -0.4))
+    ggplotly(p) %>%   layout(legend = list(orientation = "h", x = 0.4, y = -0.4),
+                             margin = list(b=80),
+                             annotations = 
+                               list(x = 1, y = -0.6,
+                                    text = "Fuente: Instituto Nacional de Estadística", 
+                                    showarrow = F, xref='paper', yref='paper', 
+                                    xanchor='right', yanchor='auto', xshift=0, yshift=0,
+                                    font=list(size=12, color="blue")))
   })
   
   
@@ -313,7 +380,7 @@ shinyServer(function(input, output) {
   output$plotAgregadoCovid <- renderPlotly({
     validate(need(input$selPais_Covid, "Cargando"))
     
-    filter(COVID,country_comun %in% input$selPais_Covid &
+    p<-filter(COVID,country_comun %in% input$selPais_Covid &
            dateRep > '2020-03-01') %>%
     group_by(dateRep) %>%
     summarise(media = weighted.mean(x=`IA14`,w=`pop`, na.rm=T)) %>%
@@ -322,6 +389,13 @@ shinyServer(function(input, output) {
     scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
     labs(x='Fecha', y='IA 14', title='Evolución IA Ponderada Países Seleccionados')
+    ggplotly(p) %>%   layout(margin = list(b=120),
+                             annotations = 
+                               list(x = 1, y = -0.5,
+                                    text = "Fuente: Dataset COVID", 
+                                    showarrow = F, xref='paper', yref='paper', 
+                                    xanchor='right', yanchor='auto', xshift=0, yshift=0,
+                                    font=list(size=12, color="blue")))
   })
   
   
@@ -338,18 +412,30 @@ shinyServer(function(input, output) {
     ggplotly(g) %>%
       animation_opts(frame = 200,
                      easing = "linear",
-                     redraw = FALSE)
+                     redraw = FALSE) %>%   layout(margin = list(b=180),
+                                                  annotations = list(x = 1, y = -0.9,
+                                                                    text = "Fuente: Dataset COVID y comercio exterior", 
+                                                                    showarrow = F, xref='paper', yref='paper', 
+                                                                    xanchor='right', yanchor='auto', xshift=0, yshift=0,
+                                                                    font=list(size=12, color="blue")))
   })
   
   output$plotCovidPaises <- renderPlotly({
     validate(need(input$selPais_Covid, "Cargando"))
-    filter(COVID,country_comun %in% input$selPais_Covid &
+    p <- filter(COVID,country_comun %in% input$selPais_Covid &
              dateRep > '2020-03-01') %>%
       ggplot()+
       geom_line(aes(x=dateRep, y=IA14, col=country_comun))+
       scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
       theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
       labs(x='Fecha', y='IA 14', title='Evolución IA Países Seleccionados')
+    ggplotly(p) %>%   layout(margin = list(b=160),
+                             annotations = 
+                               list(x = 1, y = -0.5,
+                                    text = "Fuente: Dataset COVID", 
+                                    showarrow = F, xref='paper', yref='paper', 
+                                    xanchor='right', yanchor='auto', xshift=0, yshift=0,
+                                    font=list(size=12, color="blue")))
   })
   
   # Vitamina C
