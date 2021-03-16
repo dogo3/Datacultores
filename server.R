@@ -305,7 +305,7 @@ shinyServer(function(input, output) {
   output$selPais_Covid <- renderUI({
     print(unique(COVID$country_comun))
     selectizeInput('selPais_Covid', 'Selecciona países', 
-                   choices = unique(COVID$country_comun),
+                   choices = unique(COVID$country_comun)[!is.na(unique(COVID$country_comun))],
                    selected = unique(filter(COVID,country_comun %in% translateCountry(UE,from="ISO2",to="Comun"))$country_comun), 
                    multiple = T, options = list(plugins= list('remove_button'),minItems=1))
   })
