@@ -226,6 +226,11 @@ body <- dashboardBody(
               box(
                 includeMarkdown("txt/conclusiones.md"),
                 width=12
+              ),
+              box(
+                h3('Agradecimientos'),
+                includeMarkdown("txt/agradecimientos.md"),
+                width=12
               )
             )
           )
