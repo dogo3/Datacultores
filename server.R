@@ -1,7 +1,8 @@
 packages = c("ggplot2","treemapify","lubridate","waiter","corrplot")
 package.check <- lapply(packages, FUN = function(x) {
   if (!require(x, character.only = TRUE)) {
-    install.packages(x, dependencies = TRUE,repos='http://cran.rediris.es')
+    #Descomentar la siguiente linea para instalar las dependencias
+    #install.packages(x, dependencies = TRUE)
     library(x, character.only = TRUE)
   }
 })
