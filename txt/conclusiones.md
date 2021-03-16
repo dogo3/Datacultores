@@ -6,7 +6,9 @@ Después de un análisis exhaustivo de los datos, podemos extraer las siguientes
 
 2.- Variación extraordinaria en los **precios de las frutas**. En cuanto a las hortalizas, no está claro que la variación se deba a la crisis sanitaria.
 
-3.- Mismo patrón de **exportaciones** que otros años, pero aumento del valor en euros (exportaciones más caras). **Importaciones** permanecen igual.
+3.- Aumento en el gasto guiado por las noticias relacionadas con la **vitamina C** y posterior caída al desmentirse estas.
+
+4.- Mismo patrón de **exportaciones** que otros años, pero aumento del valor en euros (exportaciones más caras). **Importaciones** permanecen igual.
 
 
 

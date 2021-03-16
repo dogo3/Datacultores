@@ -1,1 +1,1 @@
-Queremos dar las gracias a... Cajamar???
+Queremos agradecer a la organización del Datathon el brindarnos la oportunidad de participar en un evento de envergadura nacional para estudiantes. También queremos agradecer al jurado que inviertan su tiempo y dedicación en valorar nuestro trabajo y por supuesto a los patrocinadores y todas las fuentes de datos, tanto para este reto como para el de predicción de stocks.

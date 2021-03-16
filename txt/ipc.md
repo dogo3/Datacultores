@@ -11,4 +11,4 @@ Mirando las variaciones anuales, vemos como sufre una variación anual respecto 
 Por tanto, aunque los precios fueron superiores a 2019, tenemos que en 2019, en ese mismo período, aumentaron más respecto 2018, por lo que **no está del todo claro que esta variación se deba a la Covid-19**.
 
 
-En conclusión, hay una **incidencia mayor en los precios de las frutas**, que se observó también en el consumo per cápita (aumentó y se mantuvo), mientras que en el caso de las hortalizas, aumentó el primer mes y luego cayó a niveles de otros años
+En conclusión, hay una **incidencia mayor en los precios de las frutas**, que se observó también en el consumo per cápita (aumentó y se mantuvo), mientras que en el caso de las hortalizas, aumentó el primer mes y luego cayó a niveles de otros años.
