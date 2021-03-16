@@ -2,6 +2,7 @@ library(ggplot2)
 library(treemapify)
 library(lubridate)
 library(waiter)
+library(corrplot)
 
 #install.packages("remotes")
 #remotes::install_github("JohnCoene/waiter")
@@ -21,6 +22,7 @@ IPC <- readRDS("data_app/IPC.rds")
 COVID <-readRDS("data_app/COVID.rds")
 ComExtCovid <- readRDS("data_app/ComExtCovid.rds")
 ComExtCovidEsp<-readRDS("data_app/ComExtCovidEsp.rds")
+CorrData <- readRDS('data_app/CorrData.rds')
 vitaminaC <- readRDS('data_app/vitaminaCGoogle.rds')
 
 
@@ -461,6 +463,14 @@ shinyServer(function(input, output) {
                                    showarrow = F, xref='paper', yref='paper', 
                                    xanchor='right', yanchor='auto', xshift=0, yshift=0,
                                    font=list(size=12, color="blue")))
+  })
+  
+  output$corrMat<-renderPlot({
+    M <- cor(dfCorr)
+    res1 <- cor.mtest(dfCorr, conf.level = .95)
+    
+    corrplot(M, p.mat = res1$p, insig = "label_sig",
+             sig.level = c(.001, .01, .05), pch.cex = .9, pch.col = "white")
   })
     
   # Vitamina C

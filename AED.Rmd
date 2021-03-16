@@ -815,7 +815,7 @@ marzo2020<-as.Date("2020/03/01",format="%Y/%m/%d")
 noviembre2020<-as.Date("2020/11/01",format="%Y/%m/%d")
 
 #Primer dataset (MAPA)
-dfMAPAConsumoCorr <-  dfMAPAConsumo%>%filter(CCAA=="Total Nacional" & Fecha>=marzo2020 & Fecha<=noviembre2020)%>%group_by(Fecha)%>%summarise("ConsumoVol"=mean(`Volumen (miles de kg)`,na.rm=T),"ConsumoEur"=mean(`Valor (miles de €)`,na.rm=T),"Precio"=mean(`Precio medio kg`,na.rm=T))
+dfMAPAConsumoCorr <-  dfMAPAConsumo%>%filter(CCAA=="Total Nacional" & Fecha>=marzo2020 & Fecha<=noviembre2020)%>%group_by(Fecha)%>%summarise("ConsumoEur"=mean(`Valor (miles de €)`,na.rm=T),"Precio"=mean(`Precio medio kg`,na.rm=T))
 # View(dfMAPAConsumoCorr)
 ```
 ```{r}
@@ -848,6 +848,7 @@ res1 <- cor.mtest(dfCorr, conf.level = .95)
 corrplot(M, p.mat = res1$p, insig = "label_sig",
          sig.level = c(.001, .01, .05), pch.cex = .9, pch.col = "white")
 
+saveRDS(dfCorr,"data_app/CorrData.rds")
 # View(dfCovid)
 # df<-dfCovid%>%dplyr::select(geoId,countriesAndTerritories,continentExp,dateRep,day,month,`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`,pop=`popData2019`)%>%rename(IA14=`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`)%>%filter(geoId %in% UE_COVID)%>%mutate(`country_comun`=translateCountry(countriesAndTerritories,from="NombresCOVID",to="Comun"))
 # saveRDS(df,"data_app/COVID.rds")
