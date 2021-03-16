@@ -11,10 +11,6 @@ package.check <- lapply(packages, FUN = function(x) {
     library(x, character.only = TRUE)
   }
 })
-<<<<<<< HEAD
-#if(!require("JohnCoene/waiter")) remotes::install_github("JohnCoene/waiter")
-=======
->>>>>>> 416642a186587bca5721222bb926331668b35c6a
 
 
 gif <- paste0("https://i.pinimg.com/originals/17/04/1b/17041b6908ddd354c369b7bcb095823a.gif")
