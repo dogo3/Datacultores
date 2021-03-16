@@ -10,5 +10,7 @@ Después de un análisis exhaustivo de los datos, podemos extraer las siguientes
 
 4.- Mismo patrón de **exportaciones** que otros años, pero aumento del valor en euros (exportaciones más caras). **Importaciones** permanecen igual.
 
+5.- No se aprecia una influencia clara de la **Covid** en las **importaciones y exportaciones**, más allá de que las segundas aumentaron significativamente en el més de mayor incidencia acumulada (noviembre) pero necesitariamos más datos para poder concluír correlación.
+
 
 

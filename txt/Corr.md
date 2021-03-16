@@ -1,0 +1,1 @@
+Como vemos en la matriz de correlación, la correlación observada entre la IA y el resto de variables es muy debil y estadísticamente **no significativa** (p>0.05). Sería interesante tener datos de meses con mayor incidencia (enero y febrero de 2021 en especial) para ver si realmente existe algún tipo de correlación, que con los datos del periodo requerido se nos escapa.

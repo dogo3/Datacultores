@@ -242,6 +242,14 @@ body <- dashboardBody(
                 plotlyOutput("plotComExtCovidEsp"),
                 width=12
               )
+            ),
+            fluidRow(
+              box(
+                h4("Matriz de correlación entre algunas variables"),
+                plotOutput("corrMat"),
+                width=6
+              ),
+              box(includeMarkdown("txt/Corr.md"),width=6)
             )
           ),
     
