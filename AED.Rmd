@@ -788,7 +788,7 @@ dfCovidEspMes <- group_by(dfCovid,month,geoId) %>%
 
 dfComExtCovidEsp <- dplyr::inner_join(ComExtEspMes,dfCovidEspMes,by=c("MONTH"="month"))
 
-ggplotly(ggplot(dfComExtCovidEsp,aes(x=IAMeanMonth,y=DiffImpTon))+geom_point()+geom_smooth(method="lm"))
+ggplotly(ggplot(dfComExtCovidEsp,aes(x=IAMeanMonth,y=DiffExpTon))+geom_point()+geom_smooth(method="lm"))
 ```
 
 
