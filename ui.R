@@ -54,8 +54,8 @@ body <- dashboardBody(
     tags$meta(property="og:title", content="UniversityHack2021 Datacultores"),
     tags$meta(property="og:url",content="https://dogo3.shinyapps.io/Datacultores/"),
     tags$meta(property="og:description",content="Dashboard desarrollado por el equipo Datacultores para el UniversityHack2021."),
-    tags$meta(property="og:image:secure",itemprop="image",content="www/preview.png"),
-    tags$meta(property="og:image",itemprop="image",content="www/preview.png"),
+    # tags$meta(property="og:image:secure",itemprop="image",content="www/preview.png"),
+    # tags$meta(property="og:image",itemprop="image",content="www/preview.png"),
     tags$meta(property="og:type",content="website")
     ),
   
@@ -244,12 +244,12 @@ body <- dashboardBody(
               )
             ),
             fluidRow(
+              box(includeMarkdown("txt/Corr.md"),width=6),
               box(
                 h4("Matriz de correlación entre algunas variables"),
                 plotOutput("corrMat"),
                 width=6
-              ),
-              box(includeMarkdown("txt/Corr.md"),width=6)
+              )
             )
           ),
     
