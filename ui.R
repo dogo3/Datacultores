@@ -19,6 +19,7 @@ sidebar <- dashboardSidebar(
   fixedPanel(
     sidebarMenu(
       id="sidebar",
+      menuItem('Inicio', tabName='inicio', icon= icon("home")),
       menuItem("Consumo", tabName = "consumo", icon = icon("shopping-cart")),
       menuItem("Precios", tabName = "precios", icon = icon("money-bill-alt")),
       menuItem("Comercio Exterior", tabName = "comercioExterior", icon = icon("globe")),
@@ -31,17 +32,36 @@ sidebar <- dashboardSidebar(
 body <- dashboardBody(
   # https://www.shinyapps.io/admin/#/signup
   
-  use_waiter(),
-  waiter_show_on_load(html=loading_screen, color='white'),
+  #use_waiter(),
+  #waiter_show_on_load(html=loading_screen, color='white'),
   #waiter_preloader(html=loading_screen, color='white'),
   
   tags$script(HTML("$('body').addClass('fixed');")),
   
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "custom.css"),
-    tags$link(rel="shortcut icon", href="trigo.ico")),
+    tags$link(rel = "shortcut icon", href="trigo.ico")
+    ),
   
   tabItems(
+    
+    tabItem(tabName = "inicio",
+            fluidRow(
+              box(
+                h1('University Hack 2021', style = "font-weight: bold; text-align:center;"),
+                h2('Reto Cajamar Agro Analysis', style = "color: blue;font-weight: bold; text-align:center;"),
+                h3('Datacultores', style = "color:purple; font-weight: bold; text-align:center;"),
+                includeMarkdown('txt/inicio.md'),
+                img(src = "agri.gif", height = "200px", style= "display: block; margin-left: auto; margin-right: auto;"),
+                p('Este trabajo ha sido realizado por: '),
+                p('Eva D. Barrero Sánchez, graduada en Economía. Estudiante Máster en Ciencia de Datos'),
+                p('Jose Francisco Domenech Gomis, graduado en Ing. Informática. Estudiante Máster en Ciencia de Datos'),
+                width=12
+              )
+            ),
+    ),
+    
+    
     tabItem(tabName = "consumo",
             fluidRow(
               box(
