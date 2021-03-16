@@ -93,7 +93,7 @@ shinyServer(function(input, output) {
       geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
       geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
       geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=3, col='red')+
-      scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+      scale_x_date(date_breaks = '2 months',date_labels = "%b %Y")+
       ylab(variableMAPA())+
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
       ggtitle(variableMAPA())
@@ -116,7 +116,7 @@ shinyServer(function(input, output) {
       geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
       geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
       geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=3, col='red')+
-      scale_x_date(date_breaks = 'months',date_labels = "%b %Y")+
+      scale_x_date(date_breaks = '2 months',date_labels = "%b %Y")+
       ylab(variableMAPAVitC())+
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
       ggtitle(variableMAPAVitC())
@@ -182,9 +182,9 @@ shinyServer(function(input, output) {
       geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
       scale_x_date(date_breaks = "2 months",date_labels = "%b %Y")+
-      ylab("Euros")
+      ylab("Euros")+xlab("Fecha")
       ggplotly(p) %>%   layout(legend = list(orientation = "h", x = 0.4, y = -0.4),
-                               margin = list(b=100),
+                               margin = list(b=120),
                                annotations = 
                                  list(x = 1, y = -0.4,
                                       text = "Fuente: Dataset Comercio Exterior", 
@@ -204,9 +204,9 @@ shinyServer(function(input, output) {
       geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
       scale_x_date(date_breaks = "2 months",date_labels = "%b %Y")+
-      ylab("Toneladas")
+      ylab("Toneladas")+xlab("Fecha")
     ggplotly(p) %>%   layout(legend = list(orientation = "h", x = 0.4, y = -0.4),
-                             margin = list(b=100),
+                             margin = list(b=120),
                              annotations = 
                                list(x = 1, y = -0.4,
                                     text = "Fuente: Dataset Comercio Exterior", 
@@ -386,9 +386,9 @@ shinyServer(function(input, output) {
     ggplot()+
     geom_line(aes(x=dateRep, y=media))+
     scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+    theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1))+
     labs(x='Fecha', y='IA 14')
-    ggplotly(p) %>%   layout(margin = list(b=120),
+    ggplotly(p) %>%   layout(margin = list(b=130),
                              annotations = 
                                list(x = 1, y = -0.5,
                                     text = "Fuente: Dataset COVID", 

@@ -220,6 +220,7 @@ body <- dashboardBody(
               )
             )
           ),
+    
     tabItem(tabName="conclusiones",
             fluidRow(
               box(
