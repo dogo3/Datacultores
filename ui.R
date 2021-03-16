@@ -83,7 +83,7 @@ body <- dashboardBody(
                 h3('Casos excepcionales'),
                 includeMarkdown('txt/Consumo_2_1.md'),
                 plotlyOutput('vitaminas'),
-                p('Siendo 100 la máxima popularidad que puede tener una búsqueda, vemos como se alcanzó en marzo de 2020.'),
+                p('Siendo 100 la máxima popularidad que puede tener una búsqueda, vemos como se alcanzó en marzo de 2020, el momento más crítico de la primera ola.'),
                 uiOutput("selVar_MAPAVitC"),
                 checkboxInput("checkbox_diffMAPAVitC","Mostrar diferencias mensuales",value=FALSE),
                 plotlyOutput("MAPAVitC"),
@@ -202,6 +202,28 @@ body <- dashboardBody(
               box(
                 h4("Evolución IA desagregada por países seleccionados"),
                 plotlyOutput("plotCovidPaises"),
+                width=12
+              )
+            ),
+            fluidRow(
+              box(
+                includeMarkdown("txt/Covid_2.md"),
+                width=12
+              )
+            ),
+            fluidRow(
+              box(
+                h4("Diferencias en importaciones/exportaciones en función de la IA en España"),
+                uiOutput("selVar_Covid"),
+                plotlyOutput("plotComExtCovidEsp"),
+                width=12
+              )
+            )
+          ),
+    tabItem(tabName="conclusiones",
+            fluidRow(
+              box(
+                includeMarkdown("txt/conclusiones.md"),
                 width=12
               )
             )

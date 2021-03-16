@@ -773,10 +773,10 @@ ComExtEspMes<-dfComercioExterior %>%
             `ExpTon` = sum(`QUANTITY_IN_100KG_IMPORT`, na.rm = T)/10,
             `ImpTon` = sum(`QUANTITY_IN_100KG_EXPORT`, na.rm = T)/10) %>%
   group_by(MONTH)%>%
-  mutate(`DiffExpEuros`=`ExpEur`-dplyr::lag(`ExpEur`),
-         `DiffImpEuros`=`ImpEur`-dplyr::lag(`ImpEur`),
-         `DiffExpTon`=`ExpTon`-dplyr::lag(`ExpTon`),
-         `DiffImpTon`=`ImpTon`-dplyr::lag(`ImpTon`)
+  mutate(`Diferencia Exportaciones Euros`=`ExpEur`-dplyr::lag(`ExpEur`),
+         `Diferencia Importaciones Euros`=`ImpEur`-dplyr::lag(`ImpEur`),
+         `Diferencia Exportaciones Toneladas`=`ExpTon`-dplyr::lag(`ExpTon`),
+         `Diferencia Importaciones Toneladas`=`ImpTon`-dplyr::lag(`ImpTon`)
   )%>%filter(YEAR==2020 & MONTH>=2 & MONTH<=11)
 ComExtEspMes
 
@@ -786,9 +786,10 @@ dfCovidEspMes <- group_by(dfCovid,month,geoId) %>%
   summarise(IAMeanMonth = mean(`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`, na.rm=T)) %>%
   dplyr::filter_all(all_vars(!is.nan(.)))
 
-dfComExtCovidEsp <- dplyr::inner_join(ComExtEspMes,dfCovidEspMes,by=c("MONTH"="month"))
-
-ggplotly(ggplot(dfComExtCovidEsp,aes(x=IAMeanMonth,y=DiffExpTon))+geom_point()+geom_smooth(method="lm"))
+dfComExtCovidEsp <- dplyr::inner_join(ComExtEspMes,dfCovidEspMes,by=c("MONTH"="month"))%>%
+  mutate(MONTH=meses[MONTH])
+# saveRDS(dfComExtCovidEsp,"data_app/ComExtCovidEsp.rds")
+ggplotly(ggplot(dfComExtCovidEsp,aes(x=IAMeanMonth,y=`Diferencia Exportaciones Toneladas`))+geom_point()+geom_smooth(method="lm"))
 ```
 
 
