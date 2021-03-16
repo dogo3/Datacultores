@@ -436,6 +436,7 @@ shinyServer(function(input, output) {
   })
   
   output$plotComExtCovidEsp <- renderPlotly({
+    validate(need(input$selVar_Covid, "Cargando"))
     p<-ggplot(ComExtCovidEsp,aes(x=IAMeanMonth,y=ComExtCovidEsp[[input$selVar_Covid]]))+
                geom_point(aes(text=`MONTH`))+
                geom_smooth(method="lm")+
