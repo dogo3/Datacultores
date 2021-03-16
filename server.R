@@ -22,7 +22,7 @@ ComExtCovid <- readRDS("data_app/ComExtCovid.rds")
 vitaminaC <- readRDS('data_app/vitaminaCGoogle.rds')
 
 
-conversionPaises <- read.csv("./data/conversionPaises.csv",stringsAsFactors = FALSE)
+conversionPaises <- read.csv("./data_app/conversionPaises.csv",stringsAsFactors = FALSE)
 translateCountry <- function(country,from,to){
   l<-list(c())
   for(i in seq_len(length(country))){
