@@ -5,10 +5,6 @@ package.check <- lapply(packages, FUN = function(x) {
     library(x, character.only = TRUE)
   }
 })
-<<<<<<< HEAD
-#if(!require("JohnCoene/waiter")) remotes::install_github("JohnCoene/waiter")
-=======
->>>>>>> 416642a186587bca5721222bb926331668b35c6a
 
 
 top5Productos<-c("PATATAS FRESCAS","NARANJAS","TOMATES","PLATANOS","MANZANAS")
