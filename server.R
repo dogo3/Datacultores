@@ -37,8 +37,8 @@ shinyServer(function(input, output) {
   
   # w <- Waiter$new(html = loading_screen, color = "white")
   # w$show()
-  Sys.sleep(1) 
-  waiter_hide()
+  #Sys.sleep(1) 
+  #waiter_hide()
   
   
   output$selProd_MAPA<-renderUI({
@@ -364,7 +364,7 @@ shinyServer(function(input, output) {
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
       labs(x='Fecha', y='Nº búsquedas', title='Número de búsquedas en Google: vitamina C')
     
-    ggplotly(p) %>%   layout(margin = list(b=160),
+    ggplotly(p) %>% layout(margin = list(b=160),
                              annotations = 
                                list(x = 1, y = -0.5,
                                     text = "Fuente: trends.google.es", 
