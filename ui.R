@@ -7,9 +7,12 @@ library(markdown)
 
 gif <- paste0("https://i.pinimg.com/originals/17/04/1b/17041b6908ddd354c369b7bcb095823a.gif")
 gif <- "agriT.gif"
+gifLoad <- "agriTractor.gif"
+url <- "https://twitter.com/intent/tweet?text=Hello%20world&url=https://shiny.rstudio.com/gallery/widget-gallery.html/"
+
 loading_screen <- tagList(
   h2("Datacultores", style = "color:purple; font-weight: bold;"),
-  img(src = gif, height = "300px")
+  img(src = gifLoad, height = "300px")
   #h4('Labrando los datasets...', style="color:black;")
 )
 
@@ -32,9 +35,9 @@ sidebar <- dashboardSidebar(
 body <- dashboardBody(
   # https://www.shinyapps.io/admin/#/signup
   
-  #use_waiter(),
-  #waiter_show_on_load(html=loading_screen, color='white'),
-  #waiter_preloader(html=loading_screen, color='white'),
+  use_waiter(),
+  waiter_show_on_load(html=loading_screen, color='white'),
+  # waiter_preloader(html=loading_screen, color='white'),
   
   tags$script(HTML("$('body').addClass('fixed');")),
   
@@ -45,8 +48,17 @@ body <- dashboardBody(
          $('.sidebar-menu').bind('click', function (e) {
                $(document).scrollTop(0);
                });
-             });")
+             });"),
+    tags$title("your keyword rich title of the website and/or webpage"),
+    tags$meta(name="description",content="Dashboard desarrollado por el equipo Datacultores para el UniversityHack2021."),
+    tags$meta(property="og:title", content="UniversityHack2021 Datacultores"),
+    tags$meta(property="og:url",content="https://dogo3.shinyapps.io/Datacultores/"),
+    tags$meta(property="og:description",content="Dashboard desarrollado por el equipo Datacultores para el UniversityHack2021."),
+    tags$meta(property="og:image:secure",itemprop="image",content="www/preview.png"),
+    tags$meta(property="og:image",itemprop="image",content="www/preview.png"),
+    tags$meta(property="og:type",content="website")
     ),
+  
   
   tabItems(
     tabItem(tabName = "inicio",
@@ -57,12 +69,20 @@ body <- dashboardBody(
                 h3('Datacultores', style = "color:purple; font-weight: bold; text-align:center;"),
                 includeMarkdown('txt/inicio.md'),
                 img(src = "agri.gif", height = "200px", style= "display: block; margin-left: auto; margin-right: auto;"),
-                p('Este trabajo ha sido realizado por: '),
-                p('Eva D. Barrero Sánchez, graduada en Economía. Estudiante Máster en Ciencia de Datos'),
-                p('Jose Francisco Domenech Gomis, graduado en Ing. Informática. Estudiante Máster en Ciencia de Datos'),
+                p('Autores del dashboard: '),
+                HTML('<b>Eva D. Barrero Sánchez</b>, graduada en Economía (UMU). Estudiante Máster en Ciencia de Datos (UV).<br>'),
+                p(),
+                a(href="https://www.linkedin.com/in/eva-barrero-sanchez/",icon("linkedin",class = "fa-2x")),
+                a(href="https://github.com/evabarrero/",icon("github",class = "fa-2x")),
+                a(href="https://twitter.com/EvaBarrero",icon("twitter",class = "fa-2x")),
+                HTML("<br><b>Jose F. Domenech Gomis</b>, graduado en Ing. Informática (UA). Estudiante Máster en Ciencia de Datos (UV).<br>"),
+                p(),
+                a(href="https://www.linkedin.com/in/jose-francisco-domenech-gomis/",icon("linkedin",class = "fa-2x")),
+                a(href="https://github.com/dogo3/",icon("github",class = "fa-2x")),
+                a(href="https://twitter.com/DomenechGomis",icon("twitter",class = "fa-2x")),
                 width=12
               )
-            ),
+            )
     ),
     
     
@@ -173,11 +193,9 @@ body <- dashboardBody(
     
     tabItem(tabName = "impacto_covid",
             fluidRow(
-              box(
-                uiOutput("selPais_Covid"),
-                width=12
-              )
+              box(h3("Impacto Covid-19"),width=12)
             ),
+           
             
             fluidRow(
               box(
@@ -190,6 +208,12 @@ body <- dashboardBody(
                 h4("Relación entre tasa de cobertura e IA países seleccionados"),
                 plotlyOutput("plotTC"),
                 width=7
+              )
+            ),
+            fluidRow(
+              box(
+                uiOutput("selPais_Covid"),
+                width=12
               )
             ),
             fluidRow(
@@ -224,6 +248,7 @@ body <- dashboardBody(
     tabItem(tabName="conclusiones",
             fluidRow(
               box(
+                h3("Conclusiones"),
                 includeMarkdown("txt/conclusiones.md"),
                 width=12
               ),
