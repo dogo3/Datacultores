@@ -1,11 +1,10 @@
-packages = c("ggplot2","treemapify","lubridate","waiter","corrplot","remotes")
+packages = c("ggplot2","treemapify","lubridate","waiter","corrplot")
 package.check <- lapply(packages, FUN = function(x) {
   if (!require(x, character.only = TRUE)) {
     install.packages(x, dependencies = TRUE,repos='http://cran.rediris.es')
     library(x, character.only = TRUE)
   }
 })
-if(!require("JohnCoene/waiter")) remotes::install_github("JohnCoene/waiter")
 
 
 top5Productos<-c("PATATAS FRESCAS","NARANJAS","TOMATES","PLATANOS","MANZANAS")
