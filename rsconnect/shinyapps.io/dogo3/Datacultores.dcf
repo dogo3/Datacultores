@@ -1,0 +1,13 @@
+name: Datacultores
+title: Datacultores
+username:
+account: dogo3
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3799151
+bundleId: 4352233
+url: https://dogo3.shinyapps.io/Datacultores/
+when: 1615890089.27885
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .RData|AED.Rmd|README.md|vitaminaCGoogle.rds|www/agri.gif

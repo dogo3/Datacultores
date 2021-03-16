@@ -9,17 +9,17 @@ library(waiter)
 top5Productos<-c("PATATAS FRESCAS","NARANJAS","TOMATES","PLATANOS","MANZANAS")
 totalesMAPA <- c('T.HORTALIZAS FRESCAS', 'T.FRUTAS FRESCAS')
 productosVitC <- c("KIWI","NARANJAS","MANDARINAS","BROCOLI")
-dfMAPAConsumo <- readRDS("data/app/MAPAConsumo.rds")
-andalucia <- readRDS("data/app/preciosAndalucia.rds")
-mercaMadrid <- readRDS("data/app/preciosMadrid.rds")
-mercaBarna <- readRDS("data/app/preciosBarna.rds")
-comercioExterior<-readRDS("data/app/ComercioExterior.rds")
-comExtTreemap <- readRDS("data/app/ComExtTreemap.rds")
-IPC <- readRDS("data/app/IPC.rds")
-COVID <-readRDS("data/app/COVID.rds")
-ComExtCovid <- readRDS("data/app/ComExtCovid.rds")
+dfMAPAConsumo <- readRDS("data_app/MAPAConsumo.rds")
+andalucia <- readRDS("data_app/preciosAndalucia.rds")
+mercaMadrid <- readRDS("data_app/preciosMadrid.rds")
+mercaBarna <- readRDS("data_app/preciosBarna.rds")
+comercioExterior<-readRDS("data_app/ComercioExterior.rds")
+comExtTreemap <- readRDS("data_app/ComExtTreemap.rds")
+IPC <- readRDS("data_app/IPC.rds")
+COVID <-readRDS("data_app/COVID.rds")
+ComExtCovid <- readRDS("data_app/ComExtCovid.rds")
 # ComExtEspCovid
-vitaminaC <- readRDS('data/app/vitaminaCGoogle.rds')
+vitaminaC <- readRDS('data_app/vitaminaCGoogle.rds')
 
 
 conversionPaises <- read.csv("./data/conversionPaises.csv",stringsAsFactors = FALSE)
@@ -82,7 +82,7 @@ shinyServer(function(input, output) {
   
   
   output$MAPA <- renderPlotly({
-    validate(need(variableMAPA(), ""))
+    validate(need(variableMAPA(), "Cargando"))
     #df <- dfMAPAConsumo %>% filter(Producto %in% listaProductosMAPA()) 
     df <- dfMAPAConsumo %>% filter(Producto %in% input$selProd_MAPA)
     
@@ -98,7 +98,7 @@ shinyServer(function(input, output) {
   })
   
   output$MAPAVitC <- renderPlotly({
-    validate(need(variableMAPAVitC(), ""))
+    validate(need(variableMAPAVitC(), "Cargando"))
     
     df <- dfMAPAConsumo %>% filter(Producto %in% productosVitC) 
     
@@ -151,11 +151,12 @@ shinyServer(function(input, output) {
       summarise('Exp(€)' = sum(VALUE_IN_EUROS_IMPORT, na.rm = T),
                 'Imp(€)' = sum(VALUE_IN_EUROS_EXPORT, na.rm = T),
                 'Exp(ton)' = sum(QUANTITY_IN_100KG_IMPORT, na.rm=T)/10,
-                'Imp(ton)' = sum(QUANTITY_IN_100KG_EXPORT, na.rm=T)/10)
+                'Imp(ton)' = sum(QUANTITY_IN_100KG_EXPORT, na.rm=T)/10)%>%
+      filter(`Exp(€)`>0 & `Imp(€)`>0 & `Exp(ton)`>0 & `Imp(ton)`>0)
   })
   
   output$lineComExtEur<- renderPlotly({
-    validate(need(input$selPais_ComExt, ""))
+    validate(need(input$selPais_ComExt, "Cargando"))
       ggplot(comercioExteriorReact())+
       geom_line(aes(x=PERIOD, y=`Exp(€)`), col='red')+
       geom_line(aes(x=PERIOD, y=`Imp(€)`), col='blue')+
@@ -169,7 +170,7 @@ shinyServer(function(input, output) {
   })
   
   output$lineComExtTon<- renderPlotly({
-    validate(need(input$selPais_ComExt, ""))
+    validate(need(input$selPais_ComExt, "Cargando"))
     p<-comercioExteriorReact() %>%
       ggplot()+
       geom_line(aes(x=PERIOD, y=`Exp(ton)`), col='red')+
@@ -197,7 +198,7 @@ shinyServer(function(input, output) {
   
   output$preciosAndalucia <- renderPlotly({
     
-    validate(need(input$selectAndalucia, ""))
+    validate(need(input$selectAndalucia, "Cargando"))
     
     andalucia %>%
       filter(SUBSECTOR %in% input$selectAndalucia) %>%
@@ -223,7 +224,7 @@ shinyServer(function(input, output) {
   
   output$preciosMadrid <- renderPlotly({
     
-    validate(need(input$selectMadrid, ""))
+    validate(need(input$selectMadrid, "Cargando"))
     
     mercaMadrid %>% 
       filter(familia %in% input$selectMadrid) %>%
@@ -250,7 +251,7 @@ shinyServer(function(input, output) {
   
   output$preciosBarna <- renderPlotly({
     
-    validate(need(input$selectBarna, ""))
+    validate(need(input$selectBarna, "Cargando"))
     
     mercaBarna %>% 
       filter(familia %in% input$selectBarna) %>%
@@ -270,7 +271,7 @@ shinyServer(function(input, output) {
     p <- IPC %>%
       filter(`Tipo de dato` == 'Índice') %>%
       ggplot()+
-      geom_line(aes(x=Periodo, y=Total, col=Clases), size=1)+
+      geom_line(aes(x=Periodo, y=Total, col=Clases), size=0.5)+
       geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
       geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
       geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
@@ -285,7 +286,7 @@ shinyServer(function(input, output) {
     p <- IPC %>%
       filter(`Tipo de dato` == 'Variación anual') %>%
       ggplot()+
-      geom_line(aes(x=Periodo, y=Total, col=Clases), size=1)+
+      geom_line(aes(x=Periodo, y=Total, col=Clases), size=0.5)+
       geom_vline(xintercept = as.numeric(as.Date('2019-01-01')), linetype=4)+
       geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
       geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
@@ -355,7 +356,7 @@ shinyServer(function(input, output) {
   
   output$vitaminas <- renderPlotly({
     p <- ggplot(vitaminaC) +
-      geom_line(aes(x=Semana, y=Valor), col='goldenrod', size=1)+
+      geom_line(aes(x=Semana, y=Valor), col='goldenrod', size=0.5)+
       geom_vline(xintercept = as.numeric(as.Date('2020-01-01')), linetype=4)+
       geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
       geom_hline(yintercept=0)+

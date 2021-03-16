@@ -195,7 +195,7 @@ Vamos a ver ahora las diferencias mensuales de gasto en este top 5 de productos 
 #          `Diff Precio medio kg`=`Precio medio kg`-dplyr::lag(`Precio medio kg`),
 #          `Diff Penetración (%)`=`Penetración (%)`-dplyr::lag(`Penetración (%)`),
 #          `Diff Consumo per capita`=`Consumo per capita`-dplyr::lag(`Consumo per capita`))
-# saveRDS(df,file="data/app/MAPAConsumo.rds")
+# saveRDS(df,file="data_app/MAPAConsumo.rds")
 
 p<-dfMAPAConsumo_Total %>% 
   arrange(Producto,CCAA,Fecha) %>% 
@@ -546,8 +546,8 @@ ggplotly(p)
 ```
 
 ```{r}
-mercaMadrid <- readRDS("data/app/preciosMadrid.rds")
-mercaBarna <- readRDS("data/app/preciosBarna.rds")
+mercaMadrid <- readRDS("data_app/preciosMadrid.rds")
+mercaBarna <- readRDS("data_app/preciosBarna.rds")
 ```
 
 Muchas familias (17), no se saca nada en claro.
@@ -663,7 +663,7 @@ translateCountry <- function(country,from,to){
 #                 Imp = sum(VALUE_IN_EUROS_EXPORT, na.rm = T)) %>%
 #       drop_na() %>%
 #       pivot_longer(cols=c(Exp,Imp),names_to="Movimiento")
-# saveRDS(dfComExtTreemap,"./data/app/ComExtTreemap.rds")
+# saveRDS(dfComExtTreemap,"./data_app/ComExtTreemap.rds")
 ```
 
 ```{r}
@@ -760,7 +760,7 @@ dfTasaCobertura <- filter(dfComercioExterior,year(PERIOD) == 2020) %>%
 
 dfComExtCovid <- inner_join(dfCovidEurMes,dfTasaCobertura,by=c("geoId"="geoId","month"="month"))%>%dplyr::select(-REPORTER)%>%
   mutate(country_comun=translateCountry(geoId,from="ISO2",to="Comun"))
-saveRDS(dfComExtCovid,"data/app/ComExtCovid.rds")
+saveRDS(dfComExtCovid,"data_app/ComExtCovid.rds")
 ```
 
 ```{r}
@@ -849,7 +849,7 @@ corrplot(M, p.mat = res1$p, insig = "label_sig",
 
 # View(dfCovid)
 # df<-dfCovid%>%dplyr::select(geoId,countriesAndTerritories,continentExp,dateRep,day,month,`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`,pop=`popData2019`)%>%rename(IA14=`Cumulative_number_for_14_days_of_COVID-19_cases_per_100000`)%>%filter(geoId %in% UE_COVID)%>%mutate(`country_comun`=translateCountry(countriesAndTerritories,from="NombresCOVID",to="Comun"))
-# saveRDS(df,"data/app/COVID.rds")
+# saveRDS(df,"data_app/COVID.rds")
 # View(df)
 ```
 
