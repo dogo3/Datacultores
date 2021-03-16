@@ -37,7 +37,7 @@ shinyServer(function(input, output) {
   
   # w <- Waiter$new(html = loading_screen, color = "white")
   # w$show()
-  Sys.sleep(2) 
+  Sys.sleep(1) 
   waiter_hide()
   
   
