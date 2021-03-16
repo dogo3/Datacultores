@@ -40,11 +40,15 @@ body <- dashboardBody(
   
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "custom.css"),
-    tags$link(rel = "shortcut icon", href="trigo.ico")
+    tags$link(rel = "shortcut icon", href="trigo.ico"),
+    tags$script(" $(document).ready(function () {
+         $('.sidebar-menu').bind('click', function (e) {
+               $(document).scrollTop(0);
+               });
+             });")
     ),
   
   tabItems(
-    
     tabItem(tabName = "inicio",
             fluidRow(
               box(
