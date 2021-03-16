@@ -5,6 +5,16 @@ library(plotly)
 library(waiter)
 library(markdown)
 
+packages = c("shinydashboard","shiny","plotly","waiter","markdown","remotes")
+package.check <- lapply(packages, FUN = function(x) {
+  if (!require(x, character.only = TRUE)) {
+    install.packages(x, dependencies = TRUE,repos='http://cran.rediris.es')
+    library(x, character.only = TRUE)
+  }
+})
+if(!require("JohnCoene/waiter")) remotes::install_github("JohnCoene/waiter")
+
+
 gif <- paste0("https://i.pinimg.com/originals/17/04/1b/17041b6908ddd354c369b7bcb095823a.gif")
 gif <- "agriT.gif"
 gifLoad <- "agriTractor.gif"

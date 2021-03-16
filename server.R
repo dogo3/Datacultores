@@ -1,11 +1,12 @@
-library(ggplot2)
-library(treemapify)
-library(lubridate)
-library(waiter)
-library(corrplot)
+packages = c("ggplot2","treemapify","lubridate","waiter","corrplot","remotes")
+package.check <- lapply(packages, FUN = function(x) {
+  if (!require(x, character.only = TRUE)) {
+    install.packages(x, dependencies = TRUE,repos='http://cran.rediris.es')
+    library(x, character.only = TRUE)
+  }
+})
+if(!require("JohnCoene/waiter")) remotes::install_github("JohnCoene/waiter")
 
-#install.packages("remotes")
-#remotes::install_github("JohnCoene/waiter")
 
 top5Productos<-c("PATATAS FRESCAS","NARANJAS","TOMATES","PLATANOS","MANZANAS")
 totalesMAPA <- c('T.HORTALIZAS FRESCAS', 'T.FRUTAS FRESCAS')
