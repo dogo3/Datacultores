@@ -159,10 +159,12 @@ body <- dashboardBody(
             
             fluidRow(
               box(
+                h4("Evolución exportaciones e importaciones (euros)"),
                 plotlyOutput("lineComExtEur"),
                 width=6
               ),
               box(
+                h4("Evolución exportaciones e importaciones (toneladas)"),
                 plotlyOutput("lineComExtTon"),
                 width=6
               )
@@ -179,10 +181,13 @@ body <- dashboardBody(
             
             fluidRow(
               box(
+                h4("Evolución IA agregada  países seleccionados"),
+                h6("(ponderada por población)"),
                 plotlyOutput("plotAgregadoCovid"),
                 width=5
               ),
               box(
+                h4("Relación entre tasa de cobertura e IA países seleccionados"),
                 plotlyOutput("plotTC"),
                 width=7
               )
@@ -195,6 +200,7 @@ body <- dashboardBody(
             ),
             fluidRow(
               box(
+                h4("Evolución IA desagregada por países seleccionados"),
                 plotlyOutput("plotCovidPaises"),
                 width=12
               )
