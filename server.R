@@ -180,8 +180,7 @@ shinyServer(function(input, output) {
       geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
       scale_x_date(date_breaks = "2 months",date_labels = "%b %Y")+
-      ylab("Euros")+
-      ggtitle('Evolución exportaciones e importaciones (euros)')
+      ylab("Euros")
       ggplotly(p) %>%   layout(legend = list(orientation = "h", x = 0.4, y = -0.4),
                                margin = list(b=100),
                                annotations = 
@@ -203,8 +202,7 @@ shinyServer(function(input, output) {
       geom_vline(xintercept = as.numeric(as.Date('2020-03-01')), linetype=4, col='red')+
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+
       scale_x_date(date_breaks = "2 months",date_labels = "%b %Y")+
-      ylab("Toneladas")+
-      ggtitle('Evolución exportaciones e importaciones (toneladas)')
+      ylab("Toneladas")
     ggplotly(p) %>%   layout(legend = list(orientation = "h", x = 0.4, y = -0.4),
                              margin = list(b=100),
                              annotations = 
@@ -370,7 +368,6 @@ shinyServer(function(input, output) {
   # COVID
   
   output$selPais_Covid <- renderUI({
-    print(unique(COVID$country_comun))
     selectizeInput('selPais_Covid', 'Selecciona países', 
                    choices = unique(COVID$country_comun)[!is.na(unique(COVID$country_comun))],
                    selected = unique(filter(COVID,country_comun %in% translateCountry(UE,from="ISO2",to="Comun"))$country_comun), 
@@ -388,7 +385,7 @@ shinyServer(function(input, output) {
     geom_line(aes(x=dateRep, y=media))+
     scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
-    labs(x='Fecha', y='IA 14', title='Evolución IA Ponderada Países Seleccionados')
+    labs(x='Fecha', y='IA 14')
     ggplotly(p) %>%   layout(margin = list(b=120),
                              annotations = 
                                list(x = 1, y = -0.5,
@@ -407,7 +404,8 @@ shinyServer(function(input, output) {
       geom_smooth(aes(group = month,frame=month), 
                   method = "lm", 
                   show.legend = FALSE) +
-      scale_x_log10()  # convert to log scale
+      scale_x_log10()+  # convert to log scale
+      labs(x="Tasa Cobertura",y="IA media mensual ponderada")
     
     ggplotly(g) %>%
       animation_opts(frame = 200,
@@ -428,7 +426,7 @@ shinyServer(function(input, output) {
       geom_line(aes(x=dateRep, y=IA14, col=country_comun))+
       scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
       theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
-      labs(x='Fecha', y='IA 14', title='Evolución IA Países Seleccionados')
+      labs(x='Fecha', y='IA 14')
     ggplotly(p) %>%   layout(margin = list(b=160),
                              annotations = 
                                list(x = 1, y = -0.5,
