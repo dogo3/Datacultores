@@ -420,6 +420,8 @@ shinyServer(function(input, output) {
                                                                     font=list(size=12, color="blue")))
   })
   
+  #Evolución IA desagregada por países seleccionados
+  
   output$plotCovidPaises <- renderPlotly({
     validate(need(input$selPais_Covid, "Cargando"))
     p <- filter(COVID,country_comun %in% input$selPais_Covid &
@@ -427,8 +429,8 @@ shinyServer(function(input, output) {
       ggplot()+
       geom_line(aes(x=dateRep, y=IA14, col=country_comun))+
       scale_x_date(date_breaks = "month",date_labels = "%b %Y")+
-      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
-      labs(x='Fecha', y='IA 14')
+      theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1))+
+      labs(x='Fecha', y='IA 14',col="País")
     ggplotly(p) %>%   layout(margin = list(b=160),
                              annotations = 
                                list(x = 1, y = -0.5,
