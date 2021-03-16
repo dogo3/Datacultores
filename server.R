@@ -39,12 +39,7 @@ UE <- c("AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "GR", 
 
 
 shinyServer(function(input, output) {
-  
-  # w <- Waiter$new(html = loading_screen, color = "white")
-  # w$show()
-  # Sys.sleep(1) 
   waiter_hide()
-  
   
   output$selProd_MAPA<-renderUI({
     selectizeInput("selProd_MAPA","Selecciona los productos",
@@ -77,18 +72,9 @@ shinyServer(function(input, output) {
     }
   })
   
-  # listaProductosMAPA<-reactive({
-  #   if(is.null(input$selProd_MAPA)){
-  #     return(totalesMAPA) 
-  #   }else{
-  #     return(input$selProd_MAPA)
-  #   }
-  # })
-  
   
   output$MAPA <- renderPlotly({
     validate(need(variableMAPA(), "Cargando"))
-    #df <- dfMAPAConsumo %>% filter(Producto %in% listaProductosMAPA()) 
     df <- dfMAPAConsumo %>% filter(Producto %in% input$selProd_MAPA)
     
     p<-ggplot(df,aes(x=Fecha, y=df[[variableMAPA()]],col=Producto))+
